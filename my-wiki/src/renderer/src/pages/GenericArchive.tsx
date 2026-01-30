@@ -1,16 +1,24 @@
 import { useState } from 'react'
 import { WikiEntry } from '../types/wiki'
-import { Search } from 'lucide-react'
+import { Search, Plus } from 'lucide-react'
+import { CreateNewModal } from '../components/Common/CreateNewModal'
 
 interface GenericArchiveProps {
   title: string
   description: string
   data: WikiEntry[]
+  createType?: string // 생성할 타입 (없으면 버튼 숨김)
+  onRefresh?: () => void
   onEntryClick: (entry: WikiEntry) => void
 }
 
-export const GenericArchive = ({ title, description, data, onEntryClick }: GenericArchiveProps) => {
+export const GenericArchive = ({ title, description, data, createType, onRefresh, onEntryClick }: GenericArchiveProps) => {
   const [searchTerm, setSearchTerm] = useState('')
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
+
+  const handleCreateSuccess = () => {
+    if (onRefresh) onRefresh()
+  }
 
   // 검색 필터링 로직 (이름, 태그, 설명 검색)
   const filteredData = data.filter((entry) => {
@@ -22,9 +30,19 @@ export const GenericArchive = ({ title, description, data, onEntryClick }: Gener
 
   return (
     <div className="min-h-screen animate-in fade-in duration-500 p-8">
-      <header className="mb-8">
-        <h2 className="text-3xl font-bold text-white mb-2">{title}</h2>
-        <p className="text-slate-400">{description}</p>
+      <header className="mb-8 flex items-center justify-between border-b border-slate-800 pb-6">
+        <div>
+          <h2 className="text-3xl font-bold text-white mb-2">{title}</h2>
+          <p className="text-slate-400">{description}</p>
+        </div>
+        {createType && (
+          <button
+            onClick={() => setIsCreateModalOpen(true)}
+            className="flex items-center gap-2 px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-sm font-bold rounded-lg border border-slate-700 transition-colors"
+          >
+            <Plus size={16} /> Add {createType}
+          </button>
+        )}
       </header>
 
       {/* 검색 바 (UI만 존재, 기능은 추후 구현) */}
@@ -103,6 +121,15 @@ export const GenericArchive = ({ title, description, data, onEntryClick }: Gener
           })}
         </div>
       )}
+
+      {/* Create Modal */}
+      <CreateNewModal
+        isOpen={isCreateModalOpen}
+        onClose={() => setIsCreateModalOpen(false)}
+        onSuccess={handleCreateSuccess}
+        initialType={createType || 'other'}
+        lockType={true}
+      />
     </div>
   )
 }

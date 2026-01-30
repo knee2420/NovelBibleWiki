@@ -27,6 +27,10 @@ function App(): ReactElement {
     fetchData()
   }, [refreshKey])
 
+  const triggerRefresh = () => {
+    setRefreshKey((prev) => prev + 1)
+  }
+
   const handleImportComplete = () => {
     setRefreshKey((prev) => prev + 1) // 데이터 재로드 트리거
     setCurrentPage('home') // (선택사항) 완료 후 홈으로 이동 시켜서 갱신된 현황 보여주기
@@ -58,6 +62,8 @@ function App(): ReactElement {
             data={wikiData.filter(
               (d) => d.type === 'character' || (!d.type && (d as any).info?.role)
             )}
+            createType="character"   // [NEW]
+            onRefresh={triggerRefresh}
             onEntryClick={handleEntryClick}
           />
         )
@@ -67,6 +73,8 @@ function App(): ReactElement {
             title="Item Storage"
             description="무구 및 아이템 데이터베이스"
             data={wikiData.filter((d) => d.type === 'item')}
+            createType="item"        // [NEW]
+            onRefresh={triggerRefresh}
             onEntryClick={handleEntryClick}
           />
         )
@@ -76,6 +84,8 @@ function App(): ReactElement {
             title="Location Archive"
             description="지리 및 장소 데이터베이스"
             data={wikiData.filter((d) => d.type === 'location')}
+            createType="location"
+            onRefresh={triggerRefresh}
             onEntryClick={handleEntryClick}
           />
         )
@@ -85,6 +95,8 @@ function App(): ReactElement {
             title="Faction Archive"
             description="세력 및 단체 데이터베이스"
             data={wikiData.filter((d) => d.type === 'faction')}
+            createType="faction"
+            onRefresh={triggerRefresh}
             onEntryClick={handleEntryClick}
           />
         )

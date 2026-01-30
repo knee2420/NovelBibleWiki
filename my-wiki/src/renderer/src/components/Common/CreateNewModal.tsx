@@ -1,18 +1,27 @@
 // src/renderer/src/components/Common/CreateNewModal.tsx
 
-import { useState } from 'react'
-import { X, Plus, Loader2 } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { X, Plus, Loader2, Lock } from 'lucide-react'
 
 interface CreateNewModalProps {
   isOpen: boolean
   onClose: () => void
-  onSuccess: () => void // 생성 성공 시 목록 갱신 트리거
+  onSuccess: () => void
+  initialType?: string
+  lockType?: boolean
 }
 
-export const CreateNewModal = ({ isOpen, onClose, onSuccess }: CreateNewModalProps) => {
+export const CreateNewModal = ({ isOpen, onClose, onSuccess, initialType = 'character', lockType = false }: CreateNewModalProps) => {
   const [title, setTitle] = useState('')
-  const [type, setType] = useState('character') // 기본값
+  const [type, setType] = useState(initialType) // 기본값
   const [loading, setLoading] = useState(false)
+
+  useEffect(() => {
+    if (isOpen) {
+      setType(initialType)
+      setTitle('')
+    }
+  }, [isOpen, initialType])
 
   if (!isOpen) return null
 
@@ -62,17 +71,27 @@ export const CreateNewModal = ({ isOpen, onClose, onSuccess }: CreateNewModalPro
           {/* 1. 분류 선택 */}
           <div className="space-y-1">
             <label className="text-xs text-slate-400">데이터 분류 (Type)</label>
-            <select
-              value={type}
-              onChange={(e) => setType(e.target.value)}
-              className="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200 focus:border-blue-500 focus:outline-none"
-            >
-              <option value="character">인물 (Character)</option>
-              <option value="item">아이템 (Item)</option>
-              <option value="location">장소 (Location)</option>
-              <option value="faction">세력 (Faction)</option>
-              <option value="other">기타 (Other)</option>
-            </select>
+            {lockType ? (
+              // [Locked Mode] 수정 불가 (고정됨)
+              <div className="w-full bg-slate-900/50 border border-slate-700/50 rounded-lg px-3 py-2 text-sm text-slate-400 flex items-center gap-2 cursor-not-allowed">
+                <Lock size={14} />
+                <span className="uppercase font-bold text-blue-400">{type}</span>
+                <span className="text-xs ml-auto text-slate-600">(고정됨)</span>
+              </div>
+            ) : (
+              // [Free Mode] 선택 가능
+              <select
+                value={type}
+                onChange={(e) => setType(e.target.value)}
+                className="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200 focus:border-blue-500 focus:outline-none"
+              >
+                <option value="character">인물 (Character)</option>
+                <option value="item">아이템 (Item)</option>
+                <option value="location">장소 (Location)</option>
+                <option value="faction">세력 (Faction)</option>
+                <option value="other">기타 (Other)</option>
+              </select>
+            )}
           </div>
 
           {/* 2. 제목 입력 */}
@@ -82,7 +101,7 @@ export const CreateNewModal = ({ isOpen, onClose, onSuccess }: CreateNewModalPro
               type="text"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              placeholder="예: 강진우, 엑스칼리버..."
+              placeholder={`새로운 ${type} 이름 입력...`}
               className="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-slate-200 focus:border-blue-500 focus:outline-none"
               onKeyDown={(e) => e.key === 'Enter' && handleCreate()}
             />
