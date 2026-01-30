@@ -11,7 +11,7 @@ export const CharacterCard = ({ data, onClick }: CharacterCardProps) => {
   const info = data.info || {}
 
   // [Logic] Draft 판별
-  const isDraft = data.id.includes('00_Draft') || data.tags?.includes('draft')
+  const isDraft = data.id.includes('00_Draft')
 
   return (
     <div

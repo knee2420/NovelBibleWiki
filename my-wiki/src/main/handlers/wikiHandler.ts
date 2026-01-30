@@ -150,7 +150,7 @@ export function setupWikiHandlers(store: any): void {
       const frontmatter = {
         title: title, // 옵시디언 호환용
         type: type.toLowerCase(),
-        tags: ['draft'], // 태그에 자동으로 draft 추가 (선택사항)
+        tags: [], // 태그에 자동으로 draft 추가 (선택사항)
         created: new Date().toISOString().split('T')[0]
       }
 

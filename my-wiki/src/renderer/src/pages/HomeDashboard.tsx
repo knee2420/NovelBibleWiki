@@ -5,7 +5,7 @@ import { Search, ChevronRight, User, Sword, Map, Flag } from 'lucide-react'
 interface HomeDashboardProps {
   data: WikiEntry[]
   onNavigate: (page: string) => void
-  onEntryClick: (entry: WikiEntry) => void // [핵심] 상위에서 전달받은 클릭 핸들러
+  onEntryClick: (entry: WikiEntry) => void
 }
 
 export const HomeDashboard = ({ data, onNavigate, onEntryClick }: HomeDashboardProps) => {
@@ -78,7 +78,7 @@ export const HomeDashboard = ({ data, onNavigate, onEntryClick }: HomeDashboardP
             data={characters}
             pageId="characters"
             onNavigate={onNavigate}
-            onEntryClick={onEntryClick} // 전달
+            onEntryClick={onEntryClick}
             subtextKey="role"
           />
 
@@ -88,7 +88,7 @@ export const HomeDashboard = ({ data, onNavigate, onEntryClick }: HomeDashboardP
             data={items}
             pageId="items"
             onNavigate={onNavigate}
-            onEntryClick={onEntryClick} // 전달
+            onEntryClick={onEntryClick}
             subtextKey="category"
           />
 
@@ -98,7 +98,7 @@ export const HomeDashboard = ({ data, onNavigate, onEntryClick }: HomeDashboardP
             data={locations}
             pageId="locations"
             onNavigate={onNavigate}
-            onEntryClick={onEntryClick} // 전달
+            onEntryClick={onEntryClick}
             subtextKey="region"
           />
 
@@ -108,7 +108,7 @@ export const HomeDashboard = ({ data, onNavigate, onEntryClick }: HomeDashboardP
             data={factions}
             pageId="factions"
             onNavigate={onNavigate}
-            onEntryClick={onEntryClick} // 전달
+            onEntryClick={onEntryClick}
             subtextKey="leader"
           />
         </div>
@@ -126,7 +126,7 @@ interface SectionGridProps {
   data: WikiEntry[]
   pageId: string
   onNavigate: (page: string) => void
-  onEntryClick: (entry: WikiEntry) => void // [추가됨]
+  onEntryClick: (entry: WikiEntry) => void
   subtextKey: string
 }
 
@@ -167,13 +167,20 @@ const SectionGrid = ({
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
           {previewData.map((entry) => {
             const subtext = (entry as any).info?.[subtextKey] || entry.type
+            // [NEW] Draft 판별 로직
+            const isDraft = entry.id.includes('00_Draft')
 
             return (
               <div
                 key={entry.id}
-                // [여기서 entry는 map 함수가 돌려주는 개별 데이터 아이템입니다]
                 onClick={() => onEntryClick(entry)}
-                className="group bg-slate-900 border border-slate-800 rounded-xl overflow-hidden hover:border-blue-500/50 hover:shadow-lg hover:shadow-blue-500/10 transition-all cursor-pointer"
+                // [NEW] isDraft일 경우 Amber Border 적용
+                className={`group bg-slate-900 border rounded-xl overflow-hidden transition-all cursor-pointer
+                  ${
+                    isDraft
+                      ? 'border-amber-500/60 shadow-[0_0_10px_rgba(245,158,11,0.2)] hover:border-amber-400'
+                      : 'border-slate-800 hover:border-blue-500/50 hover:shadow-lg hover:shadow-blue-500/10'
+                  }`}
               >
                 <div className="aspect-[4/3] bg-slate-950 relative overflow-hidden">
                   {entry.image ? (
@@ -187,13 +194,27 @@ const SectionGrid = ({
                       NO IMAGE
                     </div>
                   )}
+                  {/* 기존 타입 뱃지 */}
                   <div className="absolute top-2 left-2 bg-black/60 backdrop-blur-sm px-1.5 py-0.5 rounded text-[10px] text-slate-300 uppercase border border-white/10">
                     {entry.type}
                   </div>
+
+                  {/* [NEW] Draft 뱃지 추가 (우측 상단) */}
+                  {isDraft && (
+                    <div className="absolute top-2 right-2 bg-amber-500 text-black text-[10px] font-bold px-1.5 py-0.5 rounded shadow-sm backdrop-blur-sm">
+                      NEW
+                    </div>
+                  )}
                 </div>
 
                 <div className="p-3">
-                  <h4 className="font-bold text-slate-200 text-sm truncate group-hover:text-blue-400 transition-colors">
+                  <h4
+                    className={`font-bold text-sm truncate transition-colors ${
+                      isDraft
+                        ? 'text-amber-100 group-hover:text-amber-400'
+                        : 'text-slate-200 group-hover:text-blue-400'
+                    }`}
+                  >
                     {entry.name}
                   </h4>
                   <p className="text-xs text-slate-500 mt-1 truncate">{subtext || '-'}</p>
@@ -218,35 +239,60 @@ const ResultGrid = ({
 
   return (
     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-      {data.map((entry) => (
-        <div
-          key={entry.id}
-          onClick={() => onEntryClick(entry)}
-          className="group bg-slate-900 border border-slate-800 rounded-xl overflow-hidden hover:border-blue-500/50 hover:shadow-lg hover:shadow-blue-500/10 transition-all cursor-pointer"
-        >
-          <div className="aspect-[4/3] bg-slate-950 relative overflow-hidden">
-            {entry.image ? (
-              <img
-                src={entry.image}
-                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-              />
-            ) : (
-              <div className="w-full h-full flex items-center justify-center text-slate-700 text-xs font-mono">
-                NO IMG
+      {data.map((entry) => {
+        // [NEW] Draft 판별 로직
+        const isDraft = entry.id.includes('00_Draft')
+
+        return (
+          <div
+            key={entry.id}
+            onClick={() => onEntryClick(entry)}
+            // [NEW] isDraft일 경우 Amber Border 적용
+            className={`group bg-slate-900 border rounded-xl overflow-hidden transition-all cursor-pointer
+              ${
+                isDraft
+                  ? 'border-amber-500/60 shadow-[0_0_10px_rgba(245,158,11,0.2)] hover:border-amber-400'
+                  : 'border-slate-800 hover:border-blue-500/50 hover:shadow-lg hover:shadow-blue-500/10'
+              }`}
+          >
+            <div className="aspect-[4/3] bg-slate-950 relative overflow-hidden">
+              {entry.image ? (
+                <img
+                  src={entry.image}
+                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center text-slate-700 text-xs font-mono">
+                  NO IMG
+                </div>
+              )}
+              {/* 기존 타입 뱃지 */}
+              <div className="absolute top-2 left-2 bg-black/60 backdrop-blur-sm px-1.5 py-0.5 rounded text-[10px] text-slate-300 uppercase border border-white/10">
+                {entry.type}
               </div>
-            )}
-            <div className="absolute top-2 left-2 bg-black/60 backdrop-blur-sm px-1.5 py-0.5 rounded text-[10px] text-slate-300 uppercase border border-white/10">
-              {entry.type}
+
+              {/* [NEW] Draft 뱃지 추가 */}
+              {isDraft && (
+                <div className="absolute top-2 right-2 bg-amber-500 text-black text-[10px] font-bold px-1.5 py-0.5 rounded shadow-sm backdrop-blur-sm">
+                  NEW
+                </div>
+              )}
+            </div>
+            <div className="p-3">
+              <h4
+                className={`font-bold text-sm truncate transition-colors ${
+                  isDraft
+                    ? 'text-amber-100 group-hover:text-amber-400'
+                    : 'text-slate-200 group-hover:text-blue-400'
+                }`}
+              >
+                {entry.name}
+              </h4>
+              <p className="text-xs text-slate-500 mt-1 truncate">Found in Search</p>
             </div>
           </div>
-          <div className="p-3">
-            <h4 className="font-bold text-slate-200 text-sm truncate group-hover:text-blue-400 transition-colors">
-              {entry.name}
-            </h4>
-            <p className="text-xs text-slate-500 mt-1 truncate">Found in Search</p>
-          </div>
-        </div>
-      ))}
+        )
+      })}
     </div>
   )
 }

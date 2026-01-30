@@ -47,7 +47,7 @@ export const GenericArchive = ({ title, description, data, onEntryClick }: Gener
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
           {filteredData.map((entry) => {
             // [Logic] Draft 판별
-            const isDraft = entry.id.includes('00_Draft') || entry.tags?.includes('draft')
+            const isDraft = entry.id.includes('00_Draft')
 
             return (
               <div
