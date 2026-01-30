@@ -1,0 +1,10 @@
+/* src/renderer/src/assets/main.css */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* 배경색 강제 지정 (물결 무늬 제거) */
+body {
+  background-color: #020617; /* slate-950 */
+  color: #e2e8f0; /* slate-200 */
+}
