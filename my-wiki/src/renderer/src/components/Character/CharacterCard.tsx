@@ -1,4 +1,3 @@
-import React from 'react'
 import { CharacterEntry } from '../../types/wiki'
 import { User } from 'lucide-react'
 

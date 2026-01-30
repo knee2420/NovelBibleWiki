@@ -1,4 +1,4 @@
-import { ReactNode, useState, useEffect, useCallback } from 'react'
+import { ReactNode, useState, useEffect } from 'react'
 import {
   Home,
   Users,
@@ -35,20 +35,6 @@ export const WikiLayout = ({ children, currentPage, onNavigate }: WikiLayoutProp
   const [projects, setProjects] = useState<{ name: string; path: string }[]>([])
   const [currentProject, setCurrentProject] = useState<{ name: string; path: string } | null>(null)
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
-
-  const loadProjects = useCallback(async () => {
-    // @ts-ignore
-    const { workspace, currentPath } = await window.api.getCurrentProject()
-    if (workspace) {
-      // @ts-ignore
-      const list = await window.api.getProjects()
-      setProjects(list)
-      if (currentPath) {
-        const active = list.find((p: any) => p.path === currentPath)
-        if (active) setCurrentProject(active)
-      }
-    }
-  }, [])
 
   useEffect(() => {
     const fetchProjects = async () => {

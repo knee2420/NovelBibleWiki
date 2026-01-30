@@ -9,12 +9,7 @@ interface GenericArchiveProps {
   onEntryClick: (entry: WikiEntry) => void
 }
 
-export const GenericArchive = ({
-  title,
-  description,
-  data,
-  onEntryClick
-}: GenericArchiveProps) => {
+export const GenericArchive = ({ title, description, data, onEntryClick }: GenericArchiveProps) => {
   const [searchTerm, setSearchTerm] = useState('')
 
   // 검색 필터링 로직 (이름, 태그, 설명 검색)
