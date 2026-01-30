@@ -119,4 +119,74 @@ export function setupWikiHandlers(store: any): void {
     store.set('vaultPath', path)
     return true
   })
+
+  // --------------------------------------------------------------------------
+  // [CRUD] 1. 새 위키 문서 생성 (Create) -> 무조건 _Drafts 폴더로 격리
+  // --------------------------------------------------------------------------
+  ipcMain.handle('create-wiki-entry', async (_, { type, title, content }) => {
+    const vaultPath = store.get('vaultPath') as string
+    if (!vaultPath) return { success: false, message: 'Vault 경로 미설정' }
+
+    // 1. Inbox 폴더 경로 설정
+    const targetDir = join(vaultPath, '20_Wiki/00_Draft')
+
+    try {
+      await fs.ensureDir(targetDir) // 폴더 없으면 생성
+
+      // 2. 파일명 안전하게 변환
+      const safeTitle = title.replace(/[\\/:*?"<>|]/g, '_')
+      let fileName = `${safeTitle}.md`
+      let filePath = join(targetDir, fileName)
+
+      // 3. 중복 방지
+      let counter = 1
+      while (await fs.pathExists(filePath)) {
+        fileName = `${safeTitle} (${counter}).md`
+        filePath = join(targetDir, fileName)
+        counter++
+      }
+
+      // 4. 기본 템플릿 생성
+      const frontmatter = {
+        title: title, // 옵시디언 호환용
+        type: type.toLowerCase(),
+        tags: ['draft'], // 태그에 자동으로 draft 추가 (선택사항)
+        created: new Date().toISOString().split('T')[0]
+      }
+
+      const fileData = matter.stringify(content || '', frontmatter)
+      await fs.writeFile(filePath, fileData, 'utf-8')
+
+      return { success: true, path: filePath }
+    } catch (error) {
+      console.error('Create Entry Failed:', error)
+      return { success: false, message: (error as any).message }
+    }
+  })
+
+  // --------------------------------------------------------------------------
+  // [CRUD] 2. 저장 (Update) -> 경로는 변경하지 않음 (편집만 수행)
+  // --------------------------------------------------------------------------
+  ipcMain.handle('save-wiki-entry', async (_, { id, newContent, newFrontmatter }) => {
+    // id는 절대 경로
+    try {
+      if (!(await fs.pathExists(id))) return { success: false, message: 'File not found' }
+
+      // 기존 데이터 읽기 (Merge를 위해)
+      const fileRaw = await fs.readFile(id, 'utf-8')
+      const { data: currentData } = matter(fileRaw)
+
+      // 기존 데이터 + 새 데이터 병합
+      // (주의: 빈 값이 오더라도 기존 값을 날리지 않도록 로직 주의 필요. 여기선 덮어쓰기 허용)
+      const mergedData = { ...currentData, ...newFrontmatter }
+
+      const newFileData = matter.stringify(newContent, mergedData)
+      await fs.writeFile(id, newFileData, 'utf-8')
+
+      return { success: true }
+    } catch (error) {
+      console.error('Save Entry Failed:', error)
+      return { success: false, message: (error as any).message }
+    }
+  })
 }

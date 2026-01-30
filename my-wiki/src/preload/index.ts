@@ -8,7 +8,14 @@ const api = {
   importVault: (path: string): Promise<any> => ipcRenderer.invoke('import-vault', path),
 
   getPlotData: (): Promise<any> => ipcRenderer.invoke('get-plot-data'),
-  getSceneDetail: (path: string): Promise<any> => ipcRenderer.invoke('get-scene-detail', path)
+  getSceneDetail: (path: string): Promise<any> => ipcRenderer.invoke('get-scene-detail', path),
+  createWikiEntry: (payload: { type: string; title: string; content?: string }): Promise<any> =>
+    ipcRenderer.invoke('create-wiki-entry', payload),
+  saveWikiEntry: (payload: any): Promise<any> => ipcRenderer.invoke('save-wiki-entry', payload),
+  selectWorkspace: () => ipcRenderer.invoke('select-workspace'),
+  getProjects: () => ipcRenderer.invoke('get-projects'),
+  selectProject: (path: string) => ipcRenderer.invoke('select-project', path),
+  getCurrentProject: () => ipcRenderer.invoke('get-current-project')
 }
 
 if (process.contextIsolated) {
