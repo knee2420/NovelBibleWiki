@@ -16,31 +16,38 @@ export const HomeDashboard = ({ data, onNavigate, onEntryClick }: HomeDashboardP
     const term = searchTerm.toLowerCase()
     return (
       entry.name.toLowerCase().includes(term) ||
-      entry.tags.some(tag => tag.toLowerCase().includes(term)) ||
+      entry.tags.some((tag) => tag.toLowerCase().includes(term)) ||
       entry.type.toLowerCase().includes(term)
     )
   })
 
   // 데이터 분류
-  const characters = data.filter(d => d.type === 'character' || (!d.type && (d as any).info?.role))
-  const items = data.filter(d => d.type === 'item' || (!d.type && (d as any).info?.category))
-  const locations = data.filter(d => d.type === 'location' || (!d.type && (d as any).info?.region))
-  const factions = data.filter(d => d.type === 'faction' || (!d.type && (d as any).info?.leader))
+  const characters = data.filter(
+    (d) => d.type === 'character' || (!d.type && (d as any).info?.role)
+  )
+  const items = data.filter((d) => d.type === 'item' || (!d.type && (d as any).info?.category))
+  const locations = data.filter(
+    (d) => d.type === 'location' || (!d.type && (d as any).info?.region)
+  )
+  const factions = data.filter((d) => d.type === 'faction' || (!d.type && (d as any).info?.leader))
 
   return (
     <div className="space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-500 pb-20">
-
       {/* 1. Hero Section */}
       <div className="relative rounded-2xl bg-gradient-to-r from-slate-900 to-slate-800 border border-slate-700 p-8 overflow-hidden shadow-2xl">
         <div className="relative z-10">
           <h2 className="text-3xl font-bold text-white mb-2">Welcome Back, Writer.</h2>
           <p className="text-slate-400 mb-6 max-w-lg">
-            세계관 데이터베이스가 가동 중입니다.<br/>
-            총 <span className="text-blue-400 font-bold">{data.length}</span>개의 설정이 기록되어 있습니다.
+            세계관 데이터베이스가 가동 중입니다.
+            <br />총 <span className="text-blue-400 font-bold">{data.length}</span>개의 설정이
+            기록되어 있습니다.
           </p>
 
           <div className="relative max-w-md group">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-blue-400 transition-colors" size={18} />
+            <Search
+              className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-blue-400 transition-colors"
+              size={18}
+            />
             <input
               type="text"
               placeholder="설정, 인물, 키워드 검색..."
@@ -64,47 +71,47 @@ export const HomeDashboard = ({ data, onNavigate, onEntryClick }: HomeDashboardP
           <ResultGrid data={searchResults} onEntryClick={onEntryClick} />
         </div>
       ) : (
-      <div className="space-y-10">
-        <SectionGrid
-          title="Character Archive"
-          icon={<User className="text-blue-400" />}
-          data={characters}
-          pageId="characters"
-          onNavigate={onNavigate}
-          onEntryClick={onEntryClick} // 전달
-          subtextKey="role"
-        />
+        <div className="space-y-10">
+          <SectionGrid
+            title="Character Archive"
+            icon={<User className="text-blue-400" />}
+            data={characters}
+            pageId="characters"
+            onNavigate={onNavigate}
+            onEntryClick={onEntryClick} // 전달
+            subtextKey="role"
+          />
 
-        <SectionGrid
-          title="Item Storage"
-          icon={<Sword className="text-purple-400" />}
-          data={items}
-          pageId="items"
-          onNavigate={onNavigate}
-          onEntryClick={onEntryClick} // 전달
-          subtextKey="category"
-        />
+          <SectionGrid
+            title="Item Storage"
+            icon={<Sword className="text-purple-400" />}
+            data={items}
+            pageId="items"
+            onNavigate={onNavigate}
+            onEntryClick={onEntryClick} // 전달
+            subtextKey="category"
+          />
 
-        <SectionGrid
-          title="Locations"
-          icon={<Map className="text-green-400" />}
-          data={locations}
-          pageId="locations"
-          onNavigate={onNavigate}
-          onEntryClick={onEntryClick} // 전달
-          subtextKey="region"
-        />
+          <SectionGrid
+            title="Locations"
+            icon={<Map className="text-green-400" />}
+            data={locations}
+            pageId="locations"
+            onNavigate={onNavigate}
+            onEntryClick={onEntryClick} // 전달
+            subtextKey="region"
+          />
 
-        <SectionGrid
-          title="Factions"
-          icon={<Flag className="text-orange-400" />}
-          data={factions}
-          pageId="factions"
-          onNavigate={onNavigate}
-          onEntryClick={onEntryClick} // 전달
-          subtextKey="leader"
-        />
-      </div>
+          <SectionGrid
+            title="Factions"
+            icon={<Flag className="text-orange-400" />}
+            data={factions}
+            pageId="factions"
+            onNavigate={onNavigate}
+            onEntryClick={onEntryClick} // 전달
+            subtextKey="leader"
+          />
+        </div>
       )}
     </div>
   )
@@ -123,7 +130,15 @@ interface SectionGridProps {
   subtextKey: string
 }
 
-const SectionGrid = ({ title, icon, data, pageId, onNavigate, onEntryClick, subtextKey }: SectionGridProps) => {
+const SectionGrid = ({
+  title,
+  icon,
+  data,
+  pageId,
+  onNavigate,
+  onEntryClick,
+  subtextKey
+}: SectionGridProps) => {
   const previewData = data.slice(0, 5)
 
   return (
@@ -181,9 +196,7 @@ const SectionGrid = ({ title, icon, data, pageId, onNavigate, onEntryClick, subt
                   <h4 className="font-bold text-slate-200 text-sm truncate group-hover:text-blue-400 transition-colors">
                     {entry.name}
                   </h4>
-                  <p className="text-xs text-slate-500 mt-1 truncate">
-                    {subtext || '-'}
-                  </p>
+                  <p className="text-xs text-slate-500 mt-1 truncate">{subtext || '-'}</p>
                 </div>
               </div>
             )
@@ -194,8 +207,13 @@ const SectionGrid = ({ title, icon, data, pageId, onNavigate, onEntryClick, subt
   )
 }
 
-
-const ResultGrid = ({ data, onEntryClick }: { data: WikiEntry[], onEntryClick: (entry: WikiEntry) => void }) => {
+const ResultGrid = ({
+  data,
+  onEntryClick
+}: {
+  data: WikiEntry[]
+  onEntryClick: (entry: WikiEntry) => void
+}) => {
   if (data.length === 0) return <div className="text-slate-500">검색 결과가 없습니다.</div>
 
   return (
@@ -208,9 +226,14 @@ const ResultGrid = ({ data, onEntryClick }: { data: WikiEntry[], onEntryClick: (
         >
           <div className="aspect-[4/3] bg-slate-950 relative overflow-hidden">
             {entry.image ? (
-              <img src={entry.image} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+              <img
+                src={entry.image}
+                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+              />
             ) : (
-              <div className="w-full h-full flex items-center justify-center text-slate-700 text-xs font-mono">NO IMG</div>
+              <div className="w-full h-full flex items-center justify-center text-slate-700 text-xs font-mono">
+                NO IMG
+              </div>
             )}
             <div className="absolute top-2 left-2 bg-black/60 backdrop-blur-sm px-1.5 py-0.5 rounded text-[10px] text-slate-300 uppercase border border-white/10">
               {entry.type}
@@ -220,9 +243,7 @@ const ResultGrid = ({ data, onEntryClick }: { data: WikiEntry[], onEntryClick: (
             <h4 className="font-bold text-slate-200 text-sm truncate group-hover:text-blue-400 transition-colors">
               {entry.name}
             </h4>
-            <p className="text-xs text-slate-500 mt-1 truncate">
-              Found in Search
-            </p>
+            <p className="text-xs text-slate-500 mt-1 truncate">Found in Search</p>
           </div>
         </div>
       ))}

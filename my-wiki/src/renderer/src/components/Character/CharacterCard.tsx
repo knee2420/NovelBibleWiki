@@ -1,5 +1,3 @@
-
-import React from 'react'
 import { CharacterEntry } from '../../types/wiki'
 import { User } from 'lucide-react'
 
@@ -8,8 +6,7 @@ interface CharacterCardProps {
   onClick: (id: string) => void
 }
 
-export const CharacterCard= ({ data, onClick }: CharacterCardProps) => {
-
+export const CharacterCard = ({ data, onClick }: CharacterCardProps) => {
   const typeSymbol = data.tags[0] ? data.tags[0].charAt(0) : '?'
   const info = data.info || {}
 
@@ -20,7 +17,6 @@ export const CharacterCard= ({ data, onClick }: CharacterCardProps) => {
     >
       {/* 비율 3:4, 배경색 및 테두리 변경 */}
       <div className="relative aspect-[3/4] w-full overflow-hidden rounded-xl bg-[#1e232e] border-2 border-[#2d3243] shadow-lg group-hover:border-cyan-500/50 group-hover:shadow-[0_0_20px_rgba(6,182,212,0.3)]">
-
         {/* 배경 장식 (그라데이션) */}
         <div className="absolute inset-0 bg-gradient-to-b from-[#252b3a] to-[#1e232e] opacity-100" />
         <div className="absolute top-0 left-0 w-full h-1/2 bg-gradient-to-b from-black/20 to-transparent" />

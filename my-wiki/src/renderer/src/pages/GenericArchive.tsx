@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { WikiEntry } from '../types/wiki'
 import { Search } from 'lucide-react'
 
@@ -16,7 +16,7 @@ export const GenericArchive = ({ title, description, data, onEntryClick }: Gener
   const filteredData = data.filter((entry) => {
     const term = searchTerm.toLowerCase()
     const matchName = entry.name.toLowerCase().includes(term)
-    const matchTags = entry.tags.some(tag => tag.toLowerCase().includes(term))
+    const matchTags = entry.tags.some((tag) => tag.toLowerCase().includes(term))
     return matchName || matchTags
   })
 
@@ -53,9 +53,15 @@ export const GenericArchive = ({ title, description, data, onEntryClick }: Gener
             >
               <div className="aspect-square relative bg-slate-950 overflow-hidden">
                 {entry.image ? (
-                  <img src={entry.image} alt={entry.name} className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" />
+                  <img
+                    src={entry.image}
+                    alt={entry.name}
+                    className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity"
+                  />
                 ) : (
-                  <div className="w-full h-full flex items-center justify-center text-slate-700 text-xs">NO IMG</div>
+                  <div className="w-full h-full flex items-center justify-center text-slate-700 text-xs">
+                    NO IMG
+                  </div>
                 )}
                 <div className="absolute top-2 left-2 px-2 py-0.5 bg-black/60 rounded text-[10px] text-white uppercase backdrop-blur-sm">
                   {entry.type}
@@ -64,7 +70,10 @@ export const GenericArchive = ({ title, description, data, onEntryClick }: Gener
               <div className="p-4">
                 <h3 className="font-bold text-slate-200 truncate">{entry.name}</h3>
                 <p className="text-xs text-slate-500 mt-1 truncate">
-                  {(entry as any).info?.category || (entry as any).info?.region || (entry as any).info?.leader || '-'}
+                  {(entry as any).info?.category ||
+                    (entry as any).info?.region ||
+                    (entry as any).info?.leader ||
+                    '-'}
                 </p>
               </div>
             </div>

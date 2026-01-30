@@ -9,12 +9,12 @@ export default function CharacterArchive(): ReactElement {
   const [selectedCharId, setSelectedCharId] = useState<string | null>(null)
 
   // 데이터 로드
- useEffect(() => {
+  useEffect(() => {
     const fetchData = async (): Promise<void> => {
       try {
         // @ts-ignore
         const allData = (await window.api.getWikiData()) as CharacterEntry[]
-        const charData = allData.filter(d => d.type === 'character')
+        const charData = allData.filter((d) => d.type === 'character')
 
         setCharacters(charData)
       } catch (error) {
@@ -37,9 +37,9 @@ export default function CharacterArchive(): ReactElement {
         <div className="text-center py-20 text-slate-500 bg-slate-900/50 rounded-xl border border-dashed border-slate-700">
           <p className="mb-4">데이터가 없습니다.</p>
           <p className="text-sm">
-             사이드바 하단의
-             <span className="text-blue-400 font-bold mx-1">[설정]</span>
-             탭에서 데이터를 연동해주세요.
+            사이드바 하단의
+            <span className="text-blue-400 font-bold mx-1">[설정]</span>
+            탭에서 데이터를 연동해주세요.
           </p>
         </div>
       )}

@@ -1,5 +1,13 @@
-import React, { ReactNode } from 'react'
-import { Home, Users, Sword, Map, Flag, Settings as SettingsIcon, LayoutTemplate } from 'lucide-react'
+import { ReactNode } from 'react'
+import {
+  Home,
+  Users,
+  Sword,
+  Map,
+  Flag,
+  Settings as SettingsIcon,
+  LayoutTemplate
+} from 'lucide-react'
 
 interface WikiLayoutProps {
   children: ReactNode
@@ -14,7 +22,7 @@ export const WikiLayout = ({ children, currentPage, onNavigate }: WikiLayoutProp
     { id: 'characters', label: '인물', icon: <Users size={20} /> },
     { id: 'items', label: '아이템', icon: <Sword size={20} /> },
     { id: 'locations', label: '지리', icon: <Map size={20} /> },
-    { id: 'factions', label: '세력', icon: <Flag size={20} /> },
+    { id: 'factions', label: '세력', icon: <Flag size={20} /> }
   ]
 
   return (
@@ -61,9 +69,7 @@ export const WikiLayout = ({ children, currentPage, onNavigate }: WikiLayoutProp
 
       {/* Main Content Area */}
       <main className="flex-1 overflow-y-auto relative scrollbar-hide">
-        <div className="max-w-[88%] mx-auto p-8 pb-20">
-          {children}
-        </div>
+        <div className="max-w-[88%] mx-auto p-8 pb-20">{children}</div>
       </main>
     </div>
   )

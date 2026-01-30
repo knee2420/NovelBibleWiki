@@ -79,7 +79,12 @@ export function setupWikiHandlers(store: any): void {
         else if (rawType === 'scene') entryType = 'scene' // 플롯 데이터는 제외하거나 포함할지 결정
 
         // 요약문 생성 (description이 없으면 본문 앞부분 자르기)
-        const summary = data.description || body.slice(0, 100).replace(/[#*`\n]/g, ' ').trim() + '...'
+        const summary =
+          data.description ||
+          body
+            .slice(0, 100)
+            .replace(/[#*`\n]/g, ' ')
+            .trim() + '...'
 
         return {
           id: filePath,
@@ -94,8 +99,7 @@ export function setupWikiHandlers(store: any): void {
       })
 
       // 플롯 파일(scene)은 위키 리스트에서 제외하고 싶다면 필터링
-      return results.filter(item => item.type !== 'scene')
-
+      return results.filter((item) => item.type !== 'scene')
     } catch (error) {
       console.error('Wiki data load failed:', error)
       return []

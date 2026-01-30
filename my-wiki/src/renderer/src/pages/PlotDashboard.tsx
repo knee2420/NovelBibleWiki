@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { ActBoard, SceneCard as SceneCardType } from '../types/plot'
+import { ActBoard } from '../types/plot'
 import { Columns } from 'lucide-react'
 import { DragDropContext, Draggable, Droppable, DropResult } from '@hello-pangea/dnd'
 import { SceneCard } from '../components/Plot/SceneCard'

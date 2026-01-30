@@ -1,4 +1,3 @@
-import React from 'react'
 import { WikiEntry, CharacterEntry, ItemEntry, LocationEntry, FactionEntry } from '../../types/wiki'
 import { CharacterDetail } from '../Character/CharacterDetail'
 import { ItemDetail } from '../Item/ItemDetail'

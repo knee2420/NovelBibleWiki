@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from 'react'
-import { X, Calendar, User, MapPin, FileText, Tag } from 'lucide-react'
-// React Markdown이 설치되어 있다고 가정합니다. 없다면 <pre> 태그로 대체 가능
+import { useEffect, useState } from 'react'
+import { X, User, MapPin, FileText, Tag } from 'lucide-react'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 
@@ -41,7 +40,6 @@ export const SceneDetailModal = ({ filePath, isOpen, onClose }: SceneDetailModal
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
       <div className="bg-slate-900 w-full max-w-6xl h-[85vh] rounded-2xl border border-slate-700 shadow-2xl flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
-
         {/* 1. Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-slate-800 bg-slate-900/50">
           <div className="flex items-center gap-3">
@@ -70,20 +68,19 @@ export const SceneDetailModal = ({ filePath, isOpen, onClose }: SceneDetailModal
           </div>
         ) : (
           <div className="flex-1 flex overflow-hidden">
-
             {/* Left: Main Content (Editor/Viewer) */}
             <div className="flex-1 overflow-y-auto p-8 custom-scrollbar bg-slate-950/30">
               <article className="prose prose-invert prose-slate max-w-none">
                 {/* 마크다운 렌더링 */}
-                <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                  {data?.content || ''}
-                </ReactMarkdown>
+                <ReactMarkdown remarkPlugins={[remarkGfm]}>{data?.content || ''}</ReactMarkdown>
               </article>
             </div>
 
             {/* Right: Metadata Sidebar */}
             <div className="w-80 border-l border-slate-800 bg-slate-900/50 p-6 overflow-y-auto custom-scrollbar">
-              <h3 className="text-sm font-bold text-slate-400 uppercase mb-4 tracking-wider">Scene Metadata</h3>
+              <h3 className="text-sm font-bold text-slate-400 uppercase mb-4 tracking-wider">
+                Scene Metadata
+              </h3>
 
               {/* Summary Section */}
               <div className="mb-6">
@@ -100,7 +97,10 @@ export const SceneDetailModal = ({ filePath, isOpen, onClose }: SceneDetailModal
                 </label>
                 <div className="flex flex-wrap gap-2">
                   {data?.frontmatter?.characters?.map((char: string, idx: number) => (
-                    <span key={idx} className="px-2 py-1 bg-indigo-900/30 border border-indigo-500/30 text-indigo-300 text-xs rounded-md">
+                    <span
+                      key={idx}
+                      className="px-2 py-1 bg-indigo-900/30 border border-indigo-500/30 text-indigo-300 text-xs rounded-md"
+                    >
                       {String(char).replace(/\[\[|\]\]/g, '')}
                     </span>
                   )) || <span className="text-slate-600 text-xs">없음</span>}
@@ -114,15 +114,18 @@ export const SceneDetailModal = ({ filePath, isOpen, onClose }: SceneDetailModal
                 </label>
                 <div className="flex flex-wrap gap-2">
                   {data?.frontmatter?.locations?.map((loc: string, idx: number) => (
-                    <span key={idx} className="px-2 py-1 bg-emerald-900/30 border border-emerald-500/30 text-emerald-300 text-xs rounded-md">
+                    <span
+                      key={idx}
+                      className="px-2 py-1 bg-emerald-900/30 border border-emerald-500/30 text-emerald-300 text-xs rounded-md"
+                    >
                       {String(loc).replace(/\[\[|\]\]/g, '')}
                     </span>
                   )) || <span className="text-slate-600 text-xs">없음</span>}
                 </div>
               </div>
 
-               {/* Tags Section */}
-               <div className="mb-6">
+              {/* Tags Section */}
+              <div className="mb-6">
                 <label className="text-xs text-slate-500 mb-2 block flex items-center gap-1">
                   <Tag size={12} /> 태그
                 </label>
@@ -134,7 +137,6 @@ export const SceneDetailModal = ({ filePath, isOpen, onClose }: SceneDetailModal
                   )) || <span className="text-slate-600 text-xs">없음</span>}
                 </div>
               </div>
-
             </div>
           </div>
         )}
