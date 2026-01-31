@@ -222,6 +222,14 @@ export function setupWikiHandlers(store: any): void {
       properties: ['openFile'],
       filters: [{ name: 'Images', extensions: ['jpg', 'png', 'gif', 'webp', 'jpeg'] }]
     })
-    return result.filePaths[0]
+    const filePath = result.filePaths[0]
+    if (!filePath) return null
+
+    // 파일을 읽어서 Base64 문자열로 변환 (미리보기용)
+    const fileData = await fs.readFile(filePath)
+    const ext = extname(filePath).slice(1) // 확장자 추출
+    const preview = `data:image/${ext};base64,${fileData.toString('base64')}`
+
+    return { path: filePath, preview: preview }
   })
 }

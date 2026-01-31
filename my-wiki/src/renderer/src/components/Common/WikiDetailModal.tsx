@@ -36,6 +36,7 @@ export const WikiDetailModal = ({ entry, onClose, onUpdate }: WikiDetailModalPro
   const [editInfo, setEditInfo] = useState({ ...entry.info })
   const [newMetaKey, setNewMetaKey] = useState('')
   const [newMetaValue, setNewMetaValue] = useState('')
+  const [previewImage, setPreviewImage] = useState(entry.image || '')
 
   // --- Handlers ---
   const handleSave = async () => {
@@ -71,9 +72,10 @@ export const WikiDetailModal = ({ entry, onClose, onUpdate }: WikiDetailModalPro
 
   const handleSelectImage = async () => {
     // @ts-ignore
-    const path = await window.api.selectImage()
-    if (path) {
-      setEditImage(path)
+    const result = await window.api.selectImage()
+    if (result) {
+      setEditImage(result.path)      // 저장할 땐 경로(String) 사용
+      setPreviewImage(result.preview) // 보여줄 땐 Base64 사용
     }
   }
 
@@ -105,6 +107,7 @@ export const WikiDetailModal = ({ entry, onClose, onUpdate }: WikiDetailModalPro
     setEditContent(entry.content || '')
     setEditTags(entry.tags?.join(', ') || '')
     setEditImage((entry.info as any)?.image || '')
+    setPreviewImage(entry.image || '')
     setEditInfo({ ...entry.info })
     setIsEditing(false)
   }
@@ -146,9 +149,10 @@ export const WikiDetailModal = ({ entry, onClose, onUpdate }: WikiDetailModalPro
         <div className="w-80 bg-slate-950 flex flex-col border-r border-slate-800 flex-shrink-0">
           {/* Image Area */}
           <div className="aspect-[3/4] w-full bg-black/50 relative overflow-hidden group">
-            {!isEditing && entry.image ? (
+            {/* [FIXED] 복잡한 로직 제거하고 previewImage state 사용 */}
+            {previewImage ? (
               <img
-                src={entry.image}
+                src={previewImage}
                 className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity"
               />
             ) : (
@@ -157,7 +161,7 @@ export const WikiDetailModal = ({ entry, onClose, onUpdate }: WikiDetailModalPro
               </div>
             )}
             {isEditing && (
-              <div className="absolute inset-0 bg-black/80 flex items-center justify-center p-4">
+              <div className="absolute inset-0 bg-black/60 flex items-center justify-center p-4 z-10">
                 <div className="w-full space-y-2">
                   <label className="text-[10px] text-slate-400 font-bold uppercase block text-center mb-2">
                     Change Image
