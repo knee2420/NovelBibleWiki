@@ -12,7 +12,14 @@ interface GenericArchiveProps {
   onEntryClick: (entry: WikiEntry) => void
 }
 
-export const GenericArchive = ({ title, description, data, createType, onRefresh, onEntryClick }: GenericArchiveProps) => {
+export const GenericArchive = ({
+  title,
+  description,
+  data,
+  createType,
+  onRefresh,
+  onEntryClick
+}: GenericArchiveProps) => {
   const [searchTerm, setSearchTerm] = useState('')
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
 

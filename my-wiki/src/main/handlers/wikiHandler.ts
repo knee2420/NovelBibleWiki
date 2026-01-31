@@ -167,20 +167,29 @@ export function setupWikiHandlers(store: any): void {
   // --------------------------------------------------------------------------
   // [CRUD] 2. 저장 (Update) -> 경로는 변경하지 않음 (편집만 수행)
   // --------------------------------------------------------------------------
-  ipcMain.handle('save-wiki-entry', async (_, { id, newContent, newFrontmatter }) => {
-    // id는 절대 경로
+  ipcMain.handle('save-wiki-entry', async (_, { id, title, type, tags, content }) => {
+    // id: 파일의 절대 경로
     try {
-      if (!(await fs.pathExists(id))) return { success: false, message: 'File not found' }
+      if (!(await fs.pathExists(id))) {
+        return { success: false, message: '파일을 찾을 수 없습니다.' }
+      }
 
-      // 기존 데이터 읽기 (Merge를 위해)
+      // 1. 기존 파일 읽기
       const fileRaw = await fs.readFile(id, 'utf-8')
-      const { data: currentData } = matter(fileRaw)
+      const { data: existingData } = matter(fileRaw)
 
-      // 기존 데이터 + 새 데이터 병합
-      // (주의: 빈 값이 오더라도 기존 값을 날리지 않도록 로직 주의 필요. 여기선 덮어쓰기 허용)
-      const mergedData = { ...currentData, ...newFrontmatter }
+      // 2. 데이터 병합 (기존 Frontmatter + 수정된 데이터)
+      // * 주의: 파일명(경로)은 변경하지 않고 내부 title만 변경합니다. (링크 깨짐 방지)
+      const newFrontmatter = {
+        ...existingData,
+        title: title,
+        type: type,
+        tags: tags,
+        // updated: new Date().toISOString() // 필요시 수정일 업데이트
+      }
 
-      const newFileData = matter.stringify(newContent, mergedData)
+      // 3. 파일 다시 쓰기
+      const newFileData = matter.stringify(content, newFrontmatter)
       await fs.writeFile(id, newFileData, 'utf-8')
 
       return { success: true }

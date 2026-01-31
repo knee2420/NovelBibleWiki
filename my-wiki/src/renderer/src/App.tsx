@@ -10,8 +10,9 @@ import { GenericArchive } from './pages/GenericArchive' // [변경] 통합 아�
 function App(): ReactElement {
   const [currentPage, setCurrentPage] = useState('home')
   const [wikiData, setWikiData] = useState<WikiEntry[]>([])
-  const [selectedEntry, setSelectedEntry] = useState<WikiEntry | null>(null)
+  const [selectedEntryId, setSelectedEntryId] = useState<string | null>(null)
   const [refreshKey, setRefreshKey] = useState(0)
+  const selectedEntry = wikiData.find((entry) => entry.id === selectedEntryId) || null
 
   // 데이터 로드
   useEffect(() => {
@@ -37,7 +38,7 @@ function App(): ReactElement {
   }
 
   const handleEntryClick = (entry: WikiEntry) => {
-    setSelectedEntry(entry)
+    setSelectedEntryId(entry.id)
   }
   // 페이지 렌더링 로직
   const renderContent = () => {
@@ -62,7 +63,7 @@ function App(): ReactElement {
             data={wikiData.filter(
               (d) => d.type === 'character' || (!d.type && (d as any).info?.role)
             )}
-            createType="character"   // [NEW]
+            createType="character" // [NEW]
             onRefresh={triggerRefresh}
             onEntryClick={handleEntryClick}
           />
@@ -73,7 +74,7 @@ function App(): ReactElement {
             title="Item Storage"
             description="무구 및 아이템 데이터베이스"
             data={wikiData.filter((d) => d.type === 'item')}
-            createType="item"        // [NEW]
+            createType="item" // [NEW]
             onRefresh={triggerRefresh}
             onEntryClick={handleEntryClick}
           />
@@ -112,7 +113,11 @@ function App(): ReactElement {
       {renderContent()}
       {selectedEntry && (
         // 현재는 CharacterDetail을 공용으로 사용 (추후 ItemDetail 등으로 분기 가능)
-        <WikiDetailModal entry={selectedEntry} onClose={() => setSelectedEntry(null)} />
+        <WikiDetailModal
+          entry={selectedEntry}
+          onClose={() => setSelectedEntryId(null)}
+          onUpdate={triggerRefresh} // [NEW] 저장 시 데이터 새로고침
+        />
       )}
     </WikiLayout>
   )

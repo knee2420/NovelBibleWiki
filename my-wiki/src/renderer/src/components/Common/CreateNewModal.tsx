@@ -11,7 +11,13 @@ interface CreateNewModalProps {
   lockType?: boolean
 }
 
-export const CreateNewModal = ({ isOpen, onClose, onSuccess, initialType = 'character', lockType = false }: CreateNewModalProps) => {
+export const CreateNewModal = ({
+  isOpen,
+  onClose,
+  onSuccess,
+  initialType = 'character',
+  lockType = false
+}: CreateNewModalProps) => {
   const [title, setTitle] = useState('')
   const [type, setType] = useState(initialType) // 기본값
   const [loading, setLoading] = useState(false)
