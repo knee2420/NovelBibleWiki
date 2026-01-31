@@ -167,7 +167,7 @@ export function setupWikiHandlers(store: any): void {
   // --------------------------------------------------------------------------
   // [CRUD] 2. 저장 (Update) -> 경로는 변경하지 않음 (편집만 수행)
   // --------------------------------------------------------------------------
-  ipcMain.handle('save-wiki-entry', async (_, { id, title, type, tags, content }) => {
+  ipcMain.handle('save-wiki-entry', async (_, { id, title, type, tags, content, info }) => {
     // id: 파일의 절대 경로
     try {
       if (!(await fs.pathExists(id))) {
@@ -182,9 +182,10 @@ export function setupWikiHandlers(store: any): void {
       // * 주의: 파일명(경로)은 변경하지 않고 내부 title만 변경합니다. (링크 깨짐 방지)
       const newFrontmatter = {
         ...existingData,
+        ...info,
         title: title,
         type: type,
-        tags: tags,
+        tags: tags
         // updated: new Date().toISOString() // 필요시 수정일 업데이트
       }
 
@@ -197,5 +198,30 @@ export function setupWikiHandlers(store: any): void {
       console.error('Save Entry Failed:', error)
       return { success: false, message: (error as any).message }
     }
+  })
+
+  ipcMain.handle('delete-wiki-entry', async (_, id: string) => {
+    // id는 파일의 절대 경로
+    try {
+      if (!(await fs.pathExists(id))) {
+        return { success: false, message: '파일이 이미 존재하지 않습니다.' }
+      }
+
+      // 파일 삭제 (휴지통이 아니라 영구 삭제되므로 주의)
+      await fs.remove(id)
+
+      return { success: true }
+    } catch (error) {
+      console.error('Delete Entry Failed:', error)
+      return { success: false, message: (error as any).message }
+    }
+  })
+
+  ipcMain.handle('select-image-dialog', async () => {
+    const result = await dialog.showOpenDialog({
+      properties: ['openFile'],
+      filters: [{ name: 'Images', extensions: ['jpg', 'png', 'gif', 'webp', 'jpeg'] }]
+    })
+    return result.filePaths[0]
   })
 }
