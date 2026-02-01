@@ -1,5 +1,17 @@
 import { useEffect, useState, useRef } from 'react'
-import { X, User, MapPin, FileText, Tag, Edit2, Save, XCircle, Trash2 } from 'lucide-react'
+import {
+  X,
+  User,
+  MapPin,
+  FileText,
+  Tag,
+  Edit2,
+  Save,
+  XCircle,
+  Trash2,
+  Plus,
+  MinusCircle
+} from 'lucide-react'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 
@@ -29,7 +41,9 @@ export const SceneDetailModal = ({
   const [editCharacters, setEditCharacters] = useState('') // Comma separated string
   const [editLocations, setEditLocations] = useState('') // Comma separated string
   const [editTags, setEditTags] = useState('') // Comma separated string
-
+  const [editMetadata, setEditMetadata] = useState<Record<string, any>>({})
+  const [newMetaKey, setNewMetaKey] = useState('')
+  const [newMetaValue, setNewMetaValue] = useState('')
   // Focus Control
   const titleInputRef = useRef<HTMLInputElement>(null)
 
@@ -78,6 +92,20 @@ export const SceneDetailModal = ({
     setEditCharacters(Array.isArray(fm.characters) ? fm.characters.join(', ') : '')
     setEditLocations(Array.isArray(fm.locations) ? fm.locations.join(', ') : '')
     setEditTags(Array.isArray(fm.tags) ? fm.tags.join(', ') : '')
+
+    const reserved = [
+      'title',
+      'summary',
+      'characters',
+      'locations',
+      'tags',
+      'type',
+      'scene',
+      'updatedAt'
+    ]
+    const meta = { ...fm }
+    reserved.forEach((key) => delete meta[key])
+    setEditMetadata(meta)
   }
 
   const handleSave = async () => {
@@ -99,6 +127,7 @@ export const SceneDetailModal = ({
           characters: toArray(editCharacters),
           locations: toArray(editLocations),
           tags: toArray(editTags),
+          ...editMetadata,
           updatedAt: new Date().toISOString()
         }
       }
@@ -146,6 +175,29 @@ export const SceneDetailModal = ({
   const handleCancel = () => {
     if (originalData) syncStateFromData(originalData)
     setIsEditing(false)
+  }
+
+  const handleAddMeta = () => {
+    if (!newMetaKey.trim()) {
+      alert('키(Key)를 입력해주세요.')
+      window.focus()
+      return
+    }
+    setEditMetadata((prev) => ({ ...prev, [newMetaKey.trim()]: newMetaValue }))
+    setNewMetaKey('')
+    setNewMetaValue('')
+  }
+
+  const handleRemoveMeta = (key: string) => {
+    setEditMetadata((prev) => {
+      const next = { ...prev }
+      delete next[key]
+      return next
+    })
+  }
+
+  const handleMetaChange = (key: string, val: string) => {
+    setEditMetadata((prev) => ({ ...prev, [key]: val }))
   }
 
   const getFileName = (path: string) => path.split(/[\\/]/).pop()?.replace(/\.md$/i, '') || ''
@@ -282,6 +334,71 @@ export const SceneDetailModal = ({
                 </div>
               )}
             </div>
+            {(Object.keys(editMetadata).length > 0 || isEditing) && (
+              <div className="space-y-2 pt-4 border-t border-slate-800">
+                <label className="text-[10px] uppercase tracking-wider text-slate-500 font-bold block">
+                  Metadata
+                </label>
+                <div className="grid grid-cols-1 gap-2">
+                  {Object.entries(editMetadata).map(([key, value]) => (
+                    <div
+                      key={key}
+                      className="flex justify-between items-center text-xs border-b border-slate-800/50 pb-1 min-h-[28px]"
+                    >
+                      <span className="text-slate-500 capitalize flex items-center gap-1">
+                        {key}
+                        {isEditing && (
+                          <button
+                            onClick={() => handleRemoveMeta(key)}
+                            className="text-slate-600 hover:text-red-400 transition-colors"
+                          >
+                            <MinusCircle size={10} />
+                          </button>
+                        )}
+                      </span>
+                      {isEditing ? (
+                        <input
+                          type="text"
+                          value={String(value)}
+                          onChange={(e) => handleMetaChange(key, e.target.value)}
+                          className="bg-slate-900 border border-slate-700 rounded px-1.5 py-0.5 text-right text-slate-200 focus:border-blue-500 outline-none w-[120px]"
+                        />
+                      ) : (
+                        <span className="text-slate-300 font-medium truncate max-w-[120px] text-right">
+                          {String(value)}
+                        </span>
+                      )}
+                    </div>
+                  ))}
+
+                  {/* Add New Meta Row */}
+                  {isEditing && (
+                    <div className="mt-2 pt-2 border-t border-dashed border-slate-800 flex gap-1 items-center">
+                      <input
+                        type="text"
+                        placeholder="Key"
+                        value={newMetaKey}
+                        onChange={(e) => setNewMetaKey(e.target.value)}
+                        className="w-1/3 bg-slate-900 border border-slate-700 rounded px-1.5 py-1 text-[10px] text-slate-300 focus:border-blue-500 outline-none"
+                      />
+                      <input
+                        type="text"
+                        placeholder="Value"
+                        value={newMetaValue}
+                        onChange={(e) => setNewMetaValue(e.target.value)}
+                        className="flex-1 bg-slate-900 border border-slate-700 rounded px-1.5 py-1 text-[10px] text-slate-300 focus:border-blue-500 outline-none"
+                      />
+                      <button
+                        onClick={handleAddMeta}
+                        className="p-1 bg-slate-800 hover:bg-blue-600 text-slate-400 hover:text-white rounded border border-slate-700 transition-colors"
+                      >
+                        <Plus size={12} />
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
           </div>
         </div>
 
