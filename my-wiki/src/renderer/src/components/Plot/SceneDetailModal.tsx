@@ -403,19 +403,19 @@ export const SceneDetailModal = ({
         </div>
 
         {/* --- Right Column: Content Editor/Viewer --- */}
-        <div className="flex-1 flex flex-col bg-[#0b0e14] relative">
+        <div className="flex-1 flex flex-col bg-[#0b0e14] relative z-0">
           {/* Top Bar (Actions) */}
           {/* [FIX] sticky 제거, justify-between 적용, 배경색 불투명으로 변경 */}
-          <div className="h-16 border-b border-slate-800 flex items-center px-6 bg-slate-900/90 backdrop-blur-sm relative z-20 shrink-0">
+          <div className="h-16 border-b border-slate-800 flex items-center px-6 bg-[#0b0e14] relative shrink-0 z-20">
             {/* Title Area */}
-            <div className="flex-1 min-w-0 mr-4">
+            <div className="w-full min-w-0 pr-36">
               {isEditing ? (
                 <input
                   ref={titleInputRef}
                   type="text"
                   value={editTitle}
                   onChange={(e) => setEditTitle(e.target.value)}
-                  className="bg-transparent text-xl font-bold text-white border-b border-blue-500 focus:outline-none w-full px-1 pb-1"
+                  className="bg-transparent text-xl font-bold text-white border-b border-blue-500 focus:outline-none w-full pb-1"
                   placeholder="씬 제목"
                   autoComplete="off"
                 />
@@ -429,7 +429,7 @@ export const SceneDetailModal = ({
               )}
             </div>
 
-            <div className="flex items-center gap-2 flex-shrink-0">
+            <div className="absolute right-6 top-0 h-full flex items-center gap-2">
               {isEditing ? (
                 <>
                   <button
@@ -474,7 +474,7 @@ export const SceneDetailModal = ({
           {loading ? (
             <div className="flex-1 flex items-center justify-center text-slate-500">로딩 중...</div>
           ) : (
-            <div className="flex-1 overflow-y-auto custom-scrollbar p-8">
+            <div className="flex-1 overflow-y-auto custom-scrollbar p-8 w-full min-w-0">
               {isEditing ? (
                 <textarea
                   value={editContent}
@@ -484,7 +484,7 @@ export const SceneDetailModal = ({
                   spellCheck={false}
                 />
               ) : (
-                <article className="prose prose-invert prose-slate max-w-none prose-p:leading-relaxed prose-headings:text-slate-200">
+                <article className="prose prose-invert prose-slate max-w-none prose-p:leading-relaxed prose-headings:text-slate-200 prose-pre:whitespace-pre-wrap prose-pre:break-words w-full break-words">
                   <ReactMarkdown remarkPlugins={[remarkGfm]}>
                     {editContent || '*내용이 없습니다.*'}
                   </ReactMarkdown>
