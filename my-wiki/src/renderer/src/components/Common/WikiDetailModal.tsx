@@ -42,7 +42,7 @@ export const WikiDetailModal = ({ entry, onClose, onUpdate }: WikiDetailModalPro
   useEffect(() => {
     if (isEditing) {
       const timer = setTimeout(() => {
-        (document.activeElement as HTMLElement)?.blur()
+        ;(document.activeElement as HTMLElement)?.blur()
         titleInputRef.current?.focus()
       }, 300)
       return () => clearTimeout(timer)
@@ -85,7 +85,7 @@ export const WikiDetailModal = ({ entry, onClose, onUpdate }: WikiDetailModalPro
     // @ts-ignore
     const result = await window.api.selectImage()
     if (result) {
-      setEditImage(result.path)      // 저장할 땐 경로(String) 사용
+      setEditImage(result.path) // 저장할 땐 경로(String) 사용
       setPreviewImage(result.preview) // 보여줄 땐 Base64 사용
     }
   }

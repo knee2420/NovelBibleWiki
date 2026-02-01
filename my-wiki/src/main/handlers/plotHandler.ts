@@ -8,45 +8,39 @@ export function setupPlotHandlers(store: any): void {
     const vaultPath = store.get('vaultPath') as string
     if (!vaultPath) return []
 
+    const plotBasePath = join(vaultPath, '10_Plot')
+
     try {
-      // 1. Vault 전체를 재귀적으로 탐색하여 모든 '챕터 후보 폴더'를 찾습니다.
-      const allChapters = recursiveScan(vaultPath)
-
-      if (allChapters.length === 0) {
-        console.log('[PlotHandler] 탐색 실패. 유효한 씬 파일을 찾지 못했습니다.')
-        return []
-      }
-
-      // 2. 발견된 챕터들을 '막(Act)' 단위로 그룹핑 (폴더 구조 기반)
-      // 막 폴더(예: "1막_...")가 있으면 그걸 기준으로, 없으면 "메인 스토리"로 통합
+      await fs.ensureDir(plotBasePath)
+      const rootItems = fs.readdirSync(plotBasePath, { withFileTypes: true })
       const actsMap = new Map<string, any>()
 
+      rootItems.forEach((dir) => {
+        if (!dir.isDirectory()) return
+
+        const fullPath = join(plotBasePath, dir.name)
+        const nameMatch = dir.name.match(/^(\d+)막_(.+)/) // "1막_제목" 패턴 파싱
+
+        actsMap.set(fullPath, {
+          id: fullPath,
+          path: fullPath,
+          actNumber: nameMatch ? parseInt(nameMatch[1]) : 999,
+          title: dir.name,
+          chapters: []
+        })
+      })
+
+      const allChapters = recursiveScan(plotBasePath)
+
+      // 3. 챕터를 해당하는 막(Act)에 분배
       allChapters.forEach((chapter) => {
-        // 부모 폴더명을 확인하여 막(Act) 결정
-        const parentPath = join(chapter.id, '..')
-        const parentName = basename(parentPath)
+        // 챕터의 부모 폴더 경로 (= 막 경로)
+        const parentPath = join(chapter.id, '..') // path.dirname(chapter.id)와 동일
 
-        let actKey = 'Default'
-        let actTitle = '메인 스토리'
-        let actNum = 1
-
-        if (parentName.includes('막') || parentName.toLowerCase().includes('act')) {
-          actKey = parentPath
-          actTitle = parentName
-          const numMatch = parentName.match(/(\d+)/)
-          actNum = numMatch ? parseInt(numMatch[0]) : 999
+        // 해당 막이 맵에 존재하면 챕터 추가
+        if (actsMap.has(parentPath)) {
+          actsMap.get(parentPath).chapters.push(chapter)
         }
-
-        if (!actsMap.has(actKey)) {
-          actsMap.set(actKey, {
-            id: actKey, // 식별자 추가
-            path: actKey,
-            actNumber: actNum,
-            title: actTitle,
-            chapters: []
-          })
-        }
-        actsMap.get(actKey).chapters.push(chapter)
       })
 
       // 3. 결과 배열로 변환 및 정렬
@@ -87,15 +81,19 @@ export function setupPlotHandlers(store: any): void {
     const vaultPath = store.get('vaultPath') as string
     if (!vaultPath) return false
     try {
+      const plotDir = join(vaultPath, '10_Plot')
+      await fs.ensureDir(plotDir) // 폴더가 없으면 생성
+
       const dirs = fs
-        .readdirSync(vaultPath)
-        .filter((n) => fs.statSync(join(vaultPath, n)).isDirectory())
+        .readdirSync(plotDir)
+        .filter((n) => fs.statSync(join(plotDir, n)).isDirectory())
+
       let max = 0
       dirs.forEach((d) => {
         const m = d.match(/^(\d+)막_/)
         if (m) max = Math.max(max, parseInt(m[1]))
       })
-      await fs.ensureDir(join(vaultPath, `${max + 1}막_${title}`))
+      await fs.ensureDir(join(plotDir, `${max + 1}막_${title}`))
       return true
     } catch (e) {
       console.error(e)

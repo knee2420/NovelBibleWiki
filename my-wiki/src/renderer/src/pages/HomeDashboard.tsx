@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react'
+import React, { useState } from 'react'
 import { WikiEntry } from '../types/wiki'
 import { Search, ChevronRight, User, Sword, Map, Flag } from 'lucide-react'
 
