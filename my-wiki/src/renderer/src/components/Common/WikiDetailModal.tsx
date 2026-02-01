@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { WikiEntry } from '../../types/wiki'
 import {
   X,
@@ -37,6 +37,17 @@ export const WikiDetailModal = ({ entry, onClose, onUpdate }: WikiDetailModalPro
   const [newMetaKey, setNewMetaKey] = useState('')
   const [newMetaValue, setNewMetaValue] = useState('')
   const [previewImage, setPreviewImage] = useState(entry.image || '')
+  const titleInputRef = useRef<HTMLInputElement>(null)
+
+  useEffect(() => {
+    if (isEditing) {
+      const timer = setTimeout(() => {
+        (document.activeElement as HTMLElement)?.blur()
+        titleInputRef.current?.focus()
+      }, 300)
+      return () => clearTimeout(timer)
+    }
+  }, [isEditing])
 
   // --- Handlers ---
   const handleSave = async () => {
@@ -328,12 +339,12 @@ export const WikiDetailModal = ({ entry, onClose, onUpdate }: WikiDetailModalPro
           <div className="h-16 border-b border-slate-800 flex items-center justify-between px-6 bg-slate-900/50 backdrop-blur-sm sticky top-0 z-10">
             {isEditing ? (
               <input
+                ref={titleInputRef}
                 type="text"
                 value={editTitle}
                 onChange={(e) => setEditTitle(e.target.value)}
                 className="bg-transparent text-2xl font-bold text-white border-b border-blue-500 focus:outline-none w-full mr-4 px-1 pb-1"
                 placeholder="문서 제목"
-                autoFocus
               />
             ) : (
               <h1 className="text-2xl font-bold text-slate-100 truncate pr-4">{entry.name}</h1>

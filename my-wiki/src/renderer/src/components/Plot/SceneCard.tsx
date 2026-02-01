@@ -6,9 +6,10 @@ interface Props {
   scene: SceneCardType
   index: number
   onClick: (id: string) => void
+  onDelete?: () => void
 }
 
-export const SceneCard = ({ scene, index, onClick }: Props) => {
+export const SceneCard = ({ scene, index, onClick, onDelete }: Props) => {
   return (
     <Draggable draggableId={scene.id} index={index}>
       {(provided, snapshot) => (
@@ -17,6 +18,10 @@ export const SceneCard = ({ scene, index, onClick }: Props) => {
           {...provided.draggableProps}
           {...provided.dragHandleProps}
           onClick={() => onClick(scene.id)}
+          onContextMenu={(e) => {
+            e.preventDefault()
+            onDelete && onDelete()
+          }}
           style={{ ...provided.draggableProps.style }}
           className={`
             group bg-slate-800 border rounded-lg p-3 cursor-grab active:cursor-grabbing transition-all

@@ -1,6 +1,6 @@
 // src/renderer/src/components/Common/CreateNewModal.tsx
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { X, Plus, Loader2, Lock } from 'lucide-react'
 
 interface CreateNewModalProps {
@@ -21,6 +21,7 @@ export const CreateNewModal = ({
   const [title, setTitle] = useState('')
   const [type, setType] = useState(initialType) // 기본값
   const [loading, setLoading] = useState(false)
+  const inputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     if (isOpen) {
@@ -28,6 +29,13 @@ export const CreateNewModal = ({
       setTitle('')
     }
   }, [isOpen, initialType])
+
+  useEffect(() => {
+    if (isOpen) {
+      const timer = setTimeout(() => inputRef.current?.focus(), 100)
+      return () => clearTimeout(timer)
+    }
+  }, [isOpen])
 
   if (!isOpen) return null
 
@@ -104,6 +112,7 @@ export const CreateNewModal = ({
           <div className="space-y-1">
             <label className="text-xs text-slate-400">문서 제목 (Title)</label>
             <input
+              ref={inputRef}
               type="text"
               value={title}
               onChange={(e) => setTitle(e.target.value)}

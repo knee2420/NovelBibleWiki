@@ -17,7 +17,17 @@ const api = {
   selectWorkspace: () => ipcRenderer.invoke('select-workspace'),
   getProjects: () => ipcRenderer.invoke('get-projects'),
   selectProject: (path: string) => ipcRenderer.invoke('select-project', path),
-  getCurrentProject: () => ipcRenderer.invoke('get-current-project')
+  getCurrentProject: () => ipcRenderer.invoke('get-current-project'),
+
+  // [NEW] Plot CRUD
+  createAct: (title: string) => ipcRenderer.invoke('create-act', title),
+  createChapter: (actPath: string, title: string) =>
+    ipcRenderer.invoke('create-chapter', { actPath, title }),
+  createScene: (chapterPath: string, title: string) =>
+    ipcRenderer.invoke('create-scene', { chapterPath, title }),
+  renameItem: (path: string, newName: string) =>
+    ipcRenderer.invoke('rename-item', { path, newName }),
+  deleteItem: (path: string) => ipcRenderer.invoke('delete-item', path)
 }
 
 if (process.contextIsolated) {

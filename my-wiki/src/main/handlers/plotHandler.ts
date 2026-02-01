@@ -1,6 +1,6 @@
-import { ipcMain } from 'electron'
+import { ipcMain, shell } from 'electron'
 import fs from 'fs-extra'
-import { join, basename } from 'path'
+import { join, basename, dirname } from 'path'
 import matter from 'gray-matter'
 
 export function setupPlotHandlers(store: any): void {
@@ -39,6 +39,8 @@ export function setupPlotHandlers(store: any): void {
 
         if (!actsMap.has(actKey)) {
           actsMap.set(actKey, {
+            id: actKey, // 식별자 추가
+            path: actKey,
             actNumber: actNum,
             title: actTitle,
             chapters: []
@@ -79,6 +81,102 @@ export function setupPlotHandlers(store: any): void {
       return null
     }
   })
+
+  // 1. 막(Act) 생성
+  ipcMain.handle('create-act', async (_, title: string) => {
+    const vaultPath = store.get('vaultPath') as string
+    if (!vaultPath) return false
+    try {
+      const dirs = fs
+        .readdirSync(vaultPath)
+        .filter((n) => fs.statSync(join(vaultPath, n)).isDirectory())
+      let max = 0
+      dirs.forEach((d) => {
+        const m = d.match(/^(\d+)막_/)
+        if (m) max = Math.max(max, parseInt(m[1]))
+      })
+      await fs.ensureDir(join(vaultPath, `${max + 1}막_${title}`))
+      return true
+    } catch (e) {
+      console.error(e)
+      return false
+    }
+  })
+
+  // 2. 챕터(Chapter) 생성
+  ipcMain.handle('create-chapter', async (_, { actPath, title }) => {
+    if (!fs.existsSync(actPath)) return false
+    try {
+      const dirs = fs
+        .readdirSync(actPath)
+        .filter((n) => fs.statSync(join(actPath, n)).isDirectory())
+      let max = 0
+      dirs.forEach((d) => {
+        const m = d.match(/^(\d+)화_/)
+        if (m) max = Math.max(max, parseInt(m[1]))
+      })
+      await fs.ensureDir(join(actPath, `${max + 1}화_${title}`))
+      return true
+    } catch (e) {
+      console.error(e)
+      return false
+    }
+  })
+
+  // 3. 씬(Scene) 생성
+  ipcMain.handle('create-scene', async (_, { chapterPath, title }) => {
+    if (!fs.existsSync(chapterPath)) return false
+    try {
+      const files = fs.readdirSync(chapterPath).filter((n) => n.endsWith('.md'))
+      let max = 0
+      files.forEach((f) => {
+        const m = f.match(/SCENE-(\d+)\.md/i)
+        if (m) max = Math.max(max, parseInt(m[1]))
+      })
+      const next = max + 1
+      const fm = {
+        type: 'scene',
+        scene: next,
+        title: title || `Scene ${next}`,
+        summary: '',
+        characters: []
+      }
+      await fs.writeFile(join(chapterPath, `SCENE-${next}.md`), matter.stringify('', fm))
+      return true
+    } catch (e) {
+      console.error(e)
+      return false
+    }
+  })
+
+  // 4. 이름 변경 (Act, Chapter 공용)
+  ipcMain.handle('rename-item', async (_, { path, newName }) => {
+    if (!fs.existsSync(path)) return false
+    try {
+      const dir = dirname(path)
+      const oldName = basename(path)
+      const prefixMatch = oldName.match(/^(\d+[막화]_)/)
+      const prefix = prefixMatch ? prefixMatch[1] : ''
+      // 새 이름에 접두사가 없으면 기존 접두사 유지
+      const finalName = newName.startsWith(prefix) ? newName : `${prefix}${newName}`
+      await fs.rename(path, join(dir, finalName))
+      return true
+    } catch (e) {
+      console.error(e)
+      return false
+    }
+  })
+
+  // 5. 삭제 (휴지통 이동)
+  ipcMain.handle('delete-item', async (_, path) => {
+    try {
+      await shell.trashItem(path)
+      return true
+    } catch (e) {
+      console.error(e)
+      return false
+    }
+  })
 }
 
 // --------------------------------------------------------------------------
@@ -98,13 +196,14 @@ function recursiveScan(dirPath: string, depth = 0): any[] {
     // 2. 현재 폴더가 '챕터'인지 검사
     // 조건: 폴더 이름에 숫자가 있거나 '화'가 포함됨 + 내부에 .md 파일이 존재함
     const mdFiles = items.filter((f) => !f.isDirectory() && f.name.endsWith('.md'))
+    const isChapterFolder = dirName.match(/^(\d+)화_/) || dirName.toLowerCase().includes('chapter')
 
-    if (mdFiles.length > 0) {
+    if (mdFiles.length > 0 || isChapterFolder) {
       // 씬 파일 파싱 시도
       const scenes = parseScenes(dirPath, mdFiles)
 
       // 유효한 씬이 하나라도 있으면 이 폴더를 '챕터'로 인정
-      if (scenes.length > 0) {
+      if (scenes.length > 0 || isChapterFolder) {
         const numMatch = dirName.match(/(\d+)/)
         chapters.push({
           id: dirPath,

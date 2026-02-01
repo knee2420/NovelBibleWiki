@@ -17,6 +17,8 @@ export interface ChapterColumn {
 }
 
 export interface ActBoard {
+  id: string
+  path: string
   actNumber: number // 막 번호 (1막...)
   title: string // 막 제목
   chapters: ChapterColumn[]
