@@ -11,7 +11,7 @@ export interface BaseEntry {
   content: string // 본문 마크다운
 }
 
-// 1. 캐릭터 (기존 확장)
+// 1. 캐릭터
 export interface CharacterEntry extends BaseEntry {
   type: 'character'
   info: {
@@ -22,7 +22,7 @@ export interface CharacterEntry extends BaseEntry {
   }
 }
 
-// 2. 아이템 (신규)
+// 2. 아이템
 export interface ItemEntry extends BaseEntry {
   type: 'item'
   info: {
@@ -32,7 +32,7 @@ export interface ItemEntry extends BaseEntry {
   }
 }
 
-// 3. 장소 (신규)
+// 3. 장소
 export interface LocationEntry extends BaseEntry {
   type: 'location'
   info: {
@@ -41,7 +41,7 @@ export interface LocationEntry extends BaseEntry {
   }
 }
 
-// 4. 세력 (신규)
+// 4. 세력
 export interface FactionEntry extends BaseEntry {
   type: 'faction'
   info: {
@@ -50,4 +50,10 @@ export interface FactionEntry extends BaseEntry {
   }
 }
 
-export type WikiEntry = CharacterEntry | ItemEntry | LocationEntry | FactionEntry
+// 5. 기타 (분류되지 않음) - [NEW] 추가됨
+export interface OtherEntry extends BaseEntry {
+  type: 'other'
+  info?: Record<string, any>
+}
+
+export type WikiEntry = CharacterEntry | ItemEntry | LocationEntry | FactionEntry | OtherEntry
