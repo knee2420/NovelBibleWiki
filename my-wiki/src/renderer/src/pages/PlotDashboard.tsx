@@ -327,6 +327,7 @@ export const PlotDashboard = () => {
       <SceneDetailModal
         isOpen={!!selectedScenePath}
         filePath={selectedScenePath || ''}
+        onUpdate={refresh}
         onClose={() => setSelectedScenePath(null)}
       />
       {modalConfig.isOpen && (

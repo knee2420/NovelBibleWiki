@@ -165,6 +165,21 @@ export function setupPlotHandlers(store: any): void {
     }
   })
 
+  ipcMain.handle('update-scene', async (_, { path, content, data }) => {
+    try {
+      if (!fs.existsSync(path)) return { success: false, message: 'File not found' }
+
+      // gray-matter로 stringify
+      const fileContent = matter.stringify(content, data)
+      await fs.writeFile(path, fileContent, 'utf-8')
+
+      return { success: true }
+    } catch (err: any) {
+      console.error('Update Scene failed:', err)
+      return { success: false, message: err.message }
+    }
+  })
+
   // 5. 삭제 (휴지통 이동)
   ipcMain.handle('delete-item', async (_, path) => {
     try {

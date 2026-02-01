@@ -27,6 +27,7 @@ const api = {
     ipcRenderer.invoke('create-scene', { chapterPath, title }),
   renameItem: (path: string, newName: string) =>
     ipcRenderer.invoke('rename-item', { path, newName }),
+  updateScene: (payload: any) => ipcRenderer.invoke('update-scene', payload),
   deleteItem: (path: string) => ipcRenderer.invoke('delete-item', path)
 }
 
