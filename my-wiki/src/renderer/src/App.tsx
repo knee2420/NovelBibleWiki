@@ -10,8 +10,9 @@ import { GenericArchive } from './pages/GenericArchive' // [변경] 통합 아�
 function App(): ReactElement {
   const [currentPage, setCurrentPage] = useState('home')
   const [wikiData, setWikiData] = useState<WikiEntry[]>([])
-  const [selectedEntry, setSelectedEntry] = useState<WikiEntry | null>(null)
+  const [selectedEntryId, setSelectedEntryId] = useState<string | null>(null)
   const [refreshKey, setRefreshKey] = useState(0)
+  const selectedEntry = wikiData.find((entry) => entry.id === selectedEntryId) || null
 
   // 데이터 로드
   useEffect(() => {
@@ -27,19 +28,20 @@ function App(): ReactElement {
     fetchData()
   }, [refreshKey])
 
+  const triggerRefresh = () => {
+    setRefreshKey((prev) => prev + 1)
+  }
+
   const handleImportComplete = () => {
-    setRefreshKey(prev => prev + 1) // 데이터 재로드 트리거
+    setRefreshKey((prev) => prev + 1) // 데이터 재로드 트리거
     setCurrentPage('home') // (선택사항) 완료 후 홈으로 이동 시켜서 갱신된 현황 보여주기
   }
 
   const handleEntryClick = (entry: WikiEntry) => {
-    setSelectedEntry(entry)
+    setSelectedEntryId(entry.id)
   }
   // 페이지 렌더링 로직
   const renderContent = () => {
-    // 타입별 필터링
-    const filterData = (type: string) => wikiData.filter(d => d.type === type)
-
     switch (currentPage) {
       case 'home':
         return (
@@ -54,41 +56,53 @@ function App(): ReactElement {
         return <PlotDashboard />
 
       case 'characters':
-        return <GenericArchive
-          title="Character Archive"
-          description="등장인물 도감"
-          data={wikiData.filter(d => d.type === 'character' || (!d.type && (d as any).info?.role))}
-          onEntryClick={handleEntryClick}
-        />
-      case 'items':
-        return <GenericArchive
-          title="Item Storage"
-          description="무구 및 아이템 데이터베이스"
-          data={wikiData.filter(d => d.type === 'item')}
-          onEntryClick={handleEntryClick}
-        />
-      case 'locations':
         return (
-         <GenericArchive
-            title="Location Archive"
-            description="지리 및 장소 데이터베이스"
-            data={wikiData.filter(d => d.type === 'location')}
+          <GenericArchive
+            title="Character Archive"
+            description="등장인물 도감"
+            data={wikiData.filter(
+              (d) => d.type === 'character' || (!d.type && (d as any).info?.role)
+            )}
+            createType="character" // [NEW]
+            onRefresh={triggerRefresh}
             onEntryClick={handleEntryClick}
           />
-          )
+        )
+      case 'items':
+        return (
+          <GenericArchive
+            title="Item Storage"
+            description="무구 및 아이템 데이터베이스"
+            data={wikiData.filter((d) => d.type === 'item')}
+            createType="item" // [NEW]
+            onRefresh={triggerRefresh}
+            onEntryClick={handleEntryClick}
+          />
+        )
+      case 'locations':
+        return (
+          <GenericArchive
+            title="Location Archive"
+            description="지리 및 장소 데이터베이스"
+            data={wikiData.filter((d) => d.type === 'location')}
+            createType="location"
+            onRefresh={triggerRefresh}
+            onEntryClick={handleEntryClick}
+          />
+        )
       case 'factions':
         return (
           <GenericArchive
             title="Faction Archive"
             description="세력 및 단체 데이터베이스"
-            data={wikiData.filter(d => d.type === 'faction')}
+            data={wikiData.filter((d) => d.type === 'faction')}
+            createType="faction"
+            onRefresh={triggerRefresh}
             onEntryClick={handleEntryClick}
           />
-          )
-      case 'settings':
-        return (
-          <SettingsPage onImportComplete={handleImportComplete} />
         )
+      case 'settings':
+        return <SettingsPage onImportComplete={handleImportComplete} />
       default:
         return <div>Page Not Found</div>
     }
@@ -101,51 +115,12 @@ function App(): ReactElement {
         // 현재는 CharacterDetail을 공용으로 사용 (추후 ItemDetail 등으로 분기 가능)
         <WikiDetailModal
           entry={selectedEntry}
-          onClose={() => setSelectedEntry(null)}
+          onClose={() => setSelectedEntryId(null)}
+          onUpdate={triggerRefresh} // [NEW] 저장 시 데이터 새로고침
         />
       )}
     </WikiLayout>
   )
 }
-
-// 간단한 그리드 뷰 (Generic Component) - 실제 파일로 분리 권장
-const GenericGrid = ({ title, desc, data }: { title: string, desc: string, data: WikiEntry[] }) => (
-  <div>
-    <header className="mb-8">
-      <h2 className="text-3xl font-bold text-white mb-2">{title}</h2>
-      <p className="text-slate-400">{desc}</p>
-    </header>
-
-    {data.length === 0 ? (
-        <div className="text-center py-20 text-slate-500 bg-slate-900/50 rounded-xl border border-dashed border-slate-700">
-            데이터가 없습니다. Obsidian 문서에 <code className="bg-slate-800 px-1 rounded text-blue-400">type: item</code> 등의 태그를 추가하세요.
-        </div>
-    ) : (
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
-        {data.map((entry) => (
-            <div key={entry.id} className="bg-slate-800 border border-slate-700 rounded-xl overflow-hidden hover:border-blue-500 transition-all cursor-pointer group">
-                <div className="aspect-[4/3] bg-slate-900 relative overflow-hidden">
-                    {entry.image ? (
-                        <img src={entry.image} alt={entry.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
-                    ) : (
-                        <div className="w-full h-full flex items-center justify-center text-slate-600 font-mono text-sm">NO IMAGE</div>
-                    )}
-                    <div className="absolute top-2 left-2 bg-black/60 backdrop-blur-sm px-2 py-0.5 rounded text-[10px] text-white uppercase border border-white/10">
-                        {entry.type}
-                    </div>
-                </div>
-                <div className="p-4">
-                    <h3 className="font-bold text-slate-100 truncate">{entry.name}</h3>
-                    <p className="text-xs text-slate-400 mt-1 truncate">
-                        {/* 타입별로 다른 정보 표시 */}
-                        {(entry as any).info?.category || (entry as any).info?.region || (entry as any).info?.leader || '-'}
-                    </p>
-                </div>
-            </div>
-        ))}
-        </div>
-    )}
-  </div>
-)
 
 export default App

@@ -1,4 +1,3 @@
-import React from 'react'
 import { Draggable } from '@hello-pangea/dnd'
 import { FileText, Tag, PenTool } from 'lucide-react'
 import { SceneCard as SceneCardType } from '../../types/plot'
@@ -7,9 +6,10 @@ interface Props {
   scene: SceneCardType
   index: number
   onClick: (id: string) => void
+  onDelete?: () => void
 }
 
-export const SceneCard = ({ scene, index, onClick }: Props) => {
+export const SceneCard = ({ scene, index, onClick, onDelete }: Props) => {
   return (
     <Draggable draggableId={scene.id} index={index}>
       {(provided, snapshot) => (
@@ -18,6 +18,10 @@ export const SceneCard = ({ scene, index, onClick }: Props) => {
           {...provided.draggableProps}
           {...provided.dragHandleProps}
           onClick={() => onClick(scene.id)}
+          onContextMenu={(e) => {
+            e.preventDefault()
+            onDelete && onDelete()
+          }}
           style={{ ...provided.draggableProps.style }}
           className={`
             group bg-slate-800 border rounded-lg p-3 cursor-grab active:cursor-grabbing transition-all
@@ -37,9 +41,7 @@ export const SceneCard = ({ scene, index, onClick }: Props) => {
           </div>
 
           {/* Title */}
-          <h4 className="font-bold text-slate-200 text-sm mb-2 leading-snug">
-            {scene.title}
-          </h4>
+          <h4 className="font-bold text-slate-200 text-sm mb-2 leading-snug">{scene.title}</h4>
 
           {/* Body: 4줄 요약 (요청사항 반영) */}
           <p className="text-xs text-slate-400 mb-3 leading-relaxed line-clamp-4 min-h-[4.5em]">

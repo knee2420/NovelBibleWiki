@@ -38,8 +38,11 @@ export const Settings = ({ onImportComplete }: SettingsProps): ReactElement => {
         </h3>
 
         <p className="text-sm text-slate-400 mb-4">
-          'NovelBibleWiki' 폴더(루트)를 선택해주세요. <br/>
-          <span className="text-xs text-slate-500">* 해당 경로 하위의 <code>10_Plot</code> 폴더와 <code>20_Wiki</code> 폴더를 자동으로 인식합니다.</span>
+          'NovelBibleWiki' 폴더(루트)를 선택해주세요. <br />
+          <span className="text-xs text-slate-500">
+            * 해당 경로 하위의 <code>10_Plot</code> 폴더와 <code>20_Wiki</code> 폴더를 자동으로
+            인식합니다.
+          </span>
         </p>
 
         <div className="space-y-4">
@@ -69,7 +72,11 @@ export const Settings = ({ onImportComplete }: SettingsProps): ReactElement => {
                 : 'bg-blue-600 hover:bg-blue-500 text-white shadow-lg shadow-blue-900/20'
             }`}
           >
-            {loading ? <RefreshCw className="w-5 h-5 animate-spin" /> : <CheckCircle className="w-5 h-5" />}
+            {loading ? (
+              <RefreshCw className="w-5 h-5 animate-spin" />
+            ) : (
+              <CheckCircle className="w-5 h-5" />
+            )}
             {loading ? '데이터 분석 중...' : '전체 데이터 불러오기 (Load All)'}
           </button>
         </div>
@@ -77,4 +84,3 @@ export const Settings = ({ onImportComplete }: SettingsProps): ReactElement => {
     </div>
   )
 }
-

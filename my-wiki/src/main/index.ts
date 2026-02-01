@@ -7,6 +7,7 @@ import Store from 'electron-store'
 // [NEW] 분리된 핸들러들 임포트
 import { setupPlotHandlers } from './handlers/plotHandler'
 import { setupWikiHandlers } from './handlers/wikiHandler'
+import { setupProjectHandlers } from './handlers/projectHandler'
 
 const store = new Store()
 
@@ -50,6 +51,7 @@ app.whenReady().then(() => {
   // [핵심] 핸들러 등록
   setupWikiHandlers(store) // 위키 기능 (불러오기, 이미지 등)
   setupPlotHandlers(store) // 플롯 기능 (칸반, 파일 정리 등)
+  setupProjectHandlers(store)
 
   createWindow()
 

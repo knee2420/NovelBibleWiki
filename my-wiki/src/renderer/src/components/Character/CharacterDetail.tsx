@@ -1,4 +1,3 @@
-import React from 'react'
 import { CharacterEntry } from '../../types/wiki'
 import { X, Share2, Download } from 'lucide-react'
 import Markdown from 'react-markdown'
@@ -145,7 +144,9 @@ export const CharacterDetail = ({ data, onClose }: CharacterDetailProps) => {
                 <span className="group-hover:text-yellow-500 transition-colors">Concept Art</span>
               </div>
               <div className="aspect-video bg-slate-800 rounded-lg border border-slate-700 flex items-center justify-center text-slate-500 hover:border-yellow-500/50 transition-colors cursor-pointer group">
-                <span className="group-hover:text-yellow-500 transition-colors">In-Novel Scene</span>
+                <span className="group-hover:text-yellow-500 transition-colors">
+                  In-Novel Scene
+                </span>
               </div>
             </div>
           </div>
