@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { ActBoard } from '../types/plot'
-import { Columns, Plus, MoreHorizontal, X } from 'lucide-react'
+import { Columns, Plus, MoreHorizontal, X, Edit2, Trash2 } from 'lucide-react'
 import { DragDropContext, Draggable, Droppable, DropResult } from '@hello-pangea/dnd'
 import { SceneCard } from '../components/Plot/SceneCard'
 import { SceneDetailModal } from '../components/Plot/SceneDetailModal'
@@ -11,6 +11,7 @@ export const PlotDashboard = () => {
   const [loading, setLoading] = useState(true)
   const [selectedScenePath, setSelectedScenePath] = useState<string | null>(null)
   const [modalConfig, setModalConfig] = useState({ isOpen: false, type: '', path: '', title: '' })
+  const [activeMenuId, setActiveMenuId] = useState<string | null>(null)
   const inputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
@@ -203,10 +204,7 @@ export const PlotDashboard = () => {
                           {...provided.dragHandleProps}
                           className="p-3 flex items-center justify-between border-b border-slate-800/60 cursor-grab active:cursor-grabbing hover:bg-slate-800/30 rounded-t-xl"
                         >
-                          <h3
-                            onClick={() => handleRenameChapter(chapter)}
-                            className="font-bold text-slate-300 text-sm truncate px-1 cursor-text hover:text-white"
-                          >
+                          <h3 className="font-bold text-slate-300 text-sm truncate px-1">
                             <span className="text-blue-500 mr-2 opacity-80">
                               #{chapter.chapterNumber}
                             </span>
@@ -216,12 +214,54 @@ export const PlotDashboard = () => {
                             <span className="text-[10px] bg-slate-800 text-slate-500 px-2 py-0.5 rounded-full font-mono">
                               {chapter.scenes.length}
                             </span>
-                            <button
-                              onClick={() => handleDeleteChapter(chapter)}
-                              className="text-slate-600 hover:text-red-400"
-                            >
-                              <MoreHorizontal className="w-3 h-3" />
-                            </button>
+                            <div className="relative">
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation() // 헤더 클릭 방지
+                                  setActiveMenuId(activeMenuId === chapter.id ? null : chapter.id)
+                                }}
+                                className={`p-1 rounded hover:bg-slate-700 transition-colors ${activeMenuId === chapter.id ? 'text-white bg-slate-700' : 'text-slate-600'}`}
+                              >
+                                <MoreHorizontal className="w-4 h-4" />
+                              </button>
+
+                              {activeMenuId === chapter.id && (
+                                <>
+                                  {/* Backdrop (클릭 시 닫기용) */}
+                                  <div
+                                    className="fixed inset-0 z-40 cursor-default"
+                                    onClick={(e) => {
+                                      e.stopPropagation()
+                                      setActiveMenuId(null)
+                                    }}
+                                  />
+
+                                  {/* Menu Items */}
+                                  <div className="absolute right-0 top-full mt-1 w-32 bg-slate-800 border border-slate-700 rounded-lg shadow-xl z-50 flex flex-col py-1 overflow-hidden animate-in fade-in zoom-in-95 duration-100">
+                                    <button
+                                      onClick={(e) => {
+                                        e.stopPropagation()
+                                        handleRenameChapter(chapter)
+                                        setActiveMenuId(null)
+                                      }}
+                                      className="flex items-center gap-2 px-3 py-2 text-xs text-slate-300 hover:text-white hover:bg-blue-600 transition-colors text-left"
+                                    >
+                                      <Edit2 size={12} /> 제목 수정
+                                    </button>
+                                    <button
+                                      onClick={(e) => {
+                                        e.stopPropagation()
+                                        handleDeleteChapter(chapter)
+                                        setActiveMenuId(null)
+                                      }}
+                                      className="flex items-center gap-2 px-3 py-2 text-xs text-red-400 hover:text-white hover:bg-red-600 transition-colors text-left"
+                                    >
+                                      <Trash2 size={12} /> 삭제하기
+                                    </button>
+                                  </div>
+                                </>
+                              )}
+                            </div>
                           </div>
                         </div>
 
