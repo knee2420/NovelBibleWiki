@@ -1,6 +1,7 @@
 import React, { memo } from 'react'
 import { Handle, Position, NodeProps, Node } from '@xyflow/react'
 import { User, Skull } from 'lucide-react' // Skull 아이콘 추가
+import { CharacterGrade } from '../../types/wiki'
 
 // [타입 정의] 노드에 들어오는 데이터 구조
 type CharacterNodeData = {
@@ -9,9 +10,18 @@ type CharacterNodeData = {
   info?: {
     status?: string // "Active", "Deceased (사망)" 등
     affiliation?: string // "검무천가", "무소속" 등
+    grade?: CharacterGrade
     role?: string
     [key: string]: any
   }
+}
+
+const SIZE_MAP: Record<string, string> = {
+  MAIN: 'w-32 h-32 border-[5px] text-lg', // 주연: 아주 큼
+  SUB: 'w-24 h-24 border-4 text-sm', // 조연: 기본
+  MINOR: 'w-16 h-16 border-2 text-[10px]', // 단역: 작음
+  EXTRA: 'w-10 h-10 border text-[8px]', // 엑스트라: 아주 작음
+  DEFAULT: 'w-24 h-24 border-4 text-sm'
 }
 
 export const CharacterNode = memo(({ data, selected }: NodeProps<Node<CharacterNodeData>>) => {
@@ -19,25 +29,26 @@ export const CharacterNode = memo(({ data, selected }: NodeProps<Node<CharacterN
   const status = data.info?.status || ''
   const affiliation = data.info?.affiliation || ''
 
-  // 1. 상태(Status) 분석 로직
-  // "사망" 혹은 "Deceased" 텍스트가 포함되어 있으면 사망 처리
+  const grade = data.info?.grade || 'SUB'
+  const sizeClass = SIZE_MAP[grade] || SIZE_MAP.DEFAULT
   const isDeceased = status.includes('사망') || status.toLowerCase().includes('deceased')
 
-  // 2. 스타일 분기 처리
-  // 사망: 흑백 필터 + 붉은/검정 테두리 + 낮은 투명도
-  // 생존: 기존 스타일 (Cyan/Blue)
-  const borderStyle = isDeceased
-    ? 'border-red-900/60 shadow-[0_0_15px_rgba(127,29,29,0.4)]'
-    : selected
-      ? 'border-cyan-400 shadow-[0_0_20px_rgba(34,211,238,0.6)] scale-110'
-      : 'border-slate-600 hover:border-cyan-500/50'
+  let borderStyle = 'border-slate-600 hover:border-cyan-500/50'
+
+  if (isDeceased) {
+    borderStyle = 'border-red-900/60 shadow-[0_0_15px_rgba(127,29,29,0.4)]'
+  } else if (selected) {
+    borderStyle = 'border-cyan-400 shadow-[0_0_20px_rgba(34,211,238,0.6)] scale-110'
+  } else if (grade === 'MAIN') {
+    // [New] 주연은 평소에도 금색 계열로 강조
+    borderStyle = 'border-amber-500/70 shadow-[0_0_10px_rgba(245,158,11,0.3)]'
+  }
 
   const imageStyle = isDeceased ? 'grayscale opacity-70' : ''
 
   return (
     <div className="relative flex flex-col items-center group">
-      {/* [Affiliation] 소속 배지 (머리 위) */}
-      {affiliation && (
+      {affiliation && grade !== 'EXTRA' && (
         <div
           className={`
           absolute -top-4 z-30 px-2 py-0.5 rounded-full text-[10px] font-bold tracking-wider uppercase border shadow-md whitespace-nowrap
@@ -55,9 +66,9 @@ export const CharacterNode = memo(({ data, selected }: NodeProps<Node<CharacterN
       {/* Main Circle Node */}
       <div
         className={`
-          relative w-24 h-24 rounded-full border-4 transition-all duration-300
+          relative rounded-full transition-all duration-300
           bg-slate-900 flex items-center justify-center overflow-visible
-          ${borderStyle}
+          ${sizeClass} ${borderStyle}
         `}
       >
         {/* 이미지 영역 */}
@@ -71,9 +82,9 @@ export const CharacterNode = memo(({ data, selected }: NodeProps<Node<CharacterN
             />
           ) : // 이미지가 없을 때 아이콘
           isDeceased ? (
-            <Skull className="text-red-900/50" size={40} />
+            <Skull className="text-red-900/50" size={grade === 'MAIN' ? 48 : 24} />
           ) : (
-            <User className="text-slate-600" size={40} />
+            <User className="text-slate-600" size={grade === 'MAIN' ? 48 : 24} />
           )}
         </div>
 
@@ -94,18 +105,22 @@ export const CharacterNode = memo(({ data, selected }: NodeProps<Node<CharacterN
       </div>
 
       {/* [Label] 이름표 (하단) */}
-      <div
-        className={`
+      {(grade !== 'EXTRA' || selected) && (
+        <div
+          className={`
         mt-2 px-3 py-1 rounded-md text-xs font-bold border transition-all duration-300 z-30
         ${
           isDeceased
             ? 'bg-slate-900/80 text-slate-500 border-slate-800 line-through decoration-red-900/50'
-            : 'bg-slate-900/90 text-slate-200 border-slate-700 group-hover:border-cyan-500/50 group-hover:text-cyan-50'
+            : grade === 'MAIN'
+              ? 'bg-amber-950/80 text-amber-200 border-amber-800'
+              : 'bg-slate-900/90 text-slate-200 border-slate-700 group-hover:border-cyan-500/50 group-hover:text-cyan-50'
         }
       `}
-      >
-        {data.label}
-      </div>
+        >
+          {data.label}
+        </div>
+      )}
     </div>
   )
 })

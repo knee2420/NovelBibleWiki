@@ -13,7 +13,7 @@ import {
 } from '@xyflow/react'
 import { Copy } from 'lucide-react'
 import '@xyflow/react/dist/style.css'
-import { WikiEntry } from '../types/wiki'
+import { WikiEntry, RelationMood, RelationTense } from '../types/wiki'
 import { getRadialPositions, findEntryByName } from '../utils/graphLayout'
 import { CharacterNode } from '../components/Board/CharacterNode'
 import { FactionNode } from '../components/Board/FactionNode'
@@ -36,7 +36,23 @@ const nodeTypes = {
 const proOptions: ProOptions = {
   hideAttribution: true // 로고 숨김 (선택)
 }
+const getEdgeStyle = (mood?: RelationMood, tense?: RelationTense) => {
+  // 1. 색상 (Mood)
+  let stroke = '#64748b' // Default (Neutral)
+  if (mood === 'FRIENDLY') stroke = '#3b82f6' // Blue
+  if (mood === 'HOSTILE') stroke = '#ef4444' // Red
 
+  // 2. 선 스타일 (Tense)
+  // PAST(과거)면 점선 + 투명도, CURRENT(현재)면 실선
+  const strokeDasharray = tense === 'PAST' ? '5 5' : undefined
+  const opacity = tense === 'PAST' ? 0.5 : 1
+
+  return {
+    style: { stroke, strokeWidth: 2, strokeDasharray, opacity },
+    labelStyle: { fill: stroke, fontWeight: 700, fontSize: 11 },
+    markerColor: stroke
+  }
+}
 export const RelationBoard: React.FC<RelationBoardProps> = ({ wikiData }) => {
   // [Optimization 3] nodes, edges 상태 관리 최적화
   const [nodes, setNodes, onNodesChange] = useNodesState<Node>([])
@@ -166,17 +182,18 @@ export const RelationBoard: React.FC<RelationBoardProps> = ({ wikiData }) => {
                 data: { label: target.name, image: target.image, ...target }
               })
             }
+            const edgeStyle = getEdgeStyle(target.mood, target.tense)
 
             newEdges.push({
               id: `${parentId}-${target.id}`,
               source: parentId,
               target: target.id,
-              label: target.relationType,
+              label: target.display || target.relationType,
               type: 'straight',
               animated: false,
-              style: { stroke: '#64748b', strokeWidth: 1.5 },
-              labelStyle: { fill: '#94a3b8', fontSize: 10 },
-              markerEnd: { type: MarkerType.ArrowClosed, color: '#64748b' }
+              style: edgeStyle.style,
+              labelStyle: edgeStyle.labelStyle,
+              markerEnd: { type: MarkerType.ArrowClosed, color: edgeStyle.markerColor }
             })
           })
 
@@ -216,7 +233,13 @@ export const RelationBoard: React.FC<RelationBoardProps> = ({ wikiData }) => {
           // [Fix] 여기서 content를 제거해야 subItems에 무거운 텍스트가 안 쌓임 (성능 핵심)
           // (image는 펼쳤을 때 아바타 보여줘야 하므로 데이터에는 남김 -> displayData에서만 가림)
           const { content, ...cleanTarget } = target
-          return { ...cleanTarget, relationType: rel.type }
+          return {
+            ...cleanTarget,
+            relationType: rel.type,
+            display: rel.display || rel.type,
+            mood: rel.mood,
+            tense: rel.tense
+          }
         })
         .filter(Boolean)
 
