@@ -56,11 +56,12 @@ export const RelationBoard: React.FC<RelationBoardProps> = ({ wikiData }) => {
     const protagonist = wikiData.find((e) => e.name.includes('강진우')) || wikiData[0]
 
     if (protagonist) {
+      const { content, ...protagonistRest } = protagonist
       newNodes.push({
         id: protagonist.id,
         type: 'character',
         position: { x: 0, y: 0 },
-        data: { label: protagonist.name, image: protagonist.image, ...protagonist }
+        data: { label: protagonist.name, image: protagonist.image, ...protagonistRest }
       })
       persistentIds.current.add(protagonist.id)
     }
@@ -71,11 +72,12 @@ export const RelationBoard: React.FC<RelationBoardProps> = ({ wikiData }) => {
 
     others.forEach((entry, index) => {
       const angle = index * angleStep
+      const { content, ...entryRest } = entry
       newNodes.push({
         id: entry.id,
         type: 'character',
         position: { x: radius * Math.cos(angle), y: radius * Math.sin(angle) },
-        data: { label: entry.name, image: entry.image, ...entry }
+        data: { label: entry.name, image: entry.image, ...entryRest }
       })
       persistentIds.current.add(entry.id)
     })
@@ -87,6 +89,12 @@ export const RelationBoard: React.FC<RelationBoardProps> = ({ wikiData }) => {
   const displayData = useMemo(() => {
     if (!selectedNodeData) return null
     const { image, content, ...rest } = selectedNodeData
+    if (rest.subItems && Array.isArray(rest.subItems)) {
+      rest.subItems = rest.subItems.map((item: any) => {
+        const { image, content, ...subRest } = item
+        return subRest
+      })
+    }
     return rest
   }, [selectedNodeData])
 
@@ -203,19 +211,37 @@ export const RelationBoard: React.FC<RelationBoardProps> = ({ wikiData }) => {
       const resolvedRelations = effectiveRelations
         .map((rel: any) => {
           const target = findEntryByName(rel.name, wikiData)
-          return target ? { ...target, relationType: rel.type } : null
+          if (!target) return null
+
+          // [Fix] 여기서 content를 제거해야 subItems에 무거운 텍스트가 안 쌓임 (성능 핵심)
+          // (image는 펼쳤을 때 아바타 보여줘야 하므로 데이터에는 남김 -> displayData에서만 가림)
+          const { content, ...cleanTarget } = target
+          return { ...cleanTarget, relationType: rel.type }
         })
         .filter(Boolean)
 
       if (resolvedRelations.length === 0) return
 
-      const groups = { relations: [] as any[], items: [] as any[], faction: [] as any[] }
+      const groups: Record<string, any[]> = { character: [], faction: [], item: [], location: [] }
       resolvedRelations.forEach((target: any) => {
-        if (target.relationType === '소속' || target.type === 'faction') groups.faction.push(target)
-        else if (target.type === 'item') groups.items.push(target)
-        else groups.relations.push(target)
+        if (target.relationType === '소속' || target.type === 'faction') {
+          groups.faction.push(target)
+          return
+        }
+        // 2. 나머지 타입(character, item, location)은 자기 방으로 이동
+        if (groups[target.type]) {
+          groups[target.type].push(target)
+        } else {
+          // 타입이 없는 경우 기본적으로 인물(character)로 분류하거나 별도 처리
+          groups.character.push(target)
+        }
       })
-
+      const labelMap: Record<string, string> = {
+        character: '인물관계',
+        faction: '소속',
+        item: '아이템',
+        location: '장소'
+      }
       const validGroups = Object.entries(groups)
         .filter(([_, items]) => items.length > 0)
         .map(([key, items]) => ({ type: key, items }))
@@ -232,8 +258,7 @@ export const RelationBoard: React.FC<RelationBoardProps> = ({ wikiData }) => {
           type: 'category',
           position: positions[idx],
           data: {
-            label:
-              group.type === 'faction' ? '소속' : group.type === 'items' ? '아이템' : '인물관계',
+            label: labelMap[group.type] || '기타',
             categoryType: group.type,
             subItems: group.items,
             parentId: node.id

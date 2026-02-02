@@ -1,6 +1,6 @@
 import { memo } from 'react' // React import 제거 (unused error 해결)
 import { Handle, Position, NodeProps, Node } from '@xyflow/react'
-import { Users, Package, Flag, Sparkles, ChevronRight } from 'lucide-react'
+import { Users, Package, Flag, Sparkles, ChevronRight, MapPin } from 'lucide-react'
 
 // [타입] 이 노드가 품고 있는 하위 데이터 목록
 type CategoryNodeData = {
@@ -12,12 +12,14 @@ type CategoryNodeData = {
 // 카테고리별 아이콘
 const getIcon = (type: string) => {
   switch (type) {
-    case 'relations':
+    case 'character':
       return <Users size={16} />
-    case 'items':
+    case 'item':
       return <Package size={16} />
     case 'faction':
       return <Flag size={16} />
+    case 'location':  // [Add] 장소 아이콘 추가
+      return <MapPin size={16} />
     case 'skills':
       return <Sparkles size={16} />
     default:
