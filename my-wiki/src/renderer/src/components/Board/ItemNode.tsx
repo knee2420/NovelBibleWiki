@@ -1,4 +1,4 @@
-import React, { memo } from 'react'
+import { memo } from 'react'
 import { Handle, Position, NodeProps, Node } from '@xyflow/react'
 import { Sword, Shield, Zap, Package, Gem, Scroll } from 'lucide-react' // 아이콘 추가
 
@@ -63,7 +63,7 @@ export const ItemNode = memo(({ data, selected }: NodeProps<Node<ItemNodeData>>)
       {/* Main Node Body (세로형 카드 - 인벤토리 슬롯 느낌) */}
       <div
         className={`
-          relative w-20 h-28 rounded-lg border-2 transition-all duration-300
+          relative w-14 h-20 rounded-md border-[1.5px] transition-all duration-300
           flex flex-col items-center justify-start overflow-hidden shadow-lg
           ${bgStyle} ${borderStyle}
         `}

@@ -1,6 +1,6 @@
-import React, { memo } from 'react'
+import { memo } from 'react'
 import { Handle, Position, NodeProps, Node } from '@xyflow/react'
-import { Landmark, Shield } from 'lucide-react' // 건물, 방패 아이콘
+import { Landmark } from 'lucide-react' // 건물, 방패 아이콘
 
 type FactionNodeData = {
   label: string
@@ -34,7 +34,7 @@ export const FactionNode = memo(({ data, selected }: NodeProps<Node<FactionNodeD
       {/* 여기서는 가독성을 위해 '둥근 사각형(App Icon 스타일)'을 채택 */}
       <div
         className={`
-          relative w-28 h-28 rounded-2xl border-[3px] transition-all duration-300
+          relative w-20 h-20 rounded-xl border-[2px] transition-all duration-300
           bg-slate-900 flex items-center justify-center overflow-visible shadow-2xl
           ${borderStyle}
         `}
@@ -67,7 +67,7 @@ export const FactionNode = memo(({ data, selected }: NodeProps<Node<FactionNodeD
       {/* [Label] 이름표 (하단, 세력은 좀 더 강조됨) */}
       <div
         className={`
-        mt-3 px-4 py-1.5 rounded-sm text-sm font-black tracking-tight border transition-all duration-300 z-30
+        mt-2 px-2 py-1 rounded-sm text-[10px] font-bold tracking-tight border transition-all duration-300 z-30
         bg-amber-950/80 text-amber-100 border-amber-800/50 group-hover:border-amber-500 group-hover:text-white
       `}
       >
