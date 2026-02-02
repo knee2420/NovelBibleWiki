@@ -6,6 +6,7 @@ import { SettingsPage } from './pages/SettingsPage'
 import { WikiEntry } from './types/wiki'
 import { WikiDetailModal } from './components/Common/WikiDetailModal' // [변경] 통합 모달 관리자
 import { GenericArchive } from './pages/GenericArchive' // [변경] 통합 아카이브 페이지
+import { RelationBoard } from './pages/RelationBoard'
 
 function App(): ReactElement {
   const [currentPage, setCurrentPage] = useState('home')
@@ -54,7 +55,8 @@ function App(): ReactElement {
 
       case 'plot':
         return <PlotDashboard />
-
+      case 'board':
+        return <RelationBoard wikiData={wikiData} />
       case 'characters':
         return (
           <GenericArchive
