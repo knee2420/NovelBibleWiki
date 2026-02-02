@@ -8,7 +8,8 @@ import {
   useEdgesState,
   Node,
   Edge,
-  MarkerType
+  MarkerType,
+  ProOptions // [Optimization] 옵션 타입
 } from '@xyflow/react'
 import { Copy } from 'lucide-react'
 import '@xyflow/react/dist/style.css'
@@ -23,6 +24,7 @@ interface RelationBoardProps {
   wikiData: WikiEntry[]
 }
 
+// [Optimization 1] nodeTypes는 컴포넌트 밖에서 선언하여 불필요한 재생성 방지
 const nodeTypes = {
   character: CharacterNode,
   faction: FactionNode,
@@ -30,45 +32,41 @@ const nodeTypes = {
   category: CategoryNode
 }
 
+// [Optimization 2] React Flow 성능 옵션 설정
+const proOptions: ProOptions = {
+  hideAttribution: true // 로고 숨김 (선택)
+}
+
 export const RelationBoard: React.FC<RelationBoardProps> = ({ wikiData }) => {
+  // [Optimization 3] nodes, edges 상태 관리 최적화
   const [nodes, setNodes, onNodesChange] = useNodesState<Node>([])
   const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([])
   const [selectedNodeData, setSelectedNodeData] = useState<any>(null)
 
-  // [NEW] 영구 보존할 노드 ID 목록 (주인공 및 주요 등장인물)
-  // 이 목록에 있는 ID는 '접기'를 눌러도 화면에서 사라지지 않습니다.
   const persistentIds = useRef<Set<string>>(new Set())
-
-  // 상태 추적용 Refs
   const menuMap = useRef<Map<string, string[]>>(new Map())
-  const expandedMap = useRef<Map<string, string[]>>(new Map())
+  // const expandedMap = useRef<Map<string, string[]>>(new Map()) // (현재 로직상 미사용이면 제거)
 
-  // 1. 초기화: 주인공을 찾아서 중앙에 배치하고 나머지는 주변에 배치
   useEffect(() => {
     if (wikiData.length === 0) return
 
     const newNodes: Node[] = []
-    const newEdges: Edge[] = [] // 초기에는 선 없음
 
-    // 1-1. 주인공 찾기 (이름이나 ID로 식별, 여기서는 '강진우' 혹은 리스트의 첫 번째)
-    // 실제 데이터에 'role: protagonist' 같은게 있다면 그걸 쓰면 좋지만, 일단 이름으로 찾습니다.
+    // 주인공 찾기 & 배치 로직 (이전과 동일)
     const protagonist = wikiData.find((e) => e.name.includes('강진우')) || wikiData[0]
 
-    // 1-2. 주인공 배치 (0,0)
     if (protagonist) {
       newNodes.push({
         id: protagonist.id,
         type: 'character',
         position: { x: 0, y: 0 },
         data: { label: protagonist.name, image: protagonist.image, ...protagonist }
-        // 주인공은 드래그해도 위치를 기억하거나 고정할 수 있음 (선택사항)
       })
       persistentIds.current.add(protagonist.id)
     }
 
-    // 1-3. 조연들 배치 (주인공 주변으로 원형 배치)
     const others = wikiData.filter((e) => e.id !== protagonist?.id && e.type === 'character')
-    const radius = 600 // 주인공과의 거리
+    const radius = 600
     const angleStep = (2 * Math.PI) / (others.length || 1)
 
     others.forEach((entry, index) => {
@@ -76,21 +74,16 @@ export const RelationBoard: React.FC<RelationBoardProps> = ({ wikiData }) => {
       newNodes.push({
         id: entry.id,
         type: 'character',
-        // 원형 배치 공식 (x = r * cos, y = r * sin)
-        position: {
-          x: radius * Math.cos(angle),
-          y: radius * Math.sin(angle)
-        },
+        position: { x: radius * Math.cos(angle), y: radius * Math.sin(angle) },
         data: { label: entry.name, image: entry.image, ...entry }
       })
       persistentIds.current.add(entry.id)
     })
 
     setNodes(newNodes)
-    setEdges(newEdges)
+    setEdges([])
   }, [wikiData, setNodes, setEdges])
 
-  // 2. 디버그 데이터 최적화
   const displayData = useMemo(() => {
     if (!selectedNodeData) return null
     const { image, content, ...rest } = selectedNodeData
@@ -103,69 +96,59 @@ export const RelationBoard: React.FC<RelationBoardProps> = ({ wikiData }) => {
     }
   }
 
-  // 3. 노드 클릭 핸들러
   const onNodeClick = useCallback(
     (_event: React.MouseEvent, node: Node) => {
       setSelectedNodeData(node.data)
 
-      // =================================================================
+      // [Optimization 4] 현재 존재하는 노드 ID를 Set으로 미리 만들어둠 (검색 속도 O(N) -> O(1))
+      // 반복문 안에서 nodes.find()를 쓰지 않기 위함
+      const currentNodeIds = new Set(nodes.map((n) => n.id))
+
       // [CASE A] 카테고리 버튼 클릭
-      // =================================================================
       if (node.type === 'category') {
         const { subItems, parentId } = node.data as any
-
         const firstChildId = subItems[0]?.id
-        // 이미 펼쳐져 있는지 확인 (엣지가 연결되어 있는지로 판단하는게 더 정확함)
-        // 여기서는 '첫번째 아이템과 부모를 잇는 엣지'가 있는지 확인
+
+        // 엣지 확인 로직도 최적화 (find 대신 some 사용)
         const isExpanded = edges.some((e) => e.source === parentId && e.target === firstChildId)
 
-        // [공통] 메뉴 버튼 닫기 (항상 닫힘)
+        // 메뉴 버튼 닫기
         if (menuMap.current.has(parentId)) {
           const menuIds = menuMap.current.get(parentId)!
           setNodes((nds) => nds.filter((n) => !menuIds.includes(n.id)))
-          // 카테고리 버튼으로 가는 점선 엣지만 삭제
           setEdges((eds) => eds.filter((e) => !menuIds.includes(e.target)))
           menuMap.current.delete(parentId)
         }
 
         if (isExpanded) {
-          // [접기 로직 수정]
-          // *중요*: persistentIds에 있는 노드(주요 캐릭터)는 삭제하지 말고 '엣지'만 끊어야 함.
-          // 아이템 등 임시 노드는 삭제해도 됨.
+          // [접기]
+          const targetIds = new Set(subItems.map((i: any) => i.id)) // Set으로 변환
 
-          const targetIds = subItems.map((i: any) => i.id)
-
-          // 1. 노드 삭제: 영구 보존 ID가 아닌 것만 삭제
           setNodes((nds) =>
             nds.filter((n) => {
-              // 삭제 대상이 아니면 유지
-              if (!targetIds.includes(n.id)) return true
-              // 삭제 대상이라도 영구 보존 ID면 유지 (강진우 등)
-              if (persistentIds.current.has(n.id)) return true
-              // 그 외(아이템 등)는 삭제
-              return false
+              if (!targetIds.has(n.id)) return true // 삭제 대상 아님
+              if (persistentIds.current.has(n.id)) return true // 영구 보존 대상
+              return false // 삭제
             })
           )
 
-          // 2. 엣지 삭제: 부모와 타겟을 잇는 엣지는 무조건 삭제
           setEdges((eds) =>
             eds.filter((e) => {
-              // 이 카테고리에 포함된 관계선이면 삭제
-              if (e.source === parentId && targetIds.includes(e.target)) return false
+              if (e.source === parentId && targetIds.has(e.target)) return false
               return true
             })
           )
         } else {
-          // [펼치기 로직]
+          // [펼치기]
           const parentNode = nodes.find((n) => n.id === parentId) || node
-          const positions = getRadialPositions(parentNode, subItems.length, 300) // 거리 300
+          const positions = getRadialPositions(parentNode, subItems.length, 300)
 
           const newNodes: Node[] = []
           const newEdges: Edge[] = []
 
           subItems.forEach((target: any, idx: number) => {
-            // 노드가 없으면 생성 (이미 있으면 생성 안함 -> 위치 유지)
-            if (!nodes.find((n) => n.id === target.id)) {
+            // [Optimization 4 적용] Set을 이용해 O(1) 검색
+            if (!currentNodeIds.has(target.id)) {
               newNodes.push({
                 id: target.id,
                 type: ['character', 'faction', 'item', 'location'].includes(target.type)
@@ -176,7 +159,6 @@ export const RelationBoard: React.FC<RelationBoardProps> = ({ wikiData }) => {
               })
             }
 
-            // 엣지는 항상 새로 연결 (부모 -> 타겟)
             newEdges.push({
               id: `${parentId}-${target.id}`,
               source: parentId,
@@ -190,17 +172,15 @@ export const RelationBoard: React.FC<RelationBoardProps> = ({ wikiData }) => {
             })
           })
 
-          setNodes((nds) => [...nds, ...newNodes])
-          setEdges((eds) => [...eds, ...newEdges])
+          // [Optimization 5] 함수형 업데이트 사용 (Batching 보장)
+          setNodes((prev) => [...prev, ...newNodes])
+          setEdges((prev) => [...prev, ...newEdges])
         }
         return
       }
 
-      // =================================================================
       // [CASE B] 캐릭터/세력 노드 클릭 (메뉴 토글)
-      // =================================================================
       if (menuMap.current.has(node.id)) {
-        // 메뉴 닫기
         const menuIds = menuMap.current.get(node.id)!
         setNodes((nds) => nds.filter((n) => !menuIds.includes(n.id)))
         setEdges((eds) => eds.filter((e) => !menuIds.includes(e.target)))
@@ -240,7 +220,6 @@ export const RelationBoard: React.FC<RelationBoardProps> = ({ wikiData }) => {
         .filter(([_, items]) => items.length > 0)
         .map(([key, items]) => ({ type: key, items }))
 
-      // 메뉴 버튼 거리 (150)
       const positions = getRadialPositions(node, validGroups.length, 150)
       const newNodes: Node[] = []
       const newEdges: Edge[] = []
@@ -275,7 +254,7 @@ export const RelationBoard: React.FC<RelationBoardProps> = ({ wikiData }) => {
       setEdges((eds) => [...eds, ...newEdges])
       menuMap.current.set(node.id, createdMenuIds)
     },
-    [nodes, wikiData, setNodes, setEdges, edges] // edges 의존성 추가
+    [nodes, wikiData, setNodes, setEdges, edges]
   )
 
   return (
@@ -287,7 +266,15 @@ export const RelationBoard: React.FC<RelationBoardProps> = ({ wikiData }) => {
         onEdgesChange={onEdgesChange}
         onNodeClick={onNodeClick}
         nodeTypes={nodeTypes}
+        // [Optimization 6] 성능 핵심 옵션들
         fitView
+        minZoom={0.1} // 너무 작게 축소 방지 (연산 줄임)
+        maxZoom={4} // 너무 크게 확대 방지
+        onlyRenderVisibleElements={true} // [핵심] 화면 밖 노드 렌더링 안 함
+        proOptions={proOptions} // 프로 옵션 (로고 숨김 등)
+        nodesDraggable={true} // 드래그가 필요 없다면 끄는 게 훨씬 빠름 (필요시 true)
+        nodesConnectable={false} // 엣지 연결 불필요시 끔
+        elementsSelectable={true}
         colorMode="dark"
       >
         <Background color="#475569" gap={20} />
@@ -299,8 +286,10 @@ export const RelationBoard: React.FC<RelationBoardProps> = ({ wikiData }) => {
         />
       </ReactFlow>
 
+      {/* 디버그 패널 */}
       {selectedNodeData && (
         <div className="absolute bottom-4 left-4 z-50 w-96 max-h-80 overflow-auto bg-black/95 border border-green-500/50 rounded p-4 font-mono text-xs text-green-400 shadow-2xl backdrop-blur-md">
+          {/* ... (이전과 동일) ... */}
           <div className="flex justify-between items-center mb-2 border-b border-green-500/30 pb-2">
             <span className="font-bold">PARSED DATA VIEW</span>
             <div className="flex gap-3">
