@@ -1,5 +1,10 @@
 export type EntryType = 'character' | 'item' | 'location' | 'faction' | 'other'
 
+export interface Relation {
+  name: string
+  type: string
+}
+
 // 공통 속성
 export interface BaseEntry {
   id: string // 파일 경로 (ID)
@@ -19,6 +24,7 @@ export interface CharacterEntry extends BaseEntry {
     affiliation?: string // 소속
     status?: string // 상태 (생존, 사망)
     alias?: string // 이명
+    relations?: Relation[]
   }
 }
 
