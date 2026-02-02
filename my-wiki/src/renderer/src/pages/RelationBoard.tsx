@@ -86,10 +86,18 @@ export const RelationBoard: React.FC<RelationBoardProps> = ({ wikiData }) => {
       // 2. Radical Menu (펼치기/접기) 로직
       const entry = node.data as unknown as WikiEntry
       // @ts-ignore: relations 접근
-      const relations = entry.info?.relations || []
+      const rawRelations = entry.info?.relations || []
+      const affiliation = (entry.info as any)?.affiliation
 
-      // 관계 데이터가 없으면 중단
-      if (!relations.length) return
+      const effectiveRelations = [...rawRelations]
+      if (affiliation) {
+        // 이미 relations에 같은 이름이 있는지 확인 (중복 방지)
+        const exists = effectiveRelations.find((r: any) => r.name === affiliation)
+        if (!exists) {
+          effectiveRelations.push({ name: affiliation, type: '소속' })
+        }
+      }
+      if (effectiveRelations.length === 0) return
 
       if (expandedMap.current.has(node.id)) {
         // [접기] : 이미 펼쳐져 있다면 자식 노드와 엣지 삭제
@@ -99,7 +107,7 @@ export const RelationBoard: React.FC<RelationBoardProps> = ({ wikiData }) => {
         expandedMap.current.delete(node.id)
       } else {
         // [펼치기] : 주변에 원형으로 노드 생성
-        const validRelations = relations
+        const validRelations = effectiveRelations
           .map((rel: any) => ({ ...rel, targetEntry: findEntryByName(rel.name, wikiData) }))
           .filter((item: any) => item.targetEntry !== undefined)
 
