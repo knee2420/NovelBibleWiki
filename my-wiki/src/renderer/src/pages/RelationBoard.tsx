@@ -16,6 +16,7 @@ import { WikiEntry } from '../types/wiki'
 import { getRadialPositions, findEntryByName } from '../utils/graphLayout'
 import { CharacterNode } from '../components/Board/CharacterNode'
 import { FactionNode } from '../components/Board/FactionNode'
+import { ItemNode } from '../components/Board/ItemNode'
 
 interface RelationBoardProps {
   wikiData: WikiEntry[]
@@ -23,7 +24,8 @@ interface RelationBoardProps {
 
 const nodeTypes = {
   character: CharacterNode,
-  faction: FactionNode
+  faction: FactionNode,
+  item: ItemNode
 }
 export const RelationBoard: React.FC<RelationBoardProps> = ({ wikiData }) => {
   const [nodes, setNodes, onNodesChange] = useNodesState<Node>([])
@@ -183,7 +185,7 @@ export const RelationBoard: React.FC<RelationBoardProps> = ({ wikiData }) => {
         />
       </ReactFlow>
       {selectedNodeData && (
-        <div className="absolute bottom-4 left-4 z-50 w-80 max-h-60 overflow-auto bg-black/90 border border-green-500/50 rounded p-4 font-mono text-xs text-green-400 shadow-2xl backdrop-blur">
+        <div className="absolute bottom-4 left-4 z-50 w-96 max-h-80 overflow-auto bg-black/95 border border-green-500/50 rounded p-4 font-mono text-xs text-green-400 shadow-2xl backdrop-blur-md">
           <div className="flex justify-between items-center mb-2 border-b border-green-500/30 pb-2">
             <span className="font-bold">PARSED DATA VIEW</span>
             <div className="flex gap-3">
