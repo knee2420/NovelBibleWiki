@@ -15,13 +15,15 @@ import '@xyflow/react/dist/style.css'
 import { WikiEntry } from '../types/wiki'
 import { getRadialPositions, findEntryByName } from '../utils/graphLayout'
 import { CharacterNode } from '../components/Board/CharacterNode'
+import { FactionNode } from '../components/Board/FactionNode'
 
 interface RelationBoardProps {
   wikiData: WikiEntry[]
 }
 
 const nodeTypes = {
-  character: CharacterNode
+  character: CharacterNode,
+  faction: FactionNode
 }
 export const RelationBoard: React.FC<RelationBoardProps> = ({ wikiData }) => {
   const [nodes, setNodes, onNodesChange] = useNodesState<Node>([])
@@ -129,7 +131,7 @@ export const RelationBoard: React.FC<RelationBoardProps> = ({ wikiData }) => {
           if (!exists) {
             newNodes.push({
               id: target.id,
-              type: target.type === 'character' ? 'character' : 'default', // 노드 타입 설정
+              type: ['character', 'faction', 'item', 'location'].includes(target.type) ? target.type : 'default', // 노드 타입 설정
               position: positions[idx],
               data: { label: target.name, image: target.image, ...target }
             })
