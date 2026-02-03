@@ -1,3 +1,22 @@
+import { RelationMood, RelationTense } from './wiki'
+
+export interface SceneDelta {
+  appear?: string[] // 등장 인물
+  disappear?: string[] // 퇴장 인물
+  update?: {
+    name: string
+    changes: Record<string, any> // status, rank, image 등
+  }[]
+  relations?: {
+    source: string
+    name: string // target
+    display?: string
+    mood?: RelationMood
+    tense?: RelationTense
+    type?: string
+  }[]
+}
+
 // 플롯(스토리보드) 전용 타입 정의
 export interface SceneCard {
   id: string // 파일 절대 경로
@@ -7,6 +26,7 @@ export interface SceneCard {
   summary: string // 요약 (Front-matter의 summary)
   characters: string[] // 등장인물 태그
   isScripted: boolean // 본문 작성 여부
+  delta?: SceneDelta
 }
 
 export interface ChapterColumn {

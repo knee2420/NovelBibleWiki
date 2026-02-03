@@ -190,6 +190,26 @@ export function setupPlotHandlers(store: any): void {
       return false
     }
   })
+
+  ipcMain.handle('get-timeline-flat', async () => {
+    const vaultPath = store.get('vaultPath') as string
+    if (!vaultPath) return []
+    const plotBasePath = join(vaultPath, '10_Plot')
+
+    // 기존 스캔 로직 재사용
+    const allChapters = recursiveScan(plotBasePath)
+
+    // 모든 챕터 내의 씬들을 꺼내서 하나의 배열로 합침
+    const allScenes = allChapters.flatMap((chapter) =>
+      chapter.scenes.map((scene: any) => ({
+        ...scene,
+        chapterTitle: chapter.title // 소속 챕터 정보 주입
+      }))
+    )
+
+    // 전체 화수(sceneNumber) 기준으로 정렬 (필요시 Act/Chapter 순 정렬 로직 보강)
+    return allScenes.sort((a, b) => a.sceneNumber - b.sceneNumber)
+  })
 }
 
 // --------------------------------------------------------------------------
@@ -269,6 +289,7 @@ function parseScenes(dirPath: string, files: fs.Dirent[]) {
           title: data.title || file.name.replace('.md', ''),
           summary: data.summary || body.slice(0, 100).replace(/[#*]/g, '').trim() + '...',
           characters: data.characters || [],
+          delta: data['wiki-data'] || null,
           isScripted: body.trim().length > 50
         }
       } catch (e) {

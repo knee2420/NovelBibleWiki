@@ -1,8 +1,14 @@
 export type EntryType = 'character' | 'item' | 'location' | 'faction' | 'other'
+export type CharacterGrade = 'MAIN' | 'SUB' | 'MINOR' | 'EXTRA'
+export type RelationMood = 'FRIENDLY' | 'HOSTILE' | 'NEUTRAL'
+export type RelationTense = 'CURRENT' | 'PAST'
 
 export interface Relation {
   name: string
   type: string
+  display?: string
+  mood?: RelationMood
+  tense?: RelationTense
 }
 
 // 공통 속성
@@ -20,6 +26,7 @@ export interface BaseEntry {
 export interface CharacterEntry extends BaseEntry {
   type: 'character'
   info: {
+    grade?: CharacterGrade
     role?: string // 역할 (주인공, 조연)
     affiliation?: string // 소속
     status?: string // 상태 (생존, 사망)

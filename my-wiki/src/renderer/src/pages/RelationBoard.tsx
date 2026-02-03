@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback, useRef, useState } from 'react'
+import React, { useEffect, useCallback, useRef, useState, useMemo } from 'react'
 import {
   ReactFlow,
   Background,
@@ -8,159 +8,441 @@ import {
   useEdgesState,
   Node,
   Edge,
-  MarkerType
+  MarkerType,
+  ProOptions // [Optimization] 옵션 타입
 } from '@xyflow/react'
-import { Copy } from 'lucide-react'
+import { Copy, Play, Pause, SkipBack, SkipForward, History, Globe } from 'lucide-react'
 import '@xyflow/react/dist/style.css'
 import { WikiEntry } from '../types/wiki'
+import { SceneCard } from '../types/plot'
 import { getRadialPositions, findEntryByName } from '../utils/graphLayout'
+import { getEdgeStyle } from '../utils/graphStyles'
 import { CharacterNode } from '../components/Board/CharacterNode'
+import { FactionNode } from '../components/Board/FactionNode'
+import { ItemNode } from '../components/Board/ItemNode'
+import { CategoryNode } from '../components/Board/CategoryNode'
 
 interface RelationBoardProps {
   wikiData: WikiEntry[]
+  sceneData: SceneCard[]
 }
 
+// [Optimization 1] nodeTypes는 컴포넌트 밖에서 선언하여 불필요한 재생성 방지
 const nodeTypes = {
-  character: CharacterNode
+  character: CharacterNode,
+  faction: FactionNode,
+  item: ItemNode,
+  category: CategoryNode
 }
-export const RelationBoard: React.FC<RelationBoardProps> = ({ wikiData }) => {
+
+// [Optimization 2] React Flow 성능 옵션 설정
+const proOptions: ProOptions = {
+  hideAttribution: true // 로고 숨김 (선택)
+}
+
+export const RelationBoard: React.FC<RelationBoardProps> = ({ wikiData, sceneData }) => {
+  // [Optimization 3] nodes, edges 상태 관리 최적화
   const [nodes, setNodes, onNodesChange] = useNodesState<Node>([])
   const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([])
   const [selectedNodeData, setSelectedNodeData] = useState<any>(null)
-  const expandedMap = useRef<Map<string, string[]>>(new Map())
+  const [viewMode, setViewMode] = useState<'static' | 'timeline'>('timeline')
 
-  // 데이터가 변경되면 그래프 다시 그리기
+  const [currentSceneIndex, setCurrentSceneIndex] = useState(0)
+  const [isPlaying, setIsPlaying] = useState(false)
+
+  const persistentIds = useRef<Set<string>>(new Set())
+  const menuMap = useRef<Map<string, string[]>>(new Map())
+  const initialLayoutMap = useRef<Map<string, Node>>(new Map())
+  // const expandedMap = useRef<Map<string, string[]>>(new Map()) // (현재 로직상 미사용이면 제거)
+
   useEffect(() => {
     if (wikiData.length === 0) return
 
-    // 초기에는 주인공 혹은 캐릭터만 그리드로 배치 (관계선 없음)
-    const initialNodes = wikiData
-      .filter((entry) => entry.type === 'character')
-      .map((entry, index) => ({
-        id: entry.id,
+    const newNodes: Node[] = []
+    const staticEdges: Edge[] = []
+
+    // 주인공 찾기 & 배치 로직 (이전과 동일)
+    const protagonist = wikiData.find((e) => e.name.includes('강진우')) || wikiData[0]
+
+    if (protagonist) {
+      const { content: _content, ...protagonistRest } = protagonist
+      newNodes.push({
+        id: protagonist.id,
+        // id: protagonist.name,
         type: 'character',
-        position: { x: (index % 5) * 300, y: Math.floor(index / 5) * 350 },
-        data: { label: entry.name, image: entry.image, ...entry }
-      }))
+        position: { x: 0, y: 0 },
+        data: { label: protagonist.name, image: protagonist.image, ...protagonistRest },
+        hidden: viewMode === 'timeline'
+      })
+      persistentIds.current.add(protagonist.id)
+    }
 
-    setNodes(initialNodes)
-    setEdges([]) // 초기 엣지 없음
-  }, [wikiData, setNodes, setEdges])
+    const others = wikiData.filter((e) => e.id !== protagonist?.id && e.type === 'character')
+    const radius = 600
+    const angleStep = (2 * Math.PI) / (others.length || 1)
 
-  // [수정] 디버그 데이터 처리 함수 (더 안전한 방식)
-  const getCleanDebugData = () => {
+    others.forEach((entry, index) => {
+      const angle = index * angleStep
+      const { content: _content, ...entryRest } = entry
+      newNodes.push({
+        id: entry.id,
+        // id: entry.name,
+        type: 'character',
+        position: { x: radius * Math.cos(angle), y: radius * Math.sin(angle) },
+        data: { label: entry.name, image: entry.image, ...entryRest },
+        hidden: viewMode === 'timeline'
+      })
+      persistentIds.current.add(entry.id)
+
+      if (viewMode === 'static') {
+        const relations = ((entry.info as any)?.relations || []) as any[]
+        relations.forEach((rel) => {
+          const targetEntry = findEntryByName(rel.name, wikiData)
+          if (targetEntry) {
+            const style = getEdgeStyle(rel.mood, rel.tense)
+            staticEdges.push({
+              id: `static-${entry.id}-${targetEntry.id}`,
+              source: entry.id,
+              target: targetEntry.id,
+              label: rel.display,
+              type: 'straight',
+              ...style
+            })
+          }
+        })
+      }
+    })
+
+    newNodes.forEach((node) => initialLayoutMap.current.set(node.data.label as string, node))
+
+    // 씬 데이터가 없으면 다 보여주기 (Fallback)
+    if (viewMode === 'static') {
+      // 1. Static Mode: 모든 노드 표시 + 최신 관계선 연결
+      setNodes(newNodes)
+      setEdges(staticEdges)
+    } else {
+      // 2. Timeline Mode: 초기화 (씬 데이터가 없으면 Fallback)
+      if (!sceneData || sceneData.length === 0) {
+        setNodes(newNodes.map((n) => ({ ...n, hidden: false })))
+        setEdges([])
+      } else {
+        // 타임라인이면 일단 노드만 세팅 (hidden=true 상태)하고 엣지는 비움 -> useEffect에서 계산
+        setNodes(newNodes)
+        setEdges([])
+      }
+    }
+  }, [wikiData, setNodes, setEdges, sceneData, viewMode])
+
+  // [Time Machine Logic] 씬 인덱스 변경 시 그래프 상태 재계산
+  useEffect(() => {
+    // [Check] 타임라인 모드가 아니면 로직 수행 안 함
+    if (
+      viewMode !== 'timeline' ||
+      !sceneData ||
+      sceneData.length === 0 ||
+      initialLayoutMap.current.size === 0
+    )
+      return
+
+    // (1) 베이스 노드 복사
+    const currentNodesMap = new Map<string, Node>()
+    initialLayoutMap.current.forEach((node, label) => {
+      currentNodesMap.set(label, JSON.parse(JSON.stringify(node)))
+    })
+
+    // (2) 엣지 기록용 Map
+    const activeEdges = new Map<string, any>()
+
+    // (3) 0번 ~ 현재 씬까지 변화 누적 (Replay)
+    for (let i = 0; i <= currentSceneIndex; i++) {
+      const delta = sceneData[i]?.delta
+      if (!delta) continue
+
+      // A. Appear
+      if (delta.appear) {
+        delta.appear.forEach((name) => {
+          const node = currentNodesMap.get(name)
+          if (node) node.hidden = false
+        })
+      }
+      // B. Update
+      if (delta.update) {
+        delta.update.forEach((upd) => {
+          const node = currentNodesMap.get(upd.name)
+          if (node) {
+            node.data.info = { ...(node.data.info as any), ...upd.changes }
+            if (upd.changes.image) node.data.image = upd.changes.image
+          }
+        })
+      }
+      // C. Relations (Edges)
+      if (delta.relations) {
+        delta.relations.forEach((rel) => {
+          const edgeKey = `${rel.source}-${rel.name}`
+          activeEdges.set(edgeKey, rel)
+        })
+      }
+      // D. Disappear
+      if (delta.disappear) {
+        delta.disappear.forEach((name) => {
+          const node = currentNodesMap.get(name)
+          if (node) node.hidden = true
+        })
+      }
+    }
+
+    // (4) 결과 변환
+    const calculatedNodes = Array.from(currentNodesMap.values())
+    const calculatedEdges: Edge[] = []
+
+    activeEdges.forEach((rel, key) => {
+      const [sourceName, targetName] = key.split('-')
+      // ID 매핑: 현재 로직상 Node의 ID가 파일경로(id)인지 이름(name)인지 주의 필요.
+      // initialLayoutMap key를 'label(이름)'로 잡았으므로 이름으로 검색.
+      // 만약 Node의 실제 ID가 파일 경로라면, currentNodesMap.get()으로 가져온 노드의 .id 속성을 써야 함.
+
+      // 여기서는 initialLayoutMap에 저장된 노드의 ID를 그대로 사용 (아마 파일 경로일 것임)
+      const sourceNode = currentNodesMap.get(sourceName)
+      const targetNode = currentNodesMap.get(targetName)
+
+      if (sourceNode && !sourceNode.hidden && targetNode && !targetNode.hidden) {
+        const style = getEdgeStyle(rel.mood, rel.tense)
+        calculatedEdges.push({
+          id: `edge-${sourceName}-${targetName}`,
+          source: sourceNode.id, // 실제 연결은 Node ID로 해야 함
+          target: targetNode.id,
+          label: rel.display,
+          type: 'straight',
+          ...style
+        })
+      }
+    })
+
+    setNodes(calculatedNodes)
+    setEdges(calculatedEdges)
+  }, [currentSceneIndex, sceneData, viewMode]) // viewMode 의존성 추가
+
+  // [Player] 재생 로직
+  useEffect(() => {
+    let interval: NodeJS.Timeout
+    if (isPlaying && sceneData) {
+      interval = setInterval(() => {
+        setCurrentSceneIndex((prev) => {
+          if (prev >= sceneData.length - 1) {
+            setIsPlaying(false)
+            return prev
+          }
+          return prev + 1
+        })
+      }, 1500)
+    }
+    return () => clearInterval(interval)
+  }, [isPlaying, sceneData])
+
+  const displayData = useMemo(() => {
     if (!selectedNodeData) return null
-
-    // 1. 원본 데이터를 복사 (불변성 유지)
-    const dataCopy = { ...selectedNodeData }
-
-    // 2. image 키가 있다면 삭제 (메모리 낭비 방지 및 가독성)
-    if ('image' in dataCopy) {
-      delete dataCopy.image
+    const { image: _image, content: _content, ...rest } = selectedNodeData
+    if (rest.subItems && Array.isArray(rest.subItems)) {
+      rest.subItems = rest.subItems.map((item: any) => {
+        const { image: _subImage, content: _subContent, ...subRest } = item
+        return subRest
+      })
     }
-    if ('content' in dataCopy) {
-      delete dataCopy.content
-    }
-    // [디버깅용] 브라우저 콘솔(F12)을 켜서 이 로그가 찍히는지 확인해보세요.
-    console.log('Cleaned Data:', dataCopy)
-
-    return dataCopy
-  }
+    return rest
+  }, [selectedNodeData])
 
   const handleCopyDebug = () => {
-    const data = getCleanDebugData()
-    if (data) {
-      navigator.clipboard.writeText(JSON.stringify(data, null, 2))
-      alert('데이터가 클립보드에 복사되었습니다.') // 알림 추가 (선택사항)
+    if (displayData) {
+      navigator.clipboard.writeText(JSON.stringify(displayData, null, 2))
     }
   }
 
-  // 렌더링 헬퍼: 데이터가 유효한지 확인
-  const displayData = getCleanDebugData()
-
-  // 노드 클릭 핸들러 (나중에 방사형 메뉴 트리거가 될 곳)
   const onNodeClick = useCallback(
-    (event: React.MouseEvent, node: Node) => {
+    (_event: React.MouseEvent, node: Node) => {
       setSelectedNodeData(node.data)
 
-      // 2. Radical Menu (펼치기/접기) 로직
+      // [Optimization 4] 현재 존재하는 노드 ID를 Set으로 미리 만들어둠 (검색 속도 O(N) -> O(1))
+      // 반복문 안에서 nodes.find()를 쓰지 않기 위함
+      const currentNodeIds = new Set(nodes.map((n) => n.id))
+
+      // [CASE A] 카테고리 버튼 클릭
+      if (node.type === 'category') {
+        const { subItems, parentId } = node.data as any
+        const firstChildId = subItems[0]?.id
+
+        // 엣지 확인 로직도 최적화 (find 대신 some 사용)
+        const isExpanded = edges.some((e) => e.source === parentId && e.target === firstChildId)
+
+        // 메뉴 버튼 닫기
+        if (menuMap.current.has(parentId)) {
+          const menuIds = menuMap.current.get(parentId)!
+          setNodes((nds) => nds.filter((n) => !menuIds.includes(n.id)))
+          setEdges((eds) => eds.filter((e) => !menuIds.includes(e.target)))
+          menuMap.current.delete(parentId)
+        }
+
+        if (isExpanded) {
+          // [접기]
+          const targetIds = new Set(subItems.map((i: any) => i.id)) // Set으로 변환
+
+          setNodes((nds) =>
+            nds.filter((n) => {
+              if (!targetIds.has(n.id)) return true // 삭제 대상 아님
+              if (persistentIds.current.has(n.id)) return true // 영구 보존 대상
+              return false // 삭제
+            })
+          )
+
+          setEdges((eds) =>
+            eds.filter((e) => {
+              if (e.source === parentId && targetIds.has(e.target)) return false
+              return true
+            })
+          )
+        } else {
+          // [펼치기]
+          const parentNode = nodes.find((n) => n.id === parentId) || node
+          const positions = getRadialPositions(parentNode, subItems.length, 300)
+
+          const newNodes: Node[] = []
+          const newEdges: Edge[] = []
+
+          subItems.forEach((target: any, idx: number) => {
+            // [Optimization 4 적용] Set을 이용해 O(1) 검색
+            if (!currentNodeIds.has(target.id)) {
+              newNodes.push({
+                id: target.id,
+                type: ['character', 'faction', 'item', 'location'].includes(target.type)
+                  ? target.type
+                  : 'default',
+                position: positions[idx],
+                data: { label: target.name, image: target.image, ...target }
+              })
+            }
+            const edgeStyle = getEdgeStyle(target.mood, target.tense)
+
+            newEdges.push({
+              id: `${parentId}-${target.id}`,
+              source: parentId,
+              target: target.id,
+              label: target.display || target.relationType,
+              type: 'straight',
+              animated: false,
+              style: edgeStyle.style,
+              labelStyle: edgeStyle.labelStyle,
+              markerEnd: { type: MarkerType.ArrowClosed, color: edgeStyle.markerColor }
+            })
+          })
+
+          // [Optimization 5] 함수형 업데이트 사용 (Batching 보장)
+          setNodes((prev) => [...prev, ...newNodes])
+          setEdges((prev) => [...prev, ...newEdges])
+        }
+        return
+      }
+
+      // [CASE B] 캐릭터/세력 노드 클릭 (메뉴 토글)
+      if (menuMap.current.has(node.id)) {
+        const menuIds = menuMap.current.get(node.id)!
+        setNodes((nds) => nds.filter((n) => !menuIds.includes(n.id)))
+        setEdges((eds) => eds.filter((e) => !menuIds.includes(e.target)))
+        menuMap.current.delete(node.id)
+        return
+      }
+
+      // 메뉴 열기
       const entry = node.data as unknown as WikiEntry
-      // @ts-ignore: relations 접근
+      // @ts-ignore
       const rawRelations = entry.info?.relations || []
       const affiliation = (entry.info as any)?.affiliation
 
       const effectiveRelations = [...rawRelations]
       if (affiliation) {
-        // 이미 relations에 같은 이름이 있는지 확인 (중복 방지)
         const exists = effectiveRelations.find((r: any) => r.name === affiliation)
-        if (!exists) {
-          effectiveRelations.push({ name: affiliation, type: '소속' })
-        }
+        if (!exists) effectiveRelations.push({ name: affiliation, type: '소속' })
       }
-      if (effectiveRelations.length === 0) return
 
-      if (expandedMap.current.has(node.id)) {
-        // [접기] : 이미 펼쳐져 있다면 자식 노드와 엣지 삭제
-        const childIds = expandedMap.current.get(node.id)!
-        setNodes((nds) => nds.filter((n) => !childIds.includes(n.id)))
-        setEdges((eds) => eds.filter((e) => e.source !== node.id))
-        expandedMap.current.delete(node.id)
-      } else {
-        // [펼치기] : 주변에 원형으로 노드 생성
-        const validRelations = effectiveRelations
-          .map((rel: any) => ({ ...rel, targetEntry: findEntryByName(rel.name, wikiData) }))
-          .filter((item: any) => item.targetEntry !== undefined)
+      const resolvedRelations = effectiveRelations
+        .map((rel: any) => {
+          const target = findEntryByName(rel.name, wikiData)
+          if (!target) return null
 
-        if (validRelations.length === 0) return
-
-        const positions = getRadialPositions(node, validRelations.length)
-        const newNodes: Node[] = []
-        const newEdges: Edge[] = []
-        const createdChildIds: string[] = []
-
-        validRelations.forEach((relItem: any, idx: number) => {
-          const target = relItem.targetEntry
-
-          // 이미 화면에 있는 노드인지 확인 (중복 생성 방지용, 여기서는 단순화하여 새로 생성하거나 연결)
-          // *실제 UX: 이미 있으면 Edge만 연결하는게 좋으나, 여기서는 'Radial Pop-up' 느낌을 위해
-          // 현재 화면에 없는 경우만 새로 생성한다고 가정
-          const exists = nodes.find((n) => n.id === target.id)
-
-          if (!exists) {
-            newNodes.push({
-              id: target.id,
-              type: target.type === 'character' ? 'character' : 'default', // 노드 타입 설정
-              position: positions[idx],
-              data: { label: target.name, image: target.image, ...target }
-            })
-            createdChildIds.push(target.id)
-          } else {
-            // 이미 존재하면 ID만 추적 (접을 때 같이 사라질지 여부는 기획에 따라 결정)
-            createdChildIds.push(target.id)
+          // [Fix] 여기서 content를 제거해야 subItems에 무거운 텍스트가 안 쌓임 (성능 핵심)
+          // (image는 펼쳤을 때 아바타 보여줘야 하므로 데이터에는 남김 -> displayData에서만 가림)
+          const { content: _cleanContent, ...cleanTarget } = target
+          return {
+            ...cleanTarget,
+            relationType: rel.type,
+            display: rel.display || rel.type,
+            mood: rel.mood,
+            tense: rel.tense
           }
-
-          newEdges.push({
-            id: `${node.id}-${target.id}`,
-            source: node.id,
-            target: target.id,
-            label: relItem.type,
-            animated: true,
-            style: { stroke: '#06b6d4' },
-            labelStyle: { fill: '#cbd5e1', fontWeight: 700 },
-            markerEnd: { type: MarkerType.ArrowClosed, color: '#06b6d4' }
-          })
         })
+        .filter(Boolean)
 
-        setNodes((nds) => [...nds, ...newNodes])
-        setEdges((eds) => [...eds, ...newEdges])
-        expandedMap.current.set(node.id, createdChildIds)
+      if (resolvedRelations.length === 0) return
+
+      const groups: Record<string, any[]> = { character: [], faction: [], item: [], location: [] }
+      resolvedRelations.forEach((target: any) => {
+        if (target.relationType === '소속' || target.type === 'faction') {
+          groups.faction.push(target)
+          return
+        }
+        // 2. 나머지 타입(character, item, location)은 자기 방으로 이동
+        if (groups[target.type]) {
+          groups[target.type].push(target)
+        } else {
+          // 타입이 없는 경우 기본적으로 인물(character)로 분류하거나 별도 처리
+          groups.character.push(target)
+        }
+      })
+      const labelMap: Record<string, string> = {
+        character: '인물관계',
+        faction: '소속',
+        item: '아이템',
+        location: '장소'
       }
+      const validGroups = Object.entries(groups)
+        .filter(([_, items]) => items.length > 0)
+        .map(([key, items]) => ({ type: key, items }))
+
+      const positions = getRadialPositions(node, validGroups.length, 150)
+      const newNodes: Node[] = []
+      const newEdges: Edge[] = []
+      const createdMenuIds: string[] = []
+
+      validGroups.forEach((group, idx) => {
+        const categoryId = `${node.id}-cat-${group.type}`
+        newNodes.push({
+          id: categoryId,
+          type: 'category',
+          position: positions[idx],
+          data: {
+            label: labelMap[group.type] || '기타',
+            categoryType: group.type,
+            subItems: group.items,
+            parentId: node.id
+          }
+        })
+        createdMenuIds.push(categoryId)
+
+        newEdges.push({
+          id: `${node.id}-${categoryId}`,
+          source: node.id,
+          target: categoryId,
+          type: 'straight',
+          style: { stroke: '#94a3b8', strokeDasharray: '4 4' }
+        })
+      })
+
+      setNodes((nds) => [...nds, ...newNodes])
+      setEdges((eds) => [...eds, ...newEdges])
+      menuMap.current.set(node.id, createdMenuIds)
     },
-    [nodes, wikiData, setNodes, setEdges]
+    [nodes, wikiData, setNodes, setEdges, edges]
   )
 
   return (
-    // [수정] h-full -> h-[85vh] (화면 높이의 85% 강제 지정)
     <div className="w-full h-[85vh] min-h-[500px] bg-slate-900 text-slate-100 border border-slate-700 rounded-lg overflow-hidden shadow-2xl relative">
       <ReactFlow
         nodes={nodes}
@@ -169,7 +451,15 @@ export const RelationBoard: React.FC<RelationBoardProps> = ({ wikiData }) => {
         onEdgesChange={onEdgesChange}
         onNodeClick={onNodeClick}
         nodeTypes={nodeTypes}
+        // [Optimization 6] 성능 핵심 옵션들
         fitView
+        minZoom={0.1} // 너무 작게 축소 방지 (연산 줄임)
+        maxZoom={4} // 너무 크게 확대 방지
+        onlyRenderVisibleElements={true} // [핵심] 화면 밖 노드 렌더링 안 함
+        proOptions={proOptions} // 프로 옵션 (로고 숨김 등)
+        nodesDraggable={true} // 드래그가 필요 없다면 끄는 게 훨씬 빠름 (필요시 true)
+        nodesConnectable={false} // 엣지 연결 불필요시 끔
+        elementsSelectable={true}
         colorMode="dark"
       >
         <Background color="#475569" gap={20} />
@@ -180,16 +470,95 @@ export const RelationBoard: React.FC<RelationBoardProps> = ({ wikiData }) => {
           style={{ backgroundColor: '#1e293b' }}
         />
       </ReactFlow>
+
+      {/* [New] View Mode Toggle Button */}
+      <div className="absolute top-4 right-4 z-50 flex gap-2">
+        <button
+          onClick={() => {
+            setViewMode('static')
+            setIsPlaying(false)
+          }}
+          className={`flex items-center gap-2 px-4 py-2 rounded-lg font-bold shadow-lg transition-all ${
+            viewMode === 'static'
+              ? 'bg-cyan-600 text-white'
+              : 'bg-slate-800 text-slate-400 hover:bg-slate-700'
+          }`}
+        >
+          <Globe size={16} /> 전체 보기 (Static)
+        </button>
+        <button
+          onClick={() => setViewMode('timeline')}
+          className={`flex items-center gap-2 px-4 py-2 rounded-lg font-bold shadow-lg transition-all ${
+            viewMode === 'timeline'
+              ? 'bg-cyan-600 text-white'
+              : 'bg-slate-800 text-slate-400 hover:bg-slate-700'
+          }`}
+        >
+          <History size={16} /> 타임라인 (Timeline)
+        </button>
+      </div>
+
+      {/* [New] Timeline UI: 슬라이더 및 재생 컨트롤 */}
+      {viewMode === 'timeline' && sceneData && sceneData.length > 0 && (
+        <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 z-50 w-2/3 max-w-2xl bg-slate-800/90 backdrop-blur border border-slate-600 rounded-xl p-4 shadow-2xl flex flex-col gap-2">
+          <div className="flex justify-between items-end mb-1">
+            <div>
+              <span className="text-xs text-cyan-400 font-bold tracking-wider">
+                SCENE {sceneData[currentSceneIndex]?.sceneNumber}
+              </span>
+              <h3 className="text-lg font-bold text-white leading-tight">
+                {sceneData[currentSceneIndex]?.title}
+              </h3>
+            </div>
+            <div className="text-xs text-slate-400">
+              {currentSceneIndex + 1} / {sceneData.length}
+            </div>
+          </div>
+
+          <input
+            type="range"
+            min={0}
+            max={sceneData.length - 1}
+            value={currentSceneIndex}
+            onChange={(e) => {
+              setIsPlaying(false)
+              setCurrentSceneIndex(Number(e.target.value))
+            }}
+            className="w-full h-2 bg-slate-600 rounded-lg appearance-none cursor-pointer accent-cyan-500 hover:accent-cyan-400 transition-all"
+          />
+
+          <div className="flex justify-center gap-4 mt-1">
+            <button
+              onClick={() => setCurrentSceneIndex((p) => Math.max(0, p - 1))}
+              className="p-2 hover:bg-slate-700 rounded-full text-slate-300"
+            >
+              <SkipBack size={20} />
+            </button>
+            <button
+              onClick={() => setIsPlaying(!isPlaying)}
+              className={`flex items-center justify-center w-12 h-12 rounded-full ${isPlaying ? 'bg-red-500' : 'bg-cyan-600'} text-white shadow-lg`}
+            >
+              {isPlaying ? <Pause fill="white" /> : <Play fill="white" className="ml-1" />}
+            </button>
+            <button
+              onClick={() => setCurrentSceneIndex((p) => Math.min(sceneData.length - 1, p + 1))}
+              className="p-2 hover:bg-slate-700 rounded-full text-slate-300"
+            >
+              <SkipForward size={20} />
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* 디버그 패널 */}
       {selectedNodeData && (
-        <div className="absolute bottom-4 left-4 z-50 w-80 max-h-60 overflow-auto bg-black/90 border border-green-500/50 rounded p-4 font-mono text-xs text-green-400 shadow-2xl backdrop-blur">
+        <div className="absolute bottom-4 left-4 z-50 w-96 max-h-80 overflow-auto bg-black/95 border border-green-500/50 rounded p-4 font-mono text-xs text-green-400 shadow-2xl backdrop-blur-md">
           <div className="flex justify-between items-center mb-2 border-b border-green-500/30 pb-2">
             <span className="font-bold">PARSED DATA VIEW</span>
             <div className="flex gap-3">
-              {/* [NEW] 복사 버튼 */}
               <button
                 onClick={handleCopyDebug}
                 className="flex items-center gap-1 text-green-400 hover:text-green-200 transition-colors"
-                title="Copy JSON"
               >
                 <Copy size={14} /> COPY
               </button>
@@ -202,10 +571,10 @@ export const RelationBoard: React.FC<RelationBoardProps> = ({ wikiData }) => {
             </div>
           </div>
           <pre className="whitespace-pre-wrap break-all leading-relaxed">
-            {displayData && Object.keys(displayData).length > 0 ? (
+            {displayData ? (
               JSON.stringify(displayData, null, 2)
             ) : (
-              <span className="text-gray-500 italic">{/* No Data or Parsing Error */}</span>
+              <span className="text-gray-500">{/*// No Data*/}</span>
             )}
           </pre>
         </div>
