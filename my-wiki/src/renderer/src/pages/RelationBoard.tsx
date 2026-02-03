@@ -158,12 +158,18 @@ export const RelationBoard: React.FC<RelationBoardProps> = ({ wikiData, sceneDat
     for (let i = 0; i <= currentSceneIndex; i++) {
       const delta = sceneData[i]?.delta
       if (!delta) continue
+      const isCurrentStep = i === currentSceneIndex
 
       // A. Appear
       if (delta.appear) {
         delta.appear.forEach((name) => {
           const node = currentNodesMap.get(name)
           if (node) node.hidden = false
+          if (node) {
+            node.hidden = false
+            // [Highlight] 이번에 등장했으면 강조
+            if (isCurrentStep) node.data.isNew = true
+          }
         })
       }
       // B. Update
@@ -173,6 +179,7 @@ export const RelationBoard: React.FC<RelationBoardProps> = ({ wikiData, sceneDat
           if (node) {
             node.data.info = { ...(node.data.info as any), ...upd.changes }
             if (upd.changes.image) node.data.image = upd.changes.image
+            if (isCurrentStep) node.data.isModified = true
           }
         })
       }
@@ -180,7 +187,7 @@ export const RelationBoard: React.FC<RelationBoardProps> = ({ wikiData, sceneDat
       if (delta.relations) {
         delta.relations.forEach((rel) => {
           const edgeKey = `${rel.source}-${rel.name}`
-          activeEdges.set(edgeKey, rel)
+          activeEdges.set(edgeKey, { ...rel, isNew: isCurrentStep })
         })
       }
       // D. Disappear
@@ -208,13 +215,16 @@ export const RelationBoard: React.FC<RelationBoardProps> = ({ wikiData, sceneDat
 
       if (sourceNode && !sourceNode.hidden && targetNode && !targetNode.hidden) {
         const style = getEdgeStyle(rel.mood, rel.tense)
+        const highlightStyle = rel.isNew ? { strokeWidth: 3, filter: 'drop-shadow(0 0 4px currentColor)' } : {}
         calculatedEdges.push({
           id: `edge-${sourceName}-${targetName}`,
           source: sourceNode.id, // 실제 연결은 Node ID로 해야 함
           target: targetNode.id,
           label: rel.display,
           type: 'straight',
-          ...style
+          ...style,
+          style: { ...style.style, ...highlightStyle },
+          animated: rel.isNew
         })
       }
     })
@@ -545,7 +555,7 @@ export const RelationBoard: React.FC<RelationBoardProps> = ({ wikiData, sceneDat
           <div className="flex justify-between items-end mb-1">
             <div>
               <span className="text-xs text-cyan-400 font-bold tracking-wider">
-                SCENE {sceneData[currentSceneIndex]?.sceneNumber}
+                CH.{sceneData[currentSceneIndex]?.chapterNumber} # {sceneData[currentSceneIndex]?.sceneNumber}
               </span>
               <h3 className="text-lg font-bold text-white leading-tight">
                 {sceneData[currentSceneIndex]?.title}

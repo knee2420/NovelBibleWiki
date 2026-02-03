@@ -7,6 +7,8 @@ import { CharacterGrade } from '../../types/wiki'
 type CharacterNodeData = {
   label: string
   image?: string
+  isNew?: boolean
+  isModified?: boolean
   info?: {
     status?: string // "Active", "Deceased (사망)" 등
     affiliation?: string // "검무천가", "무소속" 등
@@ -30,6 +32,8 @@ export const CharacterNode = memo(({ data, selected }: NodeProps<Node<CharacterN
   const affiliation = data.info?.affiliation || ''
 
   const grade = data.info?.grade || 'SUB'
+  const isNew = data.isNew || false
+  const isModified = data.isModified || false
   const sizeClass = SIZE_MAP[grade] || SIZE_MAP.DEFAULT
   const isDeceased = status.includes('사망') || status.toLowerCase().includes('deceased')
 
@@ -39,6 +43,12 @@ export const CharacterNode = memo(({ data, selected }: NodeProps<Node<CharacterN
     borderStyle = 'border-red-900/60 shadow-[0_0_15px_rgba(127,29,29,0.4)]'
   } else if (selected) {
     borderStyle = 'border-cyan-400 shadow-[0_0_20px_rgba(34,211,238,0.6)] scale-110'
+  } else if (isNew) {
+    // [Highlight] 신규 등장: 밝은 흰색/노란색 글로우
+    borderStyle = 'border-yellow-200 shadow-[0_0_30px_rgba(253,224,71,0.8)] scale-105 animate-pulse'
+  } else if (isModified) {
+    // [Highlight] 상태 변경: 파란색/보라색 글로우
+    borderStyle = 'border-indigo-400 shadow-[0_0_20px_rgba(129,140,248,0.6)] scale-105'
   } else if (grade === 'MAIN') {
     // [New] 주연은 평소에도 금색 계열로 강조
     borderStyle = 'border-amber-500/70 shadow-[0_0_10px_rgba(245,158,11,0.3)]'

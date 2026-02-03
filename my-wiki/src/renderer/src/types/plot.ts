@@ -21,6 +21,7 @@ export interface SceneDelta {
 export interface SceneCard {
   id: string // 파일 절대 경로
   fileName: string // 파일명 (예: 01_가짜영웅들의몰락.md)
+  chapterNumber?: number
   sceneNumber: number // 씬 번호
   title: string // 씬 제목 (Front-matter의 title)
   summary: string // 요약 (Front-matter의 summary)

@@ -40,12 +40,6 @@ wiki-data:
       display: 아지다하카! (경외)
       mood: FRIENDLY
       tense: CURRENT
-
-  # 3. [퇴장 처리]
-  # 이 씬이 끝나면 그래프에서 사라져야 할 노드들
-  # (다음 씬부터는 안 보여도 되는 엑스트라나 사망자)
-  disappear:
-    - 에레보스
 ---
 
 # Scene.3
