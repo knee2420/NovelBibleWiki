@@ -207,8 +207,10 @@ export function setupPlotHandlers(store: any): void {
       }))
     )
 
+    const timelineScenes = allScenes.filter((scene) => scene.delta !== null)
+
     // 전체 화수(sceneNumber) 기준으로 정렬 (필요시 Act/Chapter 순 정렬 로직 보강)
-    return allScenes.sort((a, b) => a.sceneNumber - b.sceneNumber)
+    return timelineScenes.sort((a, b) => a.sceneNumber - b.sceneNumber)
   })
 }
 
