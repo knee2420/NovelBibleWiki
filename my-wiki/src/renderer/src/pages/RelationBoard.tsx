@@ -215,7 +215,9 @@ export const RelationBoard: React.FC<RelationBoardProps> = ({ wikiData, sceneDat
 
       if (sourceNode && !sourceNode.hidden && targetNode && !targetNode.hidden) {
         const style = getEdgeStyle(rel.mood, rel.tense)
-        const highlightStyle = rel.isNew ? { strokeWidth: 3, filter: 'drop-shadow(0 0 4px currentColor)' } : {}
+        const highlightStyle = rel.isNew
+          ? { strokeWidth: 3, filter: 'drop-shadow(0 0 4px currentColor)' }
+          : {}
         calculatedEdges.push({
           id: `edge-${sourceName}-${targetName}`,
           source: sourceNode.id, // 실제 연결은 Node ID로 해야 함
@@ -555,7 +557,8 @@ export const RelationBoard: React.FC<RelationBoardProps> = ({ wikiData, sceneDat
           <div className="flex justify-between items-end mb-1">
             <div>
               <span className="text-xs text-cyan-400 font-bold tracking-wider">
-                CH.{sceneData[currentSceneIndex]?.chapterNumber} # {sceneData[currentSceneIndex]?.sceneNumber}
+                CH.{sceneData[currentSceneIndex]?.chapterNumber} #{' '}
+                {sceneData[currentSceneIndex]?.sceneNumber}
               </span>
               <h3 className="text-lg font-bold text-white leading-tight">
                 {sceneData[currentSceneIndex]?.title}
