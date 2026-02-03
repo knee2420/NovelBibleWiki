@@ -46,6 +46,7 @@ export const RelationBoard: React.FC<RelationBoardProps> = ({ wikiData, sceneDat
   const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([])
   const [selectedNodeData, setSelectedNodeData] = useState<any>(null)
   const [viewMode, setViewMode] = useState<'static' | 'timeline'>('timeline')
+  const [isSceneDebuggerOpen, setIsSceneDebuggerOpen] = useState(true)
 
   const [currentSceneIndex, setCurrentSceneIndex] = useState(0)
   const [isPlaying, setIsPlaying] = useState(false)
@@ -157,12 +158,18 @@ export const RelationBoard: React.FC<RelationBoardProps> = ({ wikiData, sceneDat
     for (let i = 0; i <= currentSceneIndex; i++) {
       const delta = sceneData[i]?.delta
       if (!delta) continue
+      const isCurrentStep = i === currentSceneIndex
 
       // A. Appear
       if (delta.appear) {
         delta.appear.forEach((name) => {
           const node = currentNodesMap.get(name)
           if (node) node.hidden = false
+          if (node) {
+            node.hidden = false
+            // [Highlight] 이번에 등장했으면 강조
+            if (isCurrentStep) node.data.isNew = true
+          }
         })
       }
       // B. Update
@@ -172,6 +179,7 @@ export const RelationBoard: React.FC<RelationBoardProps> = ({ wikiData, sceneDat
           if (node) {
             node.data.info = { ...(node.data.info as any), ...upd.changes }
             if (upd.changes.image) node.data.image = upd.changes.image
+            if (isCurrentStep) node.data.isModified = true
           }
         })
       }
@@ -179,7 +187,7 @@ export const RelationBoard: React.FC<RelationBoardProps> = ({ wikiData, sceneDat
       if (delta.relations) {
         delta.relations.forEach((rel) => {
           const edgeKey = `${rel.source}-${rel.name}`
-          activeEdges.set(edgeKey, rel)
+          activeEdges.set(edgeKey, { ...rel, isNew: isCurrentStep })
         })
       }
       // D. Disappear
@@ -207,13 +215,16 @@ export const RelationBoard: React.FC<RelationBoardProps> = ({ wikiData, sceneDat
 
       if (sourceNode && !sourceNode.hidden && targetNode && !targetNode.hidden) {
         const style = getEdgeStyle(rel.mood, rel.tense)
+        const highlightStyle = rel.isNew ? { strokeWidth: 3, filter: 'drop-shadow(0 0 4px currentColor)' } : {}
         calculatedEdges.push({
           id: `edge-${sourceName}-${targetName}`,
           source: sourceNode.id, // 실제 연결은 Node ID로 해야 함
           target: targetNode.id,
           label: rel.display,
           type: 'straight',
-          ...style
+          ...style,
+          style: { ...style.style, ...highlightStyle },
+          animated: rel.isNew
         })
       }
     })
@@ -238,6 +249,13 @@ export const RelationBoard: React.FC<RelationBoardProps> = ({ wikiData, sceneDat
     }
     return () => clearInterval(interval)
   }, [isPlaying, sceneData])
+
+  const handleCopySceneDelta = () => {
+    const delta = sceneData[currentSceneIndex]?.delta
+    if (delta) {
+      navigator.clipboard.writeText(JSON.stringify(delta, null, 2))
+    }
+  }
 
   const displayData = useMemo(() => {
     if (!selectedNodeData) return null
@@ -487,7 +505,10 @@ export const RelationBoard: React.FC<RelationBoardProps> = ({ wikiData, sceneDat
           <Globe size={16} /> 전체 보기 (Static)
         </button>
         <button
-          onClick={() => setViewMode('timeline')}
+          onClick={() => {
+            setViewMode('timeline')
+            setIsSceneDebuggerOpen(true) // [Fix] 버튼 클릭 시 즉시 실행 (useEffect 대체)
+          }}
           className={`flex items-center gap-2 px-4 py-2 rounded-lg font-bold shadow-lg transition-all ${
             viewMode === 'timeline'
               ? 'bg-cyan-600 text-white'
@@ -498,13 +519,43 @@ export const RelationBoard: React.FC<RelationBoardProps> = ({ wikiData, sceneDat
         </button>
       </div>
 
+      {viewMode === 'timeline' && isSceneDebuggerOpen && sceneData && sceneData.length > 0 && (
+        <div className="absolute bottom-4 left-4 z-40 w-80 max-h-[300px] overflow-auto bg-black/90 border border-yellow-500/30 rounded-lg p-3 font-mono text-[10px] text-yellow-200/90 shadow-2xl backdrop-blur-md">
+          <div className="flex justify-between items-center mb-2 border-b border-yellow-500/20 pb-1 sticky top-0 bg-black/90">
+            <div>
+              <span className="font-bold text-yellow-500 mr-2">⚡ SCENE DELTA</span>
+              <span className="text-[9px] text-slate-500">
+                #{sceneData[currentSceneIndex]?.sceneNumber}
+              </span>
+            </div>
+            <div className="flex gap-2">
+              <button
+                onClick={handleCopySceneDelta}
+                className="flex items-center gap-1 text-yellow-500 hover:text-yellow-100 transition-colors"
+              >
+                <Copy size={10} /> COPY
+              </button>
+              <button
+                onClick={() => setIsSceneDebuggerOpen(false)}
+                className="text-red-400 hover:text-red-200 transition-colors"
+              >
+                CLOSE
+              </button>
+            </div>
+          </div>
+          <pre className="whitespace-pre-wrap break-all leading-tight">
+            {JSON.stringify(sceneData[currentSceneIndex]?.delta || { status: 'No Delta' }, null, 2)}
+          </pre>
+        </div>
+      )}
+
       {/* [New] Timeline UI: 슬라이더 및 재생 컨트롤 */}
       {viewMode === 'timeline' && sceneData && sceneData.length > 0 && (
         <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 z-50 w-2/3 max-w-2xl bg-slate-800/90 backdrop-blur border border-slate-600 rounded-xl p-4 shadow-2xl flex flex-col gap-2">
           <div className="flex justify-between items-end mb-1">
             <div>
               <span className="text-xs text-cyan-400 font-bold tracking-wider">
-                SCENE {sceneData[currentSceneIndex]?.sceneNumber}
+                CH.{sceneData[currentSceneIndex]?.chapterNumber} # {sceneData[currentSceneIndex]?.sceneNumber}
               </span>
               <h3 className="text-lg font-bold text-white leading-tight">
                 {sceneData[currentSceneIndex]?.title}

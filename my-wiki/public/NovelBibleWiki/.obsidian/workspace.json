@@ -11,14 +11,10 @@
             "id": "12f7eb62f09bbc0f",
             "type": "leaf",
             "state": {
-              "type": "markdown",
-              "state": {
-                "file": "EX급 귀환자/20_Wiki/00_Draft/고동휘.md",
-                "mode": "source",
-                "source": false
-              },
+              "type": "empty",
+              "state": {},
               "icon": "lucide-file",
-              "title": "고동휘"
+              "title": "새 탭"
             }
           }
         ]
@@ -185,6 +181,20 @@
   },
   "active": "12f7eb62f09bbc0f",
   "lastOpenFiles": [
+    "EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/3화_실수/SCHEMA_TEST_SCENE2.md",
+    "EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/3화_실수/SCHEMA_TEST_SCENE1.md",
+    "EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/2화_전역,귀환/SCHEMA_TEST_SCENE3.md",
+    "EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/2화_전역,귀환/SCHEMA_TEST_SCENE2.md",
+    "EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/2화_전역,귀환/SCHEMA_TEST_SCENE1.md",
+    "EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/1화_이름없는영웅/SCHEMA_TEST_SCENE3.md",
+    "EX급 귀환자/88_Settings/(gen)씬별 표준 데이터 스키마.md",
+    "EX급 귀환자/88_Settings",
+    "EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/1화_이름없는영웅/SCHEMA_TEST_SCENE1.md",
+    "EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/1화_이름없는영웅/SCHEMA_TEST_SCENE2.md",
+    "EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/2화_전역,귀환/2화.전역,귀환 - SCENE1.md",
+    "EX급 귀환자/20_Wiki/1.Characters/강진우.md",
+    "EX급 귀환자/20_Wiki/1.Characters/뇌전벌꿀오소리.md",
+    "EX급 귀환자/20_Wiki/00_Draft/고동휘.md",
     "EX급 귀환자/00_original/(book)9화.md",
     "EX급 귀환자/00_original/(book)8화.md",
     "EX급 귀환자/00_original/(book)7화.md",
@@ -198,17 +208,7 @@
     "EX급 귀환자/00_original/(book)19화.md",
     "EX급 귀환자/00_original/(book)18화.md",
     "EX급 귀환자/00_original/(book)17화.md",
-    "EX급 귀환자/00_original/(book)16화.md",
-    "EX급 귀환자/00_original/(book)15화.md",
-    "EX급 귀환자/00_original/(book)14화.md",
-    "EX급 귀환자/00_original/(book)13화.md",
-    "EX급 귀환자/00_original/(book)12화.md",
-    "EX급 귀환자/00_original/(book)11화.md",
-    "EX급 귀환자/00_original/(book)10화.md",
     "EX급 귀환자/00_original",
-    "EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/1화_이름없는영웅/SCHEMA_TEST_SCENE3.md",
-    "EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/1화_이름없는영웅/SCHEMA_TEST_SCENE2.md",
-    "EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/1화_이름없는영웅/SCHEMA_TEST_SCENE1.md",
     "EX급 귀환자/99_Assets/images/royal.jpg",
     "EX급 귀환자/99_Assets/images/mk3.jpg"
   ]

@@ -203,12 +203,19 @@ export function setupPlotHandlers(store: any): void {
     const allScenes = allChapters.flatMap((chapter) =>
       chapter.scenes.map((scene: any) => ({
         ...scene,
-        chapterTitle: chapter.title // 소속 챕터 정보 주입
+        chapterTitle: chapter.title, // 소속 챕터 정보 주입
+        chapterNumber: scene.chapterNumber ?? chapter.chapterNumber ?? 1
       }))
     )
 
-    // 전체 화수(sceneNumber) 기준으로 정렬 (필요시 Act/Chapter 순 정렬 로직 보강)
-    return allScenes.sort((a, b) => a.sceneNumber - b.sceneNumber)
+    const timelineScenes = allScenes.filter((scene) => scene.delta !== null)
+
+    return timelineScenes.sort((a, b) => {
+      if (a.chapterNumber !== b.chapterNumber) {
+        return a.chapterNumber - b.chapterNumber
+      }
+      return a.sceneNumber - b.sceneNumber
+    })
   })
 }
 
@@ -286,6 +293,7 @@ function parseScenes(dirPath: string, files: fs.Dirent[]) {
           id: filePath,
           fileName: file.name,
           sceneNumber: sceneNum,
+          chapterNumber: data.chapter,
           title: data.title || file.name.replace('.md', ''),
           summary: data.summary || body.slice(0, 100).replace(/[#*]/g, '').trim() + '...',
           characters: data.characters || [],
