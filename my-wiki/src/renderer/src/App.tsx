@@ -7,10 +7,12 @@ import { WikiEntry } from './types/wiki'
 import { WikiDetailModal } from './components/Common/WikiDetailModal' // [변경] 통합 모달 관리자
 import { GenericArchive } from './pages/GenericArchive' // [변경] 통합 아카이브 페이지
 import { RelationBoard } from './pages/RelationBoard'
+import { SceneCard } from './types/plot'
 
 function App(): ReactElement {
   const [currentPage, setCurrentPage] = useState('home')
   const [wikiData, setWikiData] = useState<WikiEntry[]>([])
+  const [sceneData, setSceneData] = useState<SceneCard[]>([])
   const [selectedEntryId, setSelectedEntryId] = useState<string | null>(null)
   const [refreshKey, setRefreshKey] = useState(0)
   const selectedEntry = wikiData.find((entry) => entry.id === selectedEntryId) || null
@@ -22,6 +24,8 @@ function App(): ReactElement {
         // @ts-ignore
         const data = await window.api.getWikiData() // 기존 API 이름 유지 (내부는 수정됨)
         setWikiData(data)
+        const scenes = await window.api.getTimelineFlat()
+        setSceneData(scenes)
       } catch (error) {
         console.error(error)
       }
@@ -56,7 +60,7 @@ function App(): ReactElement {
       case 'plot':
         return <PlotDashboard />
       case 'board':
-        return <RelationBoard wikiData={wikiData} />
+        return <RelationBoard wikiData={wikiData} sceneData={sceneData} />
       case 'characters':
         return (
           <GenericArchive

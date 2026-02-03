@@ -25,6 +25,7 @@ const api = {
     ipcRenderer.invoke('create-chapter', { actPath, title }),
   createScene: (chapterPath: string, title: string) =>
     ipcRenderer.invoke('create-scene', { chapterPath, title }),
+  getTimelineFlat: () => ipcRenderer.invoke('get-timeline-flat'),
   renameItem: (path: string, newName: string) =>
     ipcRenderer.invoke('rename-item', { path, newName }),
   updateScene: (payload: any) => ipcRenderer.invoke('update-scene', payload),

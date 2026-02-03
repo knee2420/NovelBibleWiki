@@ -1,4 +1,4 @@
-import React, { memo } from 'react'
+import { memo } from 'react'
 import { Handle, Position, NodeProps, Node } from '@xyflow/react'
 import { User, Skull } from 'lucide-react' // Skull 아이콘 추가
 import { CharacterGrade } from '../../types/wiki'
