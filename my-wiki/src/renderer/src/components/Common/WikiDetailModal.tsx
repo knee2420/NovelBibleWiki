@@ -334,23 +334,27 @@ export const WikiDetailModal = ({ entry, onClose, onUpdate }: WikiDetailModalPro
         </div>
 
         {/* --- Right Column: Content Editor/Viewer --- */}
-        <div className="flex-1 flex flex-col bg-[#0b0e14]">
+        <div className="flex-1 flex flex-col bg-[#0b0e14] min-w-0 relative z-0">
           {/* Header (Title & Actions) */}
-          <div className="h-16 border-b border-slate-800 flex items-center justify-between px-6 bg-slate-900/50 backdrop-blur-sm sticky top-0 z-10">
-            {isEditing ? (
-              <input
-                ref={titleInputRef}
-                type="text"
-                value={editTitle}
-                onChange={(e) => setEditTitle(e.target.value)}
-                className="bg-transparent text-2xl font-bold text-white border-b border-blue-500 focus:outline-none w-full mr-4 px-1 pb-1"
-                placeholder="문서 제목"
-              />
-            ) : (
-              <h1 className="text-2xl font-bold text-slate-100 truncate pr-4">{entry.name}</h1>
-            )}
+          <div className="h-16 border-b border-slate-800 flex items-center px-6 bg-[#0b0e14] relative shrink-0 z-20">
+            <div className="w-full min-w-0 pr-36">
+              {isEditing ? (
+                <input
+                  ref={titleInputRef}
+                  type="text"
+                  value={editTitle}
+                  onChange={(e) => setEditTitle(e.target.value)}
+                  className="bg-transparent text-2xl font-bold text-white border-b border-blue-500 focus:outline-none w-full px-1 pb-1"
+                  placeholder="문서 제목"
+                />
+              ) : (
+                <h1 className="text-2xl font-bold text-slate-100 truncate" title={entry.name}>
+                  {entry.name}
+                </h1>
+              )}
+            </div>
 
-            <div className="flex items-center gap-2 flex-shrink-0">
+            <div className="absolute right-6 top-0 h-full flex items-center gap-2">
               {isEditing ? (
                 <>
                   <button
@@ -392,7 +396,7 @@ export const WikiDetailModal = ({ entry, onClose, onUpdate }: WikiDetailModalPro
           </div>
 
           {/* Content Body */}
-          <div className="flex-1 overflow-y-auto custom-scrollbar p-8">
+          <div className="flex-1 overflow-y-auto custom-scrollbar p-8 w-full min-w-0">
             {isEditing ? (
               <textarea
                 value={editContent}
@@ -401,7 +405,7 @@ export const WikiDetailModal = ({ entry, onClose, onUpdate }: WikiDetailModalPro
                 placeholder="# 내용을 입력하세요..."
               />
             ) : (
-              <div className="prose prose-invert prose-slate max-w-none prose-p:leading-relaxed prose-headings:text-slate-200 prose-a:text-blue-400">
+              <div className="prose prose-invert prose-slate max-w-none prose-p:leading-relaxed prose-headings:text-slate-200 prose-a:text-blue-400 w-full break-words">
                 {/* 마크다운 렌더링 */}
                 <ReactMarkdown>{entry.content || ''}</ReactMarkdown>
               </div>
