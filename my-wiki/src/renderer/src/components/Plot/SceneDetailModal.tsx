@@ -10,10 +10,12 @@ import {
   XCircle,
   Trash2,
   Plus,
-  MinusCircle
+  MinusCircle,
+  Sparkles // [NEW] Icon for AI
 } from 'lucide-react'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
+import { AIAnalyzePanel } from '../AI/AIAnalyzePanel' // [NEW] Import
 
 interface SceneDetailModalProps {
   filePath: string
@@ -41,9 +43,14 @@ export const SceneDetailModal = ({
   const [editCharacters, setEditCharacters] = useState('') // Comma separated string
   const [editLocations, setEditLocations] = useState('') // Comma separated string
   const [editTags, setEditTags] = useState('') // Comma separated string
+  const [editWikiData, setEditWikiData] = useState<any>(null) // [NEW] Wiki Data State
   const [editMetadata, setEditMetadata] = useState<Record<string, any>>({})
   const [newMetaKey, setNewMetaKey] = useState('')
   const [newMetaValue, setNewMetaValue] = useState('')
+
+  // [NEW] AI Panel State
+  const [isAIPanelOpen, setIsAIPanelOpen] = useState(false)
+
   // Focus Control
   const titleInputRef = useRef<HTMLInputElement>(null)
 
@@ -54,6 +61,7 @@ export const SceneDetailModal = ({
       // 닫힐 때 상태 초기화
       setIsEditing(false)
       setOriginalData(null)
+      setIsAIPanelOpen(false) // [NEW] Reset AI panel
     }
   }, [isOpen, filePath])
 
@@ -66,6 +74,7 @@ export const SceneDetailModal = ({
       }, 100)
       return () => clearTimeout(timer)
     }
+    return undefined
   }, [isEditing])
 
   const loadDetail = async () => {
@@ -92,6 +101,7 @@ export const SceneDetailModal = ({
     setEditCharacters(Array.isArray(fm.characters) ? fm.characters.join(', ') : '')
     setEditLocations(Array.isArray(fm.locations) ? fm.locations.join(', ') : '')
     setEditTags(Array.isArray(fm.tags) ? fm.tags.join(', ') : '')
+    setEditWikiData(fm['wiki-data'] || null) // [NEW] Sync Wiki Data
 
     const reserved = [
       'title',
@@ -101,7 +111,8 @@ export const SceneDetailModal = ({
       'tags',
       'type',
       'scene',
-      'updatedAt'
+      'updatedAt',
+      'wiki-data' // [NEW] Reserved
     ]
     const meta = { ...fm }
     reserved.forEach((key) => delete meta[key])
@@ -127,6 +138,7 @@ export const SceneDetailModal = ({
           characters: toArray(editCharacters),
           locations: toArray(editLocations),
           tags: toArray(editTags),
+          'wiki-data': editWikiData, // [NEW] Save Wiki Data
           ...editMetadata,
           updatedAt: new Date().toISOString()
         }
@@ -202,11 +214,24 @@ export const SceneDetailModal = ({
 
   const getFileName = (path: string) => path.split(/[\\/]/).pop()?.replace(/\.md$/i, '') || ''
 
+  // [NEW] AI Apply Handler
+  const handleAIApply = (data: any) => {
+    if (data.title) setEditTitle(data.title)
+    if (data.summary) setEditSummary(data.summary)
+    if (data.characters) setEditCharacters(data.characters.join(', '))
+    if (data.locations) setEditLocations(data.locations.join(', '))
+    if (data.tags) setEditTags(data.tags.join(', '))
+    if (data['wiki-data']) setEditWikiData(data['wiki-data']) // [NEW] Apply Wiki Data
+    
+    // Switch to edit mode automatically to show changes
+    setIsEditing(true)
+  }
+
   if (!isOpen) return null
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4 animate-in fade-in duration-200">
-      <div className="bg-slate-900 w-full max-w-6xl h-[85vh] rounded-2xl border border-slate-700 shadow-2xl flex overflow-hidden">
+      <div className="bg-slate-900 w-full max-w-6xl h-[85vh] rounded-2xl border border-slate-700 shadow-2xl flex overflow-hidden relative">
         {/* --- Left Column: Metadata Sidebar --- */}
         <div className="w-80 bg-slate-950 flex flex-col border-r border-slate-800 flex-shrink-0">
           {/* Header Info */}
@@ -399,13 +424,24 @@ export const SceneDetailModal = ({
                 </div>
               </div>
             )}
+
+            {/* [NEW] Wiki Data Indicator */}
+            {editWikiData && (
+              <div className="space-y-2 pt-4 border-t border-slate-800">
+                <div className="text-[10px] uppercase tracking-wider text-purple-400 font-bold flex items-center gap-1">
+                  <Sparkles size={12} /> Graph Data (Active)
+                </div>
+                <div className="text-xs text-slate-500">
+                  {(editWikiData.appear?.length || 0)} New, {(editWikiData.update?.length || 0)} Updates, {(editWikiData.relations?.length || 0)} Relations
+                </div>
+              </div>
+            )}
           </div>
         </div>
 
         {/* --- Right Column: Content Editor/Viewer --- */}
         <div className="flex-1 flex flex-col bg-[#0b0e14] relative z-0">
           {/* Top Bar (Actions) */}
-          {/* [FIX] sticky 제거, justify-between 적용, 배경색 불투명으로 변경 */}
           <div className="h-16 border-b border-slate-800 flex items-center px-6 bg-[#0b0e14] relative shrink-0 z-20">
             {/* Title Area */}
             <div className="w-full min-w-0 pr-36">
@@ -430,6 +466,16 @@ export const SceneDetailModal = ({
             </div>
 
             <div className="absolute right-6 top-0 h-full flex items-center gap-2">
+              {/* [NEW] Smart Analyze Button */}
+              {!isAIPanelOpen && (
+                <button
+                  onClick={() => setIsAIPanelOpen(true)}
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold text-purple-300 hover:text-white hover:bg-purple-900/30 border border-purple-500/30 transition-colors mr-4"
+                >
+                  <Sparkles size={14} /> Smart Analyze
+                </button>
+              )}
+
               {isEditing ? (
                 <>
                   <button
@@ -493,6 +539,15 @@ export const SceneDetailModal = ({
             </div>
           )}
         </div>
+
+        {/* [NEW] AI Side Panel */}
+        {isAIPanelOpen && (
+          <AIAnalyzePanel
+            initialText={editContent}
+            onApply={handleAIApply}
+            onClose={() => setIsAIPanelOpen(false)}
+          />
+        )}
       </div>
     </div>
   )

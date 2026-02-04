@@ -29,7 +29,12 @@ const api = {
   renameItem: (path: string, newName: string) =>
     ipcRenderer.invoke('rename-item', { path, newName }),
   updateScene: (payload: any) => ipcRenderer.invoke('update-scene', payload),
-  deleteItem: (path: string) => ipcRenderer.invoke('delete-item', path)
+  deleteItem: (path: string) => ipcRenderer.invoke('delete-item', path),
+
+  // [NEW] AI
+  saveAIKey: (key: string) => ipcRenderer.invoke('ai:saveKey', key),
+  getAIKey: () => ipcRenderer.invoke('ai:getKey'),
+  analyzeScene: (text: string) => ipcRenderer.invoke('ai:analyzeScene', text)
 }
 
 if (process.contextIsolated) {

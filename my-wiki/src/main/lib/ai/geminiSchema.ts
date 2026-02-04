@@ -1,52 +1,54 @@
+import { Schema, SchemaType } from '@google/generative-ai'
 
 /**
  * JSON Schema for Scene Data Standard Protocol v1.1
  * This schema is used to enforce structured output from Gemini.
  */
-export const SCENE_DATA_JSON_SCHEMA = {
-  type: 'object',
+export const SCENE_DATA_JSON_SCHEMA: Schema = {
+  type: SchemaType.OBJECT,
   properties: {
-    type: { type: 'string', enum: ['scene'] },
-    chapter: { type: 'number', description: 'Episode/Chapter number' },
-    scene: { type: 'number', description: 'Scene number within the chapter' },
-    title: { type: 'string', description: 'Title of the scene' },
-    summary: { type: 'string', description: 'Brief summary of the scene events' },
+    type: { type: SchemaType.STRING, enum: ['scene'], format: 'enum' },
+    chapter: { type: SchemaType.NUMBER, description: 'Episode/Chapter number' },
+    scene: { type: SchemaType.NUMBER, description: 'Scene number within the chapter' },
+    title: { type: SchemaType.STRING, description: 'Title of the scene' },
+    summary: { type: SchemaType.STRING, description: 'Brief summary of the scene events' },
     characters: {
-      type: 'array',
-      items: { type: 'string' },
+      type: SchemaType.ARRAY,
+      items: { type: SchemaType.STRING },
       description: 'List of character names appearing in the scene'
     },
     locations: {
-      type: 'array',
-      items: { type: 'string' },
+      type: SchemaType.ARRAY,
+      items: { type: SchemaType.STRING },
       description: 'List of locations where the scene takes place'
     },
     'wiki-data': {
-      type: 'object',
+      type: SchemaType.OBJECT,
       properties: {
         appear: {
-          type: 'array',
-          items: { type: 'string' },
+          type: SchemaType.ARRAY,
+          items: { type: SchemaType.STRING },
           description: 'Characters or items newly appearing in the graph'
         },
         update: {
-          type: 'array',
+          type: SchemaType.ARRAY,
           items: {
-            type: 'object',
+            type: SchemaType.OBJECT,
             properties: {
-              name: { type: 'string' },
+              name: { type: SchemaType.STRING },
               changes: {
-                type: 'object',
+                type: SchemaType.OBJECT,
                 properties: {
                   status: {
-                    type: 'string',
-                    enum: ['ALIVE', 'DECEASED', 'INJURED', 'STUNNED', 'UNKNOWN', 'ILLUSION']
+                    type: SchemaType.STRING,
+                    enum: ['ALIVE', 'DECEASED', 'INJURED', 'STUNNED', 'UNKNOWN', 'ILLUSION'],
+                    format: 'enum'
                   },
-                  role: { type: 'string' },
-                  affiliation: { type: 'string' },
-                  mental: { type: 'string' },
-                  action: { type: 'string' },
-                  image: { type: 'string' }
+                  role: { type: SchemaType.STRING },
+                  affiliation: { type: SchemaType.STRING },
+                  mental: { type: SchemaType.STRING },
+                  action: { type: SchemaType.STRING },
+                  image: { type: SchemaType.STRING }
                 },
                 required: ['status'] // status is crucial as per protocol
               }
@@ -55,22 +57,22 @@ export const SCENE_DATA_JSON_SCHEMA = {
           }
         },
         relations: {
-          type: 'array',
+          type: SchemaType.ARRAY,
           items: {
-            type: 'object',
+            type: SchemaType.OBJECT,
             properties: {
-              source: { type: 'string' },
-              name: { type: 'string' },
-              display: { type: 'string' },
-              mood: { type: 'string', enum: ['FRIENDLY', 'HOSTILE', 'NEUTRAL'] },
-              tense: { type: 'string', enum: ['CURRENT', 'PAST'] }
+              source: { type: SchemaType.STRING },
+              name: { type: SchemaType.STRING },
+              display: { type: SchemaType.STRING },
+              mood: { type: SchemaType.STRING, enum: ['FRIENDLY', 'HOSTILE', 'NEUTRAL'], format: 'enum' },
+              tense: { type: SchemaType.STRING, enum: ['CURRENT', 'PAST'], format: 'enum' }
             },
             required: ['source', 'name', 'mood', 'tense']
           }
         },
         disappear: {
-          type: 'array',
-          items: { type: 'string' },
+          type: SchemaType.ARRAY,
+          items: { type: SchemaType.STRING },
           description: 'Characters explicitly leaving the stage (not death)'
         }
       }

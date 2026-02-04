@@ -21,7 +21,10 @@ The user has provided a segment of a novel. You must analyze the characters, the
 3. **Status Enum (Crucial)**:
     - The 'status' field inside 'update' MUST be one of: ['ALIVE', 'DECEASED', 'INJURED', 'STUNNED', 'UNKNOWN', 'ILLUSION'].
     - Do NOT use free text in 'status'. Put descriptions in 'action' or 'mental'.
-4. **Logic**:
+4. **Language (Crucial)**:
+    - **ALL output values (summary, titles, etc.) MUST be in KOREAN (Hangul).**
+    - Do not translate proper nouns if they are English names in the input, but describe context in Korean.
+5. **Logic**:
     - **Death**: If a character dies, use 'update' with 'status': 'DECEASED'. DO NOT use 'disappear'.
     - **Snapshot**: Record only the *final state* of the character at the end of the scene.
     - **Disappear**: Use only when characters leave the location physically (exit stage).

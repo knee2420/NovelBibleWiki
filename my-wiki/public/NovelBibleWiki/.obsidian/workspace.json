@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "EX급 귀환자/20_Wiki/1.Characters/마석두.md",
+                "file": "EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/1화_이름없는영웅/1화.이름 없는 영웅 - SCENE3.md",
                 "mode": "source",
-                "source": false
+                "source": true
               },
               "icon": "lucide-file",
-              "title": "마석두"
+              "title": "1화.이름 없는 영웅 - SCENE3"
             }
           },
           {
@@ -199,8 +199,13 @@
   },
   "active": "12f7eb62f09bbc0f",
   "lastOpenFiles": [
-    "EX급 귀환자/20_Wiki/1.Characters/카이저.md",
+    "EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/1화_이름없는영웅/1화.이름 없는 영웅 - SCENE2.md",
+    "EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/1화_이름없는영웅/SCHEMA_TEST_SCENE2.md",
+    "EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/1화_이름없는영웅/SCHEMA_TEST_SCENE1.md",
+    "EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/1화_이름없는영웅/1화.이름 없는 영웅 - SCENE3.md",
+    "EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/1화_이름없는영웅/SCHEMA_TEST_SCENE3.md",
     "EX급 귀환자/20_Wiki/1.Characters/마석두.md",
+    "EX급 귀환자/20_Wiki/1.Characters/카이저.md",
     "EX급 귀환자/20_Wiki/1.Characters/남성일.md",
     "EX급 귀환자/20_Wiki/2. 세력 및 단체/철기 길드.md",
     "EX급 귀환자/20_Wiki/2. 세력 및 단체/블랙맘바.md",
@@ -221,12 +226,7 @@
     "EX급 귀환자/00_original/(book)6화.md",
     "EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/6화_오늘은 썩 기분이 좋았다/SCHEMA_TEST_SCENE1.md",
     "EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/5화_긴장,이완/SCHEMA_TEST_SCENE1.md",
-    "EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/5화_긴장,이완/SCHEMA_TEST_SCENE2.md",
-    "EX급 귀환자/00_original/(book)5화.md",
     "EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/6화_오늘은 썩 기분이 좋았다",
-    "EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/5화_긴장,이완/SCENE-1.md",
-    "EX급 귀환자/88_Settings/(gen)씬별 표준 데이터 스키마-관계형.md",
-    "EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/4화_치유,새로운 경험, 삶/SCHEMA_TEST_SCENE1.md",
     "EX급 귀환자/88_Settings",
     "EX급 귀환자/99_Assets/images/royal.jpg",
     "EX급 귀환자/99_Assets/images/mk3.jpg",

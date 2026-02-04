@@ -40,5 +40,6 @@ export interface SceneSchema {
   summary: string;
   characters: string[];
   locations: string[];
+  tags: string[];
   'wiki-data': SceneDelta;
 }
