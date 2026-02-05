@@ -8,6 +8,8 @@ import { SCENE_DATA_JSON_SCHEMA } from '../lib/ai/geminiSchema'
 // We use a specific key for the API token
 const STORE_KEY_API_TOKEN = 'gemini_api_key'
 
+import { characterService } from '../services/characterService'
+
 export function setupAIHandlers(store: Store): void {
   // 1. Save API Key
   ipcMain.handle('ai:saveKey', async (_, apiKey: string) => {
@@ -46,6 +48,25 @@ export function setupAIHandlers(store: Store): void {
     } catch (error: any) {
       console.error('Gemini API Error:', error)
       return { success: false, message: error.message }
+    }
+  })
+
+  // 4. Update Characters
+  ipcMain.handle('ai:updateCharacter', async (_, payload: { aiResult: any, sceneInfo: any }) => {
+    try {
+        const { aiResult, sceneInfo } = payload
+        const results: any[] = []
+
+        if (aiResult.characters && Array.isArray(aiResult.characters)) {
+            for (const char of aiResult.characters) {
+                const res = await characterService.upsertCharacter(char.name, char, sceneInfo)
+                results.push(res)
+            }
+        }
+        return { success: true, results }
+    } catch (error: any) {
+        console.error('Character Update Error:', error)
+        return { success: false, message: error.message }
     }
   })
 }
