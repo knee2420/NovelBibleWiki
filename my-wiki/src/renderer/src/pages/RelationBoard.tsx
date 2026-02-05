@@ -15,7 +15,9 @@ import { Copy, Play, Pause, SkipBack, SkipForward, History, Globe } from 'lucide
 import '@xyflow/react/dist/style.css'
 import { WikiEntry } from '../types/wiki'
 import { SceneCard } from '../types/plot'
-import { getRadialPositions, findEntryByName } from '../utils/graphLayout'
+import { getRadialPositions } from '../utils/graphLayout'
+// [Refactor] Use global name resolver
+import { findEntryByName, resolveCanonicalName } from '../utils/nameResolver'
 import { getEdgeStyle } from '../utils/graphStyles'
 import { CharacterNode } from '../components/Board/CharacterNode'
 import { FactionNode } from '../components/Board/FactionNode'
@@ -160,40 +162,77 @@ export const RelationBoard: React.FC<RelationBoardProps> = ({ wikiData, sceneDat
       if (!delta) continue
       const isCurrentStep = i === currentSceneIndex
 
+      // 주인공 찾기 (for fallback connection)
+      const protagonistName = wikiData.find((e) => e.name.includes('강진우'))?.name || wikiData[0]?.name
+
       // A. Appear
       if (delta.appear) {
         delta.appear.forEach((name) => {
-          const node = currentNodesMap.get(name)
-          if (node) node.hidden = false
+          // [Global Alias Resolution]
+          const resolvedName = resolveCanonicalName(name, wikiData)
+          const node = currentNodesMap.get(resolvedName)
+
           if (node) {
             node.hidden = false
-            // [Highlight] 이번에 등장했으면 강조
             if (isCurrentStep) node.data.isNew = true
+
+            // [New Feature] Implicit Connection to Protagonist
+            if (protagonistName && resolvedName !== protagonistName) {
+                const forwardKey = `${protagonistName}-${resolvedName}`
+                const backwardKey = `${resolvedName}-${protagonistName}`
+                
+                if (!activeEdges.has(forwardKey) && !activeEdges.has(backwardKey)) {
+                     activeEdges.set(forwardKey, {
+                        source: protagonistName,
+                        name: resolvedName,
+                        display: '등장',
+                        mood: 'neutral',
+                        isNew: isCurrentStep,
+                        term: 'appear'
+                    })
+                }
+            }
           }
         })
       }
+
       // B. Update
       if (delta.update) {
         delta.update.forEach((upd) => {
-          const node = currentNodesMap.get(upd.name)
+          const resolvedName = resolveCanonicalName(upd.name, wikiData)
+          const node = currentNodesMap.get(resolvedName)
           if (node) {
+            node.hidden = false
             node.data.info = { ...(node.data.info as any), ...upd.changes }
             if (upd.changes.image) node.data.image = upd.changes.image
             if (isCurrentStep) node.data.isModified = true
           }
         })
       }
+
       // C. Relations (Edges)
       if (delta.relations) {
         delta.relations.forEach((rel) => {
-          const edgeKey = `${rel.source}-${rel.name}`
+          const sourceName = resolveCanonicalName(rel.source, wikiData)
+          const targetName = resolveCanonicalName(rel.name, wikiData)
+
+          const sourceNode = currentNodesMap.get(sourceName)
+          if (sourceNode) sourceNode.hidden = false
+          
+          const targetNode = currentNodesMap.get(targetName)
+          if (targetNode) targetNode.hidden = false
+
+          // Edge Key with resolved names
+          const edgeKey = `${sourceName}-${targetName}`
           activeEdges.set(edgeKey, { ...rel, isNew: isCurrentStep })
         })
       }
+
       // D. Disappear
       if (delta.disappear) {
         delta.disappear.forEach((name) => {
-          const node = currentNodesMap.get(name)
+          const resolvedName = resolveCanonicalName(name, wikiData)
+          const node = currentNodesMap.get(resolvedName)
           if (node) node.hidden = true
         })
       }
@@ -215,7 +254,9 @@ export const RelationBoard: React.FC<RelationBoardProps> = ({ wikiData, sceneDat
 
       if (sourceNode && !sourceNode.hidden && targetNode && !targetNode.hidden) {
         const style = getEdgeStyle(rel.mood, rel.tense)
-        const highlightStyle = rel.isNew ? { strokeWidth: 3, filter: 'drop-shadow(0 0 4px currentColor)' } : {}
+        const highlightStyle = rel.isNew
+          ? { strokeWidth: 3, filter: 'drop-shadow(0 0 4px currentColor)' }
+          : {}
         calculatedEdges.push({
           id: `edge-${sourceName}-${targetName}`,
           source: sourceNode.id, // 실제 연결은 Node ID로 해야 함
@@ -555,7 +596,8 @@ export const RelationBoard: React.FC<RelationBoardProps> = ({ wikiData, sceneDat
           <div className="flex justify-between items-end mb-1">
             <div>
               <span className="text-xs text-cyan-400 font-bold tracking-wider">
-                CH.{sceneData[currentSceneIndex]?.chapterNumber} # {sceneData[currentSceneIndex]?.sceneNumber}
+                CH.{sceneData[currentSceneIndex]?.chapterNumber} #{' '}
+                {sceneData[currentSceneIndex]?.sceneNumber}
               </span>
               <h3 className="text-lg font-bold text-white leading-tight">
                 {sceneData[currentSceneIndex]?.title}

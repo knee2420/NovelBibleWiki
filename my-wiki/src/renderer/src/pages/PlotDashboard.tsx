@@ -1,9 +1,10 @@
 import { useState, useEffect, useRef } from 'react'
 import { ActBoard } from '../types/plot'
-import { Columns, Plus, MoreHorizontal, X, Edit2, Trash2 } from 'lucide-react'
+import { Columns, Plus, MoreHorizontal, X, Edit2, Trash2, Sparkles } from 'lucide-react'
 import { DragDropContext, Draggable, Droppable, DropResult } from '@hello-pangea/dnd'
 import { SceneCard } from '../components/Plot/SceneCard'
 import { SceneDetailModal } from '../components/Plot/SceneDetailModal'
+import { BulkImportModal } from '../components/AI/BulkImportModal' // [NEW] Import
 
 export const PlotDashboard = () => {
   const [plotData, setPlotData] = useState<ActBoard[]>([])
@@ -12,6 +13,10 @@ export const PlotDashboard = () => {
   const [selectedScenePath, setSelectedScenePath] = useState<string | null>(null)
   const [modalConfig, setModalConfig] = useState({ isOpen: false, type: '', path: '', title: '' })
   const [activeMenuId, setActiveMenuId] = useState<string | null>(null)
+  
+  // [NEW] Bulk Import State
+  const [isBulkImportOpen, setIsBulkImportOpen] = useState(false)
+
   const inputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
@@ -139,12 +144,13 @@ export const PlotDashboard = () => {
       }, 100)
       return () => clearTimeout(timer)
     }
+    return undefined
   }, [modalConfig.isOpen])
 
   const currentAct = plotData[currentActIndex]
 
   if (loading) return <div className="text-white p-8">로딩 중...</div>
-  if (!currentAct) return <div className="text-slate-500 p-8">데이터 없음</div>
+  // if (!currentAct) return <div className="text-slate-500 p-8">데이터 없음</div> // [FIX] 데이터 없어도 UI 렌더링하도록 수정 가능하지만 일단 유지
 
   return (
     <div className="h-full flex flex-col overflow-hidden bg-[#0b0c15]">
@@ -176,153 +182,176 @@ export const PlotDashboard = () => {
         >
           <Plus className="w-4 h-4" />
         </button>
+
+        {/* [NEW] Bulk Import Button */}
+        <button
+          onClick={() => setIsBulkImportOpen(true)}
+          className="ml-4 flex items-center gap-2 px-3 py-1.5 bg-purple-600/10 border border-purple-500/30 text-purple-400 hover:bg-purple-600 hover:text-white rounded-lg text-xs font-bold transition-all"
+        >
+          <Sparkles size={14} /> AI Bulk Import
+        </button>
+
         <span className="ml-auto text-xs text-slate-600 flex items-center gap-1">
           <Columns className="w-3 h-3" /> 드래그로 씬 이동 가능
         </span>
       </div>
+      
       {/* 2. Kanban Board Area (DnD Context) */}
-      <DragDropContext onDragEnd={onDragEnd}>
-        <Droppable droppableId="board" type="chapter" direction="horizontal">
-          {(provided) => (
-            <div ref={provided.innerRef} {...provided.droppableProps} className="flex-1 p-6">
-              <div className="flex flex-wrap items-start gap-3">
-                {currentAct.chapters.map((chapter, index) => (
-                  // [NEW] 각 챕터를 Draggable로 감싸기
-                  <Draggable key={chapter.id} draggableId={chapter.id} index={index}>
-                    {(provided, snapshot) => (
-                      <div
-                        ref={provided.innerRef}
-                        {...provided.draggableProps}
-                        className={`w-[300px] flex flex-col flex-shrink-0 bg-[#161822] rounded-xl border shadow-sm transition-colors ${
-                          snapshot.isDragging
-                            ? 'border-blue-500 z-50 shadow-2xl'
-                            : 'border-slate-800/60'
-                        }`}
-                      >
-                        {/* Column Header (여기가 드래그 손잡이!) */}
+      {currentAct ? (
+        <DragDropContext onDragEnd={onDragEnd}>
+          <Droppable droppableId="board" type="chapter" direction="horizontal">
+            {(provided) => (
+              <div ref={provided.innerRef} {...provided.droppableProps} className="flex-1 p-6">
+                <div className="flex flex-wrap items-start gap-3">
+                  {currentAct.chapters.map((chapter, index) => (
+                    // [NEW] 각 챕터를 Draggable로 감싸기
+                    <Draggable key={chapter.id} draggableId={chapter.id} index={index}>
+                      {(provided, snapshot) => (
                         <div
-                          {...provided.dragHandleProps}
-                          className="p-3 flex items-center justify-between border-b border-slate-800/60 cursor-grab active:cursor-grabbing hover:bg-slate-800/30 rounded-t-xl"
+                          ref={provided.innerRef}
+                          {...provided.draggableProps}
+                          className={`w-[300px] flex flex-col flex-shrink-0 bg-[#161822] rounded-xl border shadow-sm transition-colors ${
+                            snapshot.isDragging
+                              ? 'border-blue-500 z-50 shadow-2xl'
+                              : 'border-slate-800/60'
+                          }`}
                         >
-                          <h3 className="font-bold text-slate-300 text-sm truncate px-1">
-                            <span className="text-blue-500 mr-2 opacity-80">
-                              #{chapter.chapterNumber}
-                            </span>
-                            {chapter.title}
-                          </h3>
-                          <div className="flex items-center gap-2">
-                            <span className="text-[10px] bg-slate-800 text-slate-500 px-2 py-0.5 rounded-full font-mono">
-                              {chapter.scenes.length}
-                            </span>
-                            <div className="relative">
-                              <button
-                                onClick={(e) => {
-                                  e.stopPropagation() // 헤더 클릭 방지
-                                  setActiveMenuId(activeMenuId === chapter.id ? null : chapter.id)
-                                }}
-                                className={`p-1 rounded hover:bg-slate-700 transition-colors ${activeMenuId === chapter.id ? 'text-white bg-slate-700' : 'text-slate-600'}`}
-                              >
-                                <MoreHorizontal className="w-4 h-4" />
-                              </button>
+                          {/* Column Header (여기가 드래그 손잡이!) */}
+                          <div
+                            {...provided.dragHandleProps}
+                            className="p-3 flex items-center justify-between border-b border-slate-800/60 cursor-grab active:cursor-grabbing hover:bg-slate-800/30 rounded-t-xl"
+                          >
+                            <h3 className="font-bold text-slate-300 text-sm truncate px-1">
+                              <span className="text-blue-500 mr-2 opacity-80">
+                                #{chapter.chapterNumber}
+                              </span>
+                              {chapter.title}
+                            </h3>
+                            <div className="flex items-center gap-2">
+                              <span className="text-[10px] bg-slate-800 text-slate-500 px-2 py-0.5 rounded-full font-mono">
+                                {chapter.scenes.length}
+                              </span>
+                              <div className="relative">
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation() // 헤더 클릭 방지
+                                    setActiveMenuId(activeMenuId === chapter.id ? null : chapter.id)
+                                  }}
+                                  className={`p-1 rounded hover:bg-slate-700 transition-colors ${activeMenuId === chapter.id ? 'text-white bg-slate-700' : 'text-slate-600'}`}
+                                >
+                                  <MoreHorizontal className="w-4 h-4" />
+                                </button>
 
-                              {activeMenuId === chapter.id && (
-                                <>
-                                  {/* Backdrop (클릭 시 닫기용) */}
-                                  <div
-                                    className="fixed inset-0 z-40 cursor-default"
-                                    onClick={(e) => {
-                                      e.stopPropagation()
-                                      setActiveMenuId(null)
-                                    }}
-                                  />
-
-                                  {/* Menu Items */}
-                                  <div className="absolute right-0 top-full mt-1 w-32 bg-slate-800 border border-slate-700 rounded-lg shadow-xl z-50 flex flex-col py-1 overflow-hidden animate-in fade-in zoom-in-95 duration-100">
-                                    <button
+                                {activeMenuId === chapter.id && (
+                                  <>
+                                    {/* Backdrop (클릭 시 닫기용) */}
+                                    <div
+                                      className="fixed inset-0 z-40 cursor-default"
                                       onClick={(e) => {
                                         e.stopPropagation()
-                                        handleRenameChapter(chapter)
                                         setActiveMenuId(null)
                                       }}
-                                      className="flex items-center gap-2 px-3 py-2 text-xs text-slate-300 hover:text-white hover:bg-blue-600 transition-colors text-left"
-                                    >
-                                      <Edit2 size={12} /> 제목 수정
-                                    </button>
-                                    <button
-                                      onClick={(e) => {
-                                        e.stopPropagation()
-                                        handleDeleteChapter(chapter)
-                                        setActiveMenuId(null)
-                                      }}
-                                      className="flex items-center gap-2 px-3 py-2 text-xs text-red-400 hover:text-white hover:bg-red-600 transition-colors text-left"
-                                    >
-                                      <Trash2 size={12} /> 삭제하기
-                                    </button>
-                                  </div>
-                                </>
-                              )}
+                                    />
+
+                                    {/* Menu Items */}
+                                    <div className="absolute right-0 top-full mt-1 w-32 bg-slate-800 border border-slate-700 rounded-lg shadow-xl z-50 flex flex-col py-1 overflow-hidden animate-in fade-in zoom-in-95 duration-100">
+                                      <button
+                                        onClick={(e) => {
+                                          e.stopPropagation()
+                                          handleRenameChapter(chapter)
+                                          setActiveMenuId(null)
+                                        }}
+                                        className="flex items-center gap-2 px-3 py-2 text-xs text-slate-300 hover:text-white hover:bg-blue-600 transition-colors text-left"
+                                      >
+                                        <Edit2 size={12} /> 제목 수정
+                                      </button>
+                                      <button
+                                        onClick={(e) => {
+                                          e.stopPropagation()
+                                          handleDeleteChapter(chapter)
+                                          setActiveMenuId(null)
+                                        }}
+                                        className="flex items-center gap-2 px-3 py-2 text-xs text-red-400 hover:text-white hover:bg-red-600 transition-colors text-left"
+                                      >
+                                        <Trash2 size={12} /> 삭제하기
+                                      </button>
+                                    </div>
+                                  </>
+                                )}
+                              </div>
                             </div>
                           </div>
-                        </div>
 
-                        {/* Droppable Area (Existing Scene List) */}
-                        <Droppable droppableId={chapter.id} type="scene">
-                          {(provided, snapshot) => (
-                            <div
-                              ref={provided.innerRef}
-                              {...provided.droppableProps}
-                              className={`p-2 min-h-[150px] space-y-2 transition-colors rounded-b-xl ${
-                                snapshot.isDraggingOver ? 'bg-slate-800/30' : ''
-                              }`}
-                            >
-                              {chapter.scenes.map((scene, index) => (
-                                <SceneCard
-                                  key={scene.id}
-                                  scene={scene}
-                                  index={index}
-                                  onClick={setSelectedScenePath}
-                                  onDelete={() => {
-                                    if (window.confirm('씬 삭제?')) {
-                                      // @ts-ignore
-                                      window.api.deleteItem(scene.id).then(refresh)
-                                    }
-                                  }}
-                                />
-                              ))}
-                              {provided.placeholder}
-
-                              {chapter.scenes.length === 0 && (
-                                <div className="h-full flex items-center justify-center text-slate-700 text-xs py-10 border-2 border-dashed border-slate-800 rounded-lg mx-2">
-                                  빈 챕터
-                                </div>
-                              )}
-                              <button
-                                onClick={() => handleCreateScene(chapter.id)}
-                                className="w-full py-2 mt-2 flex items-center justify-center gap-1 text-xs text-slate-500 hover:bg-slate-800/50 hover:text-slate-300 rounded-lg transition-colors border border-transparent hover:border-slate-800 dashed"
+                          {/* Droppable Area (Existing Scene List) */}
+                          <Droppable droppableId={chapter.id} type="scene">
+                            {(provided, snapshot) => (
+                              <div
+                                ref={provided.innerRef}
+                                {...provided.droppableProps}
+                                className={`p-2 min-h-[150px] space-y-2 transition-colors rounded-b-xl ${
+                                  snapshot.isDraggingOver ? 'bg-slate-800/30' : ''
+                                }`}
                               >
-                                <Plus className="w-3 h-3" /> 씬 추가
-                              </button>
-                            </div>
-                          )}
-                        </Droppable>
-                      </div>
-                    )}
-                  </Draggable>
-                ))}
-                {provided.placeholder}
-                <button
-                  onClick={handleCreateChapter}
-                  className="w-[300px] flex-shrink-0 h-[100px] border-2 border-dashed border-slate-800 rounded-xl flex items-center justify-center text-slate-600 hover:text-slate-400 hover:border-slate-600 hover:bg-slate-800/20 transition-all"
-                >
-                  <span className="flex items-center gap-2 font-bold">
-                    <Plus className="w-5 h-5" /> 챕터 추가
-                  </span>
-                </button>
+                                {chapter.scenes.map((scene, index) => (
+                                  <SceneCard
+                                    key={scene.id}
+                                    scene={scene}
+                                    index={index}
+                                    onClick={setSelectedScenePath}
+                                    onDelete={() => {
+                                      if (window.confirm('씬 삭제?')) {
+                                        // @ts-ignore
+                                        window.api.deleteItem(scene.id).then(refresh)
+                                      }
+                                    }}
+                                  />
+                                ))}
+                                {provided.placeholder}
+
+                                {chapter.scenes.length === 0 && (
+                                  <div className="h-full flex items-center justify-center text-slate-700 text-xs py-10 border-2 border-dashed border-slate-800 rounded-lg mx-2">
+                                    빈 챕터
+                                  </div>
+                                )}
+                                <button
+                                  onClick={() => handleCreateScene(chapter.id)}
+                                  className="w-full py-2 mt-2 flex items-center justify-center gap-1 text-xs text-slate-500 hover:bg-slate-800/50 hover:text-slate-300 rounded-lg transition-colors border border-transparent hover:border-slate-800 dashed"
+                                >
+                                  <Plus className="w-3 h-3" /> 씬 추가
+                                </button>
+                              </div>
+                            )}
+                          </Droppable>
+                        </div>
+                      )}
+                    </Draggable>
+                  ))}
+                  {provided.placeholder}
+                  <button
+                    onClick={handleCreateChapter}
+                    className="w-[300px] flex-shrink-0 h-[100px] border-2 border-dashed border-slate-800 rounded-xl flex items-center justify-center text-slate-600 hover:text-slate-400 hover:border-slate-600 hover:bg-slate-800/20 transition-all"
+                  >
+                    <span className="flex items-center gap-2 font-bold">
+                      <Plus className="w-5 h-5" /> 챕터 추가
+                    </span>
+                  </button>
+                </div>
               </div>
-            </div>
-          )}
-        </Droppable>
-      </DragDropContext>
+            )}
+          </Droppable>
+        </DragDropContext>
+      ) : (
+        <div className="flex-1 flex flex-col items-center justify-center text-slate-500">
+             <p className="mb-4">생성된 Act가 없습니다.</p>
+             <button
+               onClick={handleCreateAct}
+               className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-500 font-bold"
+             >
+               첫 Act 생성하기
+             </button>
+        </div>
+      )}
+
       {/* Modal */}
       <SceneDetailModal
         isOpen={!!selectedScenePath}
@@ -330,6 +359,18 @@ export const PlotDashboard = () => {
         onUpdate={refresh}
         onClose={() => setSelectedScenePath(null)}
       />
+
+      {/* [NEW] Bulk Import Modal */}
+      <BulkImportModal
+        isOpen={isBulkImportOpen}
+        onClose={() => setIsBulkImportOpen(false)}
+        actPath={currentAct?.path} // Pass current act path
+        onComplete={() => {
+          refresh()
+          alert('가져오기가 완료되었습니다.')
+        }}
+      />
+
       {modalConfig.isOpen && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
           <div className="bg-slate-900 border border-slate-700 rounded-xl w-full max-w-md shadow-2xl animate-in fade-in zoom-in-95 duration-200">

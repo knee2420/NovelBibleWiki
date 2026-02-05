@@ -11,19 +11,27 @@ import {
   Trash2,
   Image as ImageIcon,
   Plus,
-  MinusCircle
+  MinusCircle,
+  Clock, 
+  BookOpen,
+  Activity,
+  Maximize2,
+  Minimize2
 } from 'lucide-react'
 import ReactMarkdown from 'react-markdown'
+import { CharacterHistoryViewer } from '../Analysis/CharacterHistoryViewer' 
+import { CharacterStatusViewer } from '../Analysis/CharacterStatusViewer' 
 
 interface WikiDetailModalProps {
   entry: WikiEntry
   onClose: () => void
-  onUpdate?: () => void // 저장 후 데이터 갱신 콜백
+  onUpdate?: () => void 
 }
 
 export const WikiDetailModal = ({ entry, onClose, onUpdate }: WikiDetailModalProps) => {
   // --- View Mode Data ---
-  // (초기 데이터는 entry에서 옴)
+  const [activeTab, setActiveTab] = useState<'overview' | 'status' | 'history'>('overview')
+  const [isMaximized, setIsMaximized] = useState(false) // [NEW] Window State
 
   // --- Edit Mode State ---
   const [isEditing, setIsEditing] = useState(false)
@@ -39,6 +47,37 @@ export const WikiDetailModal = ({ entry, onClose, onUpdate }: WikiDetailModalPro
   const [previewImage, setPreviewImage] = useState(entry.image || '')
   const titleInputRef = useRef<HTMLInputElement>(null)
 
+  // ... (Keep existing hooks and handlers unchanged)
+  // Just copying handlers to ensure context exists, or I can use the same pattern as before if I don't need to change them.
+  // Actually, I should use the range replacement to avoid rewriting everything. 
+  
+  // Handlers (truncated for brevity in ReplacementContent, I will target the full file structure with carefully chosen start/end lines if I rewrite the whole thing, OR use specific blocks)
+  // Since I need to change imports AND render AND state, a full rewrite might be safer to avoid offset errors, or multiple chunks.
+  // I will use multiple chunks.
+  
+  // CHUNK 1: Imports
+  
+  // CHUNK 2: State
+  
+  // CHUNK 3: Modal Container Class
+  
+  // CHUNK 4: Child Component Props
+  
+  // Wait, `replace_file_content` allows multiple chunks but requires exact string matching.
+  // Let's do it in one go if I can match the surrounding code.
+  // Actually, I'll just rewrite the Return statement and the imports/state.
+  
+  // Let's stick to the instruction: "Add Maximize toggle..."
+  
+  // I will just use `replace_file_content` with specific blocks.
+  
+
+  // Derived Data
+  const aliases = (entry.info as any)?.alias ? [(entry.info as any).alias] : []
+
+
+
+
   useEffect(() => {
     if (isEditing) {
       const timer = setTimeout(() => {
@@ -47,6 +86,7 @@ export const WikiDetailModal = ({ entry, onClose, onUpdate }: WikiDetailModalPro
       }, 300)
       return () => clearTimeout(timer)
     }
+    return () => {} // Explicitly return a cleanup function or nothing consistently
   }, [isEditing])
 
   // --- Handlers ---
@@ -155,7 +195,7 @@ export const WikiDetailModal = ({ entry, onClose, onUpdate }: WikiDetailModalPro
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm animate-in fade-in duration-200 p-4">
       {/* Modal Container */}
-      <div className="relative w-full max-w-5xl h-[85vh] bg-slate-900 border border-slate-700 rounded-2xl shadow-2xl flex overflow-hidden">
+      <div className={`relative bg-slate-900 border border-slate-700 shadow-2xl flex overflow-hidden transition-all duration-300 ${isMaximized ? 'fixed inset-0 w-screen h-screen z-[110] rounded-none border-0' : 'w-full max-w-5xl h-[85vh] rounded-2xl'}`}>
         {/* --- Left Column: Image & Meta (Fixed width) --- */}
         <div className="w-80 bg-slate-950 flex flex-col border-r border-slate-800 flex-shrink-0">
           {/* Image Area */}
@@ -384,6 +424,13 @@ export const WikiDetailModal = ({ entry, onClose, onUpdate }: WikiDetailModalPro
                   >
                     <Edit2 size={14} /> 수정
                   </button>
+                  <button 
+                    onClick={() => setIsMaximized(!isMaximized)}
+                    className="flex items-center justify-center w-8 h-8 rounded-full text-slate-500 hover:text-white hover:bg-slate-800 transition-colors mr-1"
+                    title={isMaximized ? "Restore" : "Maximize"}
+                  >
+                    {isMaximized ? <Minimize2 size={16} /> : <Maximize2 size={16} />}
+                  </button>
                   <button
                     onClick={onClose}
                     className="flex items-center justify-center w-8 h-8 rounded-full text-slate-500 hover:text-white hover:bg-slate-800 transition-colors"
@@ -396,19 +443,60 @@ export const WikiDetailModal = ({ entry, onClose, onUpdate }: WikiDetailModalPro
           </div>
 
           {/* Content Body */}
-          <div className="flex-1 overflow-y-auto custom-scrollbar p-8 w-full min-w-0">
+          <div className="flex-1 w-full min-w-0 bg-[#0b0e14] relative flex flex-col overflow-hidden">
+            
+            {/* [NEW] Tabs for Character */}
+            {!isEditing && entry.type === 'character' && (
+                <div className="flex items-center border-b border-slate-800 bg-slate-950/50 sticky top-0 z-10 px-6 backdrop-blur-sm shrink-0">
+                    <button
+                        onClick={() => setActiveTab('overview')}
+                        className={`px-4 py-3 text-xs font-bold border-b-2 transition-colors flex items-center gap-2 ${activeTab === 'overview' ? 'border-blue-500 text-blue-400' : 'border-transparent text-slate-500 hover:text-slate-300'}`}
+                    >
+                        <BookOpen size={14} /> 개요 (Overview)
+                    </button>
+                    <button
+                        onClick={() => setActiveTab('status')}
+                        className={`px-4 py-3 text-xs font-bold border-b-2 transition-colors flex items-center gap-2 ${activeTab === 'status' ? 'border-green-500 text-green-400' : 'border-transparent text-slate-500 hover:text-slate-300'}`}
+                    >
+                        <Activity size={14} /> 상태 (Status)
+                    </button>
+                    <button
+                        onClick={() => setActiveTab('history')}
+                        className={`px-4 py-3 text-xs font-bold border-b-2 transition-colors flex items-center gap-2 ${activeTab === 'history' ? 'border-purple-500 text-purple-400' : 'border-transparent text-slate-500 hover:text-slate-300'}`}
+                    >
+                        <Clock size={14} /> 타임라인 (History)
+                    </button>
+                </div>
+            )}
+
             {isEditing ? (
-              <textarea
-                value={editContent}
-                onChange={(e) => setEditContent(e.target.value)}
-                className="w-full h-full min-h-[500px] bg-transparent text-slate-300 text-sm leading-relaxed focus:outline-none resize-none font-mono"
-                placeholder="# 내용을 입력하세요..."
-              />
+                <div className="flex-1 overflow-y-auto p-8 custom-scrollbar">
+                    <textarea
+                        value={editContent}
+                        onChange={(e) => setEditContent(e.target.value)}
+                        className="w-full h-full min-h-[500px] bg-transparent text-slate-300 text-sm leading-relaxed focus:outline-none resize-none font-mono"
+                        placeholder="# 내용을 입력하세요..."
+                    />
+                </div>
             ) : (
-              <div className="prose prose-invert prose-slate max-w-none prose-p:leading-relaxed prose-headings:text-slate-200 prose-a:text-blue-400 w-full break-words">
-                {/* 마크다운 렌더링 */}
-                <ReactMarkdown>{entry.content || ''}</ReactMarkdown>
-              </div>
+                <>
+                    {/* View Mode Switch */}
+                    {entry.type === 'character' && activeTab === 'history' ? (
+                        <div className="flex-1 min-h-0 animate-in fade-in slide-in-from-bottom-2 duration-300">
+                            <CharacterHistoryViewer characterName={entry.name} aliases={aliases} />
+                        </div>
+                    ) : entry.type === 'character' && activeTab === 'status' ? (
+                        <div className="flex-1 min-h-0 animate-in fade-in slide-in-from-bottom-2 duration-300">
+                            <CharacterStatusViewer characterName={entry.name} aliases={aliases} />
+                        </div>
+                    ) : (
+                        <div className="flex-1 overflow-y-auto custom-scrollbar p-8">
+                            <div className="prose prose-invert prose-slate max-w-none prose-p:leading-relaxed prose-headings:text-slate-200 prose-a:text-blue-400 w-full break-words">
+                                <ReactMarkdown>{entry.content || ''}</ReactMarkdown>
+                            </div>
+                        </div>
+                    )}
+                </>
             )}
           </div>
 
