@@ -1,12 +1,16 @@
-import { useState, useRef } from 'react'
+import { useState } from 'react'
 import { X, Sparkles, UploadCloud, Play, CheckCircle, FileText, ArrowRight, Trash2, Plus } from 'lucide-react'
 import { aiService } from '../../services/aiService'
+import { WikiEntry } from '../../types/wiki'
+import { CharacterReviewModal } from './CharacterReviewModal'
+import { useCharacterReview } from '../../hooks/useCharacterReview'
 
 interface BulkImportModalProps {
   isOpen: boolean
   onClose: () => void
   onComplete: (data: any) => void
   actPath?: string
+  wikiData?: WikiEntry[] // [NEW]
 }
 
 interface SourceFile {
@@ -16,7 +20,9 @@ interface SourceFile {
   size: number
 }
 
-export const BulkImportModal = ({ isOpen, onClose, onComplete, actPath }: BulkImportModalProps) => {
+// Removed inline interfaces as they are imported or used in hook
+
+export const BulkImportModal = ({ isOpen, onClose, onComplete, actPath, wikiData = [] }: BulkImportModalProps) => {
   const [step, setStep] = useState<1 | 2 | 3>(1) // 1: Input, 2: Structure Review, 3: Processing
   const [sources, setSources] = useState<SourceFile[]>([])
   const [inputText, setInputText] = useState('') // Direct text input
@@ -25,6 +31,18 @@ export const BulkImportModal = ({ isOpen, onClose, onComplete, actPath }: BulkIm
   const [processingLog, setProcessingLog] = useState<string[]>([])
   const [isProcessing, setIsProcessing] = useState(false)
   const [isDragging, setIsDragging] = useState(false)
+
+  // [Hook] Use Character Review
+  const { 
+      isReviewing, 
+      pendingReviews, 
+      reviewIndex, 
+      decisions, 
+      detectNewCharacters, 
+      handleReviewAction, 
+      waitForReview,
+      resetReview
+  } = useCharacterReview(wikiData)
 
   // [New] Selection State: "chapIdx-sceneIdx" -> boolean
   const [selection, setSelection] = useState<Record<string, boolean>>({})
@@ -138,6 +156,9 @@ export const BulkImportModal = ({ isOpen, onClose, onComplete, actPath }: BulkIm
       setIsProcessing(false)
     }
   }
+  
+  // Removed detectNewCharacters and handleReviewAction (using hook)
+
 
   const handleProcessImport = async () => {
     // 0. Check Act Path
@@ -198,6 +219,14 @@ export const BulkImportModal = ({ isOpen, onClose, onComplete, actPath }: BulkIm
              const aiResult = await aiService.analyzeScene(scene.content)
              setProcessingLog((prev) => [...prev, `     ✨ AI 분석 완료. 저장 중...`])
 
+             // [NEW] Check for New Characters & Pause if needed
+             const needsReview = detectNewCharacters(aiResult)
+             if (needsReview) {
+                 setProcessingLog((prev) => [...prev, `     ⚠️ 신규 캐릭터 감지. 검토 대기 중...`])
+                 await waitForReview()
+                 setProcessingLog((prev) => [...prev, `     ✨ 캐릭터 검토 완료. 저장 계속...`])
+             }
+
              // [FIX] Extract Real Numbers from Path to ensure consistency
              const chapterNumMatch = createdChapterPath?.match(/(\d+)화_/)
              const sceneNumMatch = createdScenePath?.match(/SCENE-(\d+)/i)
@@ -223,16 +252,36 @@ export const BulkImportModal = ({ isOpen, onClose, onComplete, actPath }: BulkIm
 
              // [NEW] 5. Sync Character Data
              setProcessingLog((prev) => [...prev, `     👤 캐릭터 정보 동기화 중...`])
+             
+             // Include Decisions
+             // [FIX] aiResult.characters is string[], so use 'c' directly key
+             const decisionsForScene = aiResult.characters?.map((c: any) => {
+                 const name = typeof c === 'string' ? c : c.name
+                 return decisions[name]
+             }).filter(Boolean) || []
+
              // @ts-ignore
-             await window.api.updateCharacter({
+             const syncResult = await window.api.updateCharacter({
                  aiResult: finalData,
                  sceneInfo: {
                      chapter: realChapterNum,
                      scene: realSceneNum,
                      title: scene.title,
                      sourcePath: createdScenePath
-                 }
+                 },
+                 decisions: decisionsForScene // [NEW] Pass decisions
              })
+             
+             // Log Results
+             if (syncResult && syncResult.results) {
+                 syncResult.results.forEach((res: any) => {
+                     if (res.type === 'created') {
+                         setProcessingLog(prev => [...prev, `     ✨ [신규] 캐릭터 등록됨: ${res.file}`])
+                     } else if (res.type === 'merged') {
+                         setProcessingLog(prev => [...prev, `     🔗 [병합] 캐릭터 별칭 추가됨: ${res.file}`])
+                     }
+                 })
+             }
 
              setProcessingLog((prev) => [...prev, `     ✅ 저장 및 동기화 완료`])
 
@@ -433,8 +482,17 @@ export const BulkImportModal = ({ isOpen, onClose, onComplete, actPath }: BulkIm
             </div>
           )}
 
-          {step === 3 && (
-            <div className="p-10 h-full flex flex-col items-center justify-center space-y-6 animate-in fade-in duration-500">
+           {step === 3 && (
+            <div className="relative p-10 h-full flex flex-col items-center justify-center space-y-6 animate-in fade-in duration-500">
+               {/* Review Overlay Component */}
+               <CharacterReviewModal
+                   isOpen={isReviewing}
+                   pendingReviews={pendingReviews}
+                   reviewIndex={reviewIndex}
+                   wikiData={wikiData}
+                   onAction={handleReviewAction}
+               />
+
                {isProcessing ? (
                  <div className="w-16 h-16 border-4 border-slate-800 border-t-purple-500 rounded-full animate-spin"></div>
                ) : (
@@ -462,6 +520,7 @@ export const BulkImportModal = ({ isOpen, onClose, onComplete, actPath }: BulkIm
                                setStep(1)
                                setStructure([])
                                setProcessingLog([])
+                               resetReview() // Reset hook state
                            }}
                            className="px-6 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-lg transition-colors font-bold"
                        >

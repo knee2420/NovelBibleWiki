@@ -6,7 +6,13 @@ import { SceneCard } from '../components/Plot/SceneCard'
 import { SceneDetailModal } from '../components/Plot/SceneDetailModal'
 import { BulkImportModal } from '../components/AI/BulkImportModal' // [NEW] Import
 
-export const PlotDashboard = () => {
+import { WikiEntry } from '../types/wiki'
+
+interface PlotDashboardProps {
+  wikiData: WikiEntry[]
+}
+
+export const PlotDashboard = ({ wikiData }: PlotDashboardProps) => {
   const [plotData, setPlotData] = useState<ActBoard[]>([])
   const [currentActIndex, setCurrentActIndex] = useState(0)
   const [loading, setLoading] = useState(true)
@@ -353,11 +359,13 @@ export const PlotDashboard = () => {
       )}
 
       {/* Modal */}
+      {/* Modal */}
       <SceneDetailModal
         isOpen={!!selectedScenePath}
         filePath={selectedScenePath || ''}
         onUpdate={refresh}
         onClose={() => setSelectedScenePath(null)}
+        wikiData={wikiData} // [NEW] Pass wikiData
       />
 
       {/* [NEW] Bulk Import Modal */}
@@ -365,6 +373,7 @@ export const PlotDashboard = () => {
         isOpen={isBulkImportOpen}
         onClose={() => setIsBulkImportOpen(false)}
         actPath={currentAct?.path} // Pass current act path
+        wikiData={wikiData} // [NEW] Pass wikiData
         onComplete={() => {
           refresh()
           alert('가져오기가 완료되었습니다.')

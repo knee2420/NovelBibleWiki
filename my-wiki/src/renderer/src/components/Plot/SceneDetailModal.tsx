@@ -13,22 +13,27 @@ import {
   MinusCircle,
   Sparkles // [NEW] Icon for AI
 } from 'lucide-react'
+import { AIAnalyzePanel } from '../AI/AIAnalyzePanel'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
-import { AIAnalyzePanel } from '../AI/AIAnalyzePanel' // [NEW] Import
+import { WikiEntry } from '../../types/wiki'
+import { CharacterReviewModal } from '../AI/CharacterReviewModal'
+import { useCharacterReview } from '../../hooks/useCharacterReview'
 
 interface SceneDetailModalProps {
   filePath: string
   isOpen: boolean
   onClose: () => void
   onUpdate?: () => void // 데이터 갱신 요청 콜백 (PlotDashboard에서 넘겨줘야 함)
+  wikiData?: WikiEntry[] // [NEW]
 }
 
 export const SceneDetailModal = ({
   filePath,
   isOpen,
   onClose,
-  onUpdate
+  onUpdate,
+  wikiData = []
 }: SceneDetailModalProps) => {
   const [loading, setLoading] = useState(false)
 
@@ -51,6 +56,18 @@ export const SceneDetailModal = ({
   // [NEW] AI Panel State
   const [isAIPanelOpen, setIsAIPanelOpen] = useState(false)
 
+  // [Hook] Use Character Review
+  const { 
+    isReviewing, 
+    pendingReviews, 
+    reviewIndex, 
+    decisions, 
+    detectNewCharacters, 
+    handleReviewAction, 
+    waitForReview,
+    resetReview
+  } = useCharacterReview(wikiData)
+
   // Focus Control
   const titleInputRef = useRef<HTMLInputElement>(null)
 
@@ -62,6 +79,7 @@ export const SceneDetailModal = ({
       setIsEditing(false)
       setOriginalData(null)
       setIsAIPanelOpen(false) // [NEW] Reset AI panel
+      resetReview()
     }
   }, [isOpen, filePath])
 
@@ -128,6 +146,9 @@ export const SceneDetailModal = ({
           .map((s) => s.trim())
           .filter((s) => s !== '')
 
+      // Collect decisions from hook
+      const activeDecisions = Object.keys(decisions).length > 0 ? Object.values(decisions) : undefined
+
       const payload = {
         path: filePath,
         content: editContent,
@@ -141,7 +162,8 @@ export const SceneDetailModal = ({
           'wiki-data': editWikiData, // [NEW] Save Wiki Data
           ...editMetadata,
           updatedAt: new Date().toISOString()
-        }
+        },
+        decisions: activeDecisions // [NEW] Pass decisions
       }
 
       // @ts-ignore
@@ -215,7 +237,15 @@ export const SceneDetailModal = ({
   const getFileName = (path: string) => path.split(/[\\/]/).pop()?.replace(/\.md$/i, '') || ''
 
   // [NEW] AI Apply Handler
-  const handleAIApply = (data: any) => {
+  const handleAIApply = async (data: any) => {
+    // 1. Check for New Characters
+    const needsReview = detectNewCharacters(data)
+
+    if (needsReview) {
+      await waitForReview()
+    }
+
+    // 2. Apply Data
     if (data.title) setEditTitle(data.title)
     if (data.summary) setEditSummary(data.summary)
     if (data.characters) setEditCharacters(data.characters.join(', '))
@@ -225,6 +255,9 @@ export const SceneDetailModal = ({
     
     // Switch to edit mode automatically to show changes
     setIsEditing(true)
+    
+    // Close AI Panel
+    setIsAIPanelOpen(false)
   }
 
   if (!isOpen) return null
@@ -548,6 +581,15 @@ export const SceneDetailModal = ({
             onClose={() => setIsAIPanelOpen(false)}
           />
         )}
+        
+        {/* [NEW] Review Overlay */}
+        <CharacterReviewModal
+           isOpen={isReviewing}
+           pendingReviews={pendingReviews}
+           reviewIndex={reviewIndex}
+           wikiData={wikiData}
+           onAction={handleReviewAction}
+        />
       </div>
     </div>
   )

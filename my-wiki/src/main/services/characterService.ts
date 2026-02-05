@@ -4,14 +4,15 @@ import matter from 'gray-matter'
 
 // [Configuration]
 const CHARACTER_DIR = path.join(process.cwd(), 'public/NovelBibleWiki/EX급 귀환자/20_Wiki/1.Characters')
+console.log('[CharacterService] Init. CWD:', process.cwd())
+console.log('[CharacterService] Target Dir:', CHARACTER_DIR)
 
 // Helper: Ensure directory exists
 const ensureDir = async () => {
     try {
-        await fs.access(CHARACTER_DIR)
-    } catch {
-        // public folder structure should exist, but safety check
-        console.error(`Character Directory not found: ${CHARACTER_DIR}`)
+        await fs.mkdir(CHARACTER_DIR, { recursive: true })
+    } catch (e: any) {
+        console.error(`Failed to create character dir: ${e.message}`)
     }
 }
 
@@ -47,9 +48,37 @@ export const characterService = {
   /**
    * Main Entry: Update or Create Character
    */
-  upsertCharacter: async (name: string, aiData: any, sceneInfo: { chapter: number, scene: number, title: string, sourcePath: string }) => {
+  upsertCharacter: async (name: string, aiData: any, sceneInfo: { chapter: number, scene: number, title: string, sourcePath: string }, decision?: any) => {
+     if (decision?.action === 'skip') {
+         return { type: 'skipped', file: name }
+     }
+  
      await ensureDir()
-     const existingFile = await findCharacterFile(name)
+     
+     let existingFile = await findCharacterFile(name)
+     
+     // [Decision: Merge] Override existingFile
+     if (decision?.action === 'merge' && decision.targetId) {
+         // targetId can be absolute path or just filename
+         // If absolute, clean it
+         const potentialName = decision.targetId.endsWith('.md') 
+            ? path.basename(decision.targetId) 
+            : decision.targetId + '.md' // Attempt to match
+            
+         // Check if this file exists in CHARACTER_DIR
+         const fullPath = path.join(CHARACTER_DIR, potentialName)
+         try {
+             await fs.access(fullPath)
+             existingFile = potentialName
+             console.log(`[CharacterService] Merging '${name}' into existing file: ${existingFile}`)
+         } catch {
+             // If direct name match failed, try to fallback or search?
+             // But usually frontend sends correct ID.
+             // If frontend sends 'uuid' instead of path, we are in trouble. 
+             // Assuming frontend sends the 'id' which is 'FILE_PATH' in local filesystem mode.
+             existingFile = path.basename(decision.targetId)
+         }
+     }
 
      const timestamp = new Date().toISOString()
      const sourceHeader = `[[${sceneInfo.chapter}화.${sceneInfo.title.replace(/ /g, '_')} - SCENE${sceneInfo.scene}]]`
@@ -96,14 +125,31 @@ export const characterService = {
          // We'll trust the latest if exists, or append.
          // Actually, 'relations' in FM should be a cumulative current state.
          // Let's just update 'status' for now.
+         // Let's just update 'status' for now.
          if (aiData.status) newFm.status = aiData.status
          if (aiData.rank) newFm.rank = aiData.rank // if AI extracts rank
+         
+             // [Decision: Merge] Add Alias
+             if (decision?.action === 'merge') {
+                 let aliases: string[] = []
+                 if (typeof newFm.alias === 'string') {
+                    aliases = newFm.alias.split(',').map((s: string) => s.trim())
+                 } else if (Array.isArray(newFm.alias)) {
+                    aliases = [...newFm.alias]
+                 }
+                 
+                 if (!aliases.includes(name)) {
+                     aliases.push(name)
+                     newFm.alias = aliases.join(', ')
+                     logEntry += `- **별칭 추가(Alias)**: ${name}\n`
+                 }
+             }
          
          // Write back
          const newContent = matter.stringify(parsed.content + logEntry, newFm)
          await fs.writeFile(filePath, newContent)
          console.log(`[Character] Updated ${existingFile}`)
-         return { type: 'updated', file: existingFile }
+          return { type: decision?.action === 'merge' ? 'merged' : 'updated', file: existingFile }
 
      } else {
          // [CREATE NEW]
