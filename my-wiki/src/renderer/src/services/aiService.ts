@@ -15,23 +15,40 @@ export const aiService = {
   },
 
   // 2. Parse Structure (Bulk)
-  // Currently we use a heuristic parser (Mock-like) because Gemini might be too expensive/slow for full structure parsing of huge text,
-  // OR we can implementation a real one if needed. For now, let's keep the heuristic logic in renderer or move it to main.
-  // Let's implement a smart heuristic parser here without AI for structure, 
-  // but we can optionally use AI if the heuristic fails.
-  // For cost efficiency, regex splitting is better for "Chapter" separation.
+  // [Improved] Supports File Markers and Smart Delimiters
   parseStructure: async (fullText: string) => {
-    // 1. Split by "제N화" or "***" or "Chapter"
-    // This logic is purely local regex
     const chapters: any[] = []
     
     // Normalize newlines
     const text = fullText.replace(/\r\n/g, '\n')
     
-    // Regex for Chapter Header: e.g., "제 1 화", "Chapter 1", "1화."
-    const chapterRegex = /^(?:제|Chapter)?\s*(\d+)\s*(?:화|장|Chapter)?[\.\s]*(.*)$/gm
+    // [Strategy 1] Check for "[FILE START: filename]" markers (Added by BulkImportModal)
+    // Regex: \[FILE START: (.*?)\]([\s\S]*?)\[FILE END\]
+    const fileRegex = /\[FILE START:\s*(.*?)\]([\s\S]*?)\[FILE END\]/g
+    const fileMatches = [...text.matchAll(fileRegex)]
     
-    // Find all chapter headers
+    if (fileMatches.length > 0) {
+        fileMatches.forEach((m, idx) => {
+            const fileName = m[1].trim()
+            const content = m[2].trim()
+            
+            // Try to extract chapter number from filename
+            const numMatch = fileName.match(/(\d+)/)
+            const chapterNum = numMatch ? parseInt(numMatch[0]) : idx + 1
+            
+            chapters.push({
+                chapterNumber: chapterNum,
+                title: fileName.replace(/\.[^/.]+$/, ""), // remove extension
+                scenes: splitScenes(content)
+            })
+        })
+        return chapters
+    }
+
+    // [Strategy 2] Regex based splitting (Traditional)
+    // Regex for Chapter Header: e.g., "제 1 화", "Chapter 1", "1화.", "# 1화"
+    const chapterRegex = /^(?:#+\s*)?(?:제|Chapter)?\s*(\d+)\s*(?:화|장|Chapter)?[\.\s]*(.*)$/gm
+    
     const matches = [...text.matchAll(chapterRegex)]
     
     if (matches.length === 0) {
@@ -81,15 +98,48 @@ export const aiService = {
   }
 }
 
-// Helper to split scenes (by *** or blank lines or just one scene)
+// Helper to split scenes
 function splitScenes(text: string) {
-    // Delimiter: "***" or large gaps?
-    // Let's use "***" as explicit scene divider
-    const parts = text.split(/\n\s*\*\*\*\s*\n/)
+    // Delimiters:
+    // 1. "***", "---", "===" (Visual Separators)
+    // 2. <br> tags (HTML)
+    // 3. Three or more newlines (Gap) => \n\s*\n\s*\n
+    
+    // Regex explanation:
+    // (?: ... ) : Non-capturing group
+    // \n\s*[\*\-=_]{3,}\s*\n : Separator lines like ***, ---, ===
+    // | : OR
+    // \n\s*\n\s*\n : 3+ newlines (Empty line gap >= 2)
+    
+    const splitter = /\n\s*(?:[\*\-=_]{3,}|<br\s*\/?>)\s*\n|\n\s*\n\s*\n/i
+    
+    // Split and filter empty parts
+    let parts = text.split(splitter).map(p => p.trim()).filter(p => p.length > 0)
+    
+    // [Refinement] Filter out "Title Only" scenes
+    // If a part is very short (< 50 chars) and looks like a header, ignore it.
+    parts = parts.filter((part, index) => {
+        const isShort = part.length < 50
+        // Starts with #, number, "제", "Chapter", "[", "<"
+        const isHeaderLike = /^(?:#|제|Chapter|\d+화|\[|<)/i.test(part)
+        
+        // If we have multiple parts, and this one is short & header-like, drop it.
+        // (Usually these are leftovers from the top of the file)
+        if (parts.length > 1 && isShort && isHeaderLike) return false
+        
+        // Ignore extremely short noise (< 5 chars) unless it's the only content
+        if (parts.length > 1 && part.length < 5) return false
+        
+        return true
+    })
+    
+    if (parts.length === 0) {
+        return [{ sceneNumber: 1, title: 'Scene 1', content: text }]
+    }
     
     return parts.map((part, idx) => ({
         sceneNumber: idx + 1,
         title: `Scene ${idx + 1}`,
-        content: part.trim()
+        content: part
     }))
 }

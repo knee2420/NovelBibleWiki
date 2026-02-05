@@ -79,7 +79,7 @@ export function setupPlotHandlers(store: any): void {
   // 1. 막(Act) 생성
   ipcMain.handle('create-act', async (_, title: string) => {
     const vaultPath = store.get('vaultPath') as string
-    if (!vaultPath) return false
+    if (!vaultPath) return null
     try {
       const plotDir = join(vaultPath, '10_Plot')
       await fs.ensureDir(plotDir) // 폴더가 없으면 생성
@@ -93,17 +93,18 @@ export function setupPlotHandlers(store: any): void {
         const m = d.match(/^(\d+)막_/)
         if (m) max = Math.max(max, parseInt(m[1]))
       })
-      await fs.ensureDir(join(plotDir, `${max + 1}막_${title}`))
-      return true
+      const newPath = join(plotDir, `${max + 1}막_${title}`)
+      await fs.ensureDir(newPath)
+      return newPath
     } catch (e) {
       console.error(e)
-      return false
+      return null
     }
   })
 
   // 2. 챕터(Chapter) 생성
   ipcMain.handle('create-chapter', async (_, { actPath, title }) => {
-    if (!fs.existsSync(actPath)) return false
+    if (!fs.existsSync(actPath)) return null
     try {
       const dirs = fs
         .readdirSync(actPath)
@@ -113,17 +114,18 @@ export function setupPlotHandlers(store: any): void {
         const m = d.match(/^(\d+)화_/)
         if (m) max = Math.max(max, parseInt(m[1]))
       })
-      await fs.ensureDir(join(actPath, `${max + 1}화_${title}`))
-      return true
+      const newPath = join(actPath, `${max + 1}화_${title}`)
+      await fs.ensureDir(newPath)
+      return newPath
     } catch (e) {
       console.error(e)
-      return false
+      return null
     }
   })
 
   // 3. 씬(Scene) 생성
   ipcMain.handle('create-scene', async (_, { chapterPath, title }) => {
-    if (!fs.existsSync(chapterPath)) return false
+    if (!fs.existsSync(chapterPath)) return null
     try {
       const files = fs.readdirSync(chapterPath).filter((n) => n.endsWith('.md'))
       let max = 0
@@ -139,11 +141,12 @@ export function setupPlotHandlers(store: any): void {
         summary: '',
         characters: []
       }
-      await fs.writeFile(join(chapterPath, `SCENE-${next}.md`), matter.stringify('', fm))
-      return true
+      const newPath = join(chapterPath, `SCENE-${next}.md`)
+      await fs.writeFile(newPath, matter.stringify('', fm))
+      return newPath
     } catch (e) {
       console.error(e)
-      return false
+      return null
     }
   })
 

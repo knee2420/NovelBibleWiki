@@ -364,6 +364,7 @@ export const PlotDashboard = () => {
       <BulkImportModal
         isOpen={isBulkImportOpen}
         onClose={() => setIsBulkImportOpen(false)}
+        actPath={currentAct?.path} // Pass current act path
         onComplete={() => {
           refresh()
           alert('가져오기가 완료되었습니다.')

@@ -34,7 +34,8 @@ const api = {
   // [NEW] AI
   saveAIKey: (key: string) => ipcRenderer.invoke('ai:saveKey', key),
   getAIKey: () => ipcRenderer.invoke('ai:getKey'),
-  analyzeScene: (text: string) => ipcRenderer.invoke('ai:analyzeScene', text)
+  analyzeScene: (text: string) => ipcRenderer.invoke('ai:analyzeScene', text),
+  selectMultipleFiles: () => ipcRenderer.invoke('select-multiple-files')
 }
 
 if (process.contextIsolated) {

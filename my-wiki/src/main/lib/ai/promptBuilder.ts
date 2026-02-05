@@ -29,6 +29,11 @@ The user has provided a segment of a novel. You must analyze the characters, the
     - **Snapshot**: Record only the *final state* of the character at the end of the scene.
     - **Disappear**: Use only when characters leave the location physically (exit stage).
     - **Items**: Treat key items as characters or relations if they are significant.
+6. **Data Consistency & Appear Rule (CRITICAL)**:
+    - **Master List**: The 'appear' list is the source of truth. It MUST include ALL participating entities (characters, named groups, mobs).
+    - **No Orphans**: If an entity is mentioned in 'relations' or 'update', it **MUST** be explicitly listed in 'appear'.
+    - **Groups/Mobs**: If a group (e.g., "철기 길드원", "구상웅 일당") is acting or being acted upon, that **collective name** MUST be added to 'appear'.
+    - **Name Exactness**: The name used in 'appear' must EXACTLY match the name used in 'relations' and 'update'. Do not use inconsistencies like putting "Guild Members" in 'appear' but "Cheolgi Guild" in 'update'.
 
 # Schema Reference
 Refrain from improvising fields. Stick to this structure:

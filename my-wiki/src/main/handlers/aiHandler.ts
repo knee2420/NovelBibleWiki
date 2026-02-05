@@ -31,7 +31,7 @@ export function setupAIHandlers(store: Store): void {
 
       const genAI = new GoogleGenerativeAI(apiKey)
       const model = genAI.getGenerativeModel({
-        model: 'gemini-2.5-flash-lite', // or flash
+        model: 'gemini-2.5-flash',
         generationConfig: {
           responseMimeType: 'application/json',
           responseSchema: SCENE_DATA_JSON_SCHEMA

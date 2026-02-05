@@ -2,7 +2,7 @@
 
 import { ipcMain, dialog } from 'electron'
 import fs from 'fs-extra'
-import { join } from 'path'
+import { join, basename } from 'path'
 
 export function setupProjectHandlers(store: any): void {
   // 1. 워크스페이스(최상위 폴더) 선택
@@ -54,5 +54,30 @@ export function setupProjectHandlers(store: any): void {
       workspace: store.get('workspacePath'),
       currentPath: store.get('vaultPath')
     }
+  })
+
+  // 5. 다중 파일 선택 및 읽기 (Bulk Import용)
+  ipcMain.handle('select-multiple-files', async () => {
+    const { canceled, filePaths } = await dialog.showOpenDialog({
+      properties: ['openFile', 'multiSelections'],
+      filters: [{ name: 'Text/Markdown', extensions: ['md', 'txt', 'json'] }]
+    })
+
+    if (canceled || filePaths.length === 0) return []
+
+    const files: { name: string; path: string; content: string }[] = []
+    for (const p of filePaths) {
+      try {
+        const content = await fs.readFile(p, 'utf-8')
+        files.push({
+          name: basename(p),
+          path: p,
+          content
+        })
+      } catch (err) {
+        console.error(`Failed to read file ${p}:`, err)
+      }
+    }
+    return files
   })
 }
