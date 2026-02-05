@@ -118,7 +118,7 @@ function splitScenes(text: string) {
     
     // [Refinement] Filter out "Title Only" scenes
     // If a part is very short (< 50 chars) and looks like a header, ignore it.
-    parts = parts.filter((part, index) => {
+    parts = parts.filter((part) => {
         const isShort = part.length < 50
         // Starts with #, number, "제", "Chapter", "[", "<"
         const isHeaderLike = /^(?:#|제|Chapter|\d+화|\[|<)/i.test(part)

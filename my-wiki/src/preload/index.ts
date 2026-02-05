@@ -35,7 +35,9 @@ const api = {
   saveAIKey: (key: string) => ipcRenderer.invoke('ai:saveKey', key),
   getAIKey: () => ipcRenderer.invoke('ai:getKey'),
   analyzeScene: (text: string) => ipcRenderer.invoke('ai:analyzeScene', text),
-  selectMultipleFiles: () => ipcRenderer.invoke('select-multiple-files')
+  selectMultipleFiles: () => ipcRenderer.invoke('select-multiple-files'),
+  // [NEW] Character Sync
+  updateCharacter: (payload: any) => ipcRenderer.invoke('ai:updateCharacter', payload)
 }
 
 if (process.contextIsolated) {

@@ -40,6 +40,7 @@ export const SettingsPage = ({ onImportComplete }: SettingsPageProps) => {
           <div className="bg-slate-950/50 p-6 rounded-lg border border-slate-800/50">
             <Settings onImportComplete={onImportComplete} />
           </div>
+          
         </div>
 
         {/* 2. 주의사항 카드 (장식용) */}

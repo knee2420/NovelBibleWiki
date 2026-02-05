@@ -4,26 +4,26 @@ import { HomeDashboard } from './pages/HomeDashboard'
 import { PlotDashboard } from './pages/PlotDashboard'
 import { SettingsPage } from './pages/SettingsPage'
 import { WikiEntry } from './types/wiki'
-import { WikiDetailModal } from './components/Common/WikiDetailModal' // [변경] 통합 모달 관리자
-import { GenericArchive } from './pages/GenericArchive' // [변경] 통합 아카이브 페이지
+import { WikiDetailModal } from './components/Common/WikiDetailModal' 
+import { GenericArchive } from './pages/GenericArchive'
 import { RelationBoard } from './pages/RelationBoard'
 import { SceneCard } from './types/plot'
 
 function App(): ReactElement {
-  const [currentPage, setCurrentPage] = useState('home')
+  const [currentPage, setCurrentPage] = useState('home') // Default: Home
   const [wikiData, setWikiData] = useState<WikiEntry[]>([])
   const [sceneData, setSceneData] = useState<SceneCard[]>([])
   const [selectedEntryId, setSelectedEntryId] = useState<string | null>(null)
   const [refreshKey, setRefreshKey] = useState(0)
   const selectedEntry = wikiData.find((entry) => entry.id === selectedEntryId) || null
 
-  // 데이터 로드
   useEffect(() => {
     const fetchData = async () => {
       try {
         // @ts-ignore
-        const data = await window.api.getWikiData() // 기존 API 이름 유지 (내부는 수정됨)
+        const data = await window.api.getWikiData()
         setWikiData(data)
+        // @ts-ignore
         const scenes = await window.api.getTimelineFlat()
         setSceneData(scenes)
       } catch (error) {
@@ -38,14 +38,14 @@ function App(): ReactElement {
   }
 
   const handleImportComplete = () => {
-    setRefreshKey((prev) => prev + 1) // 데이터 재로드 트리거
-    setCurrentPage('home') // (선택사항) 완료 후 홈으로 이동 시켜서 갱신된 현황 보여주기
+    setRefreshKey((prev) => prev + 1)
+    setCurrentPage('home')
   }
 
   const handleEntryClick = (entry: WikiEntry) => {
     setSelectedEntryId(entry.id)
   }
-  // 페이지 렌더링 로직
+
   const renderContent = () => {
     switch (currentPage) {
       case 'home':
@@ -53,7 +53,7 @@ function App(): ReactElement {
           <HomeDashboard
             data={wikiData}
             onNavigate={setCurrentPage}
-            onEntryClick={handleEntryClick} // 핸들러 전달
+            onEntryClick={handleEntryClick}
           />
         )
 
@@ -69,7 +69,7 @@ function App(): ReactElement {
             data={wikiData.filter(
               (d) => d.type === 'character' || (!d.type && (d as any).info?.role)
             )}
-            createType="character" // [NEW]
+            createType="character"
             onRefresh={triggerRefresh}
             onEntryClick={handleEntryClick}
           />
@@ -80,7 +80,7 @@ function App(): ReactElement {
             title="Item Storage"
             description="무구 및 아이템 데이터베이스"
             data={wikiData.filter((d) => d.type === 'item')}
-            createType="item" // [NEW]
+            createType="item"
             onRefresh={triggerRefresh}
             onEntryClick={handleEntryClick}
           />
@@ -118,11 +118,10 @@ function App(): ReactElement {
     <WikiLayout currentPage={currentPage} onNavigate={setCurrentPage}>
       {renderContent()}
       {selectedEntry && (
-        // 현재는 CharacterDetail을 공용으로 사용 (추후 ItemDetail 등으로 분기 가능)
         <WikiDetailModal
           entry={selectedEntry}
           onClose={() => setSelectedEntryId(null)}
-          onUpdate={triggerRefresh} // [NEW] 저장 시 데이터 새로고침
+          onUpdate={triggerRefresh}
         />
       )}
     </WikiLayout>

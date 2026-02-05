@@ -213,6 +213,7 @@ export const BulkImportModal = ({ isOpen, onClose, onComplete, actPath }: BulkIm
              }
 
              // 4. Save Content & Metadata
+             // 4. Save Content & Metadata
              // @ts-ignore
              await window.api.updateScene({
                  path: createdScenePath,
@@ -220,7 +221,20 @@ export const BulkImportModal = ({ isOpen, onClose, onComplete, actPath }: BulkIm
                  data: finalData // Front-matter 저장
              })
 
-             setProcessingLog((prev) => [...prev, `     ✅ 저장 완료`])
+             // [NEW] 5. Sync Character Data
+             setProcessingLog((prev) => [...prev, `     👤 캐릭터 정보 동기화 중...`])
+             // @ts-ignore
+             await window.api.updateCharacter({
+                 aiResult: finalData,
+                 sceneInfo: {
+                     chapter: realChapterNum,
+                     scene: realSceneNum,
+                     title: scene.title,
+                     sourcePath: createdScenePath
+                 }
+             })
+
+             setProcessingLog((prev) => [...prev, `     ✅ 저장 및 동기화 완료`])
 
           } catch (e: any) {
              console.error(e)
