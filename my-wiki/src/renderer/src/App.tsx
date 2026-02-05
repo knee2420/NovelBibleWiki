@@ -58,7 +58,7 @@ function App(): ReactElement {
         )
 
       case 'plot':
-        return <PlotDashboard />
+        return <PlotDashboard wikiData={wikiData} />
       case 'board':
         return <RelationBoard wikiData={wikiData} sceneData={sceneData} />
       case 'characters':

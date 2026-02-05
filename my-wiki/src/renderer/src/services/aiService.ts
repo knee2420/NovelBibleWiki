@@ -3,6 +3,35 @@ import { SceneSchema } from '../../../shared/types/scene-schema'
 export const aiService = {
   // 1. Analyze Scene (Single)
   analyzeScene: async (text: string): Promise<Partial<SceneSchema>> => {
+    // [MOCK MODE]
+    if (text.includes('[MOCK]')) {
+        console.log('[AI Service] Using MOCK Data')
+        return {
+            type: 'scene',
+            chapter: 15,
+            scene: 1,
+            title: 'Mock Scene',
+            summary: 'Mock Summary',
+            characters: ['김중헌'], // String array as per recent schema change
+            locations: ['Seoul'],
+            'wiki-data': {
+                appear: ['김중헌'],
+                update: [
+                    { 
+                        name: '김중헌', 
+                        changes: { 
+                            role: 'Test Character', 
+                            status: 'ALIVE',
+                            action: 'Testing saving functionality'
+                        } 
+                    }
+                ],
+                relations: [],
+                disappear: []
+            } as any
+        }
+    }
+
     // Call Main Process via Preload
     // @ts-ignore
     const result = await window.api.analyzeScene(text)

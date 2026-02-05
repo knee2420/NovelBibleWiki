@@ -52,14 +52,25 @@ export function setupAIHandlers(store: Store): void {
   })
 
   // 4. Update Characters
-  ipcMain.handle('ai:updateCharacter', async (_, payload: { aiResult: any, sceneInfo: any }) => {
+  ipcMain.handle('ai:updateCharacter', async (_, payload: { aiResult: any, sceneInfo: any, decisions?: any[] }) => {
     try {
-        const { aiResult, sceneInfo } = payload
+        const { aiResult, sceneInfo, decisions } = payload
         const results: any[] = []
 
         if (aiResult.characters && Array.isArray(aiResult.characters)) {
-            for (const char of aiResult.characters) {
-                const res = await characterService.upsertCharacter(char.name, char, sceneInfo)
+            const updates = aiResult['wiki-data']?.update || []
+
+            for (const charName of aiResult.characters) {
+                if (typeof charName !== 'string') continue;
+
+                // Find matching update data to use as AI Data
+                const updateInfo = updates.find((u: any) => u.name === charName)
+                const aiData = updateInfo?.changes || { role: 'Unknown', desc: 'Auto-generated' }
+                
+                // User decision
+                const decision = decisions?.find((d: any) => d.name === charName)
+                
+                const res = await characterService.upsertCharacter(charName, aiData, sceneInfo, decision)
                 results.push(res)
             }
         }
