@@ -3,7 +3,7 @@ import { WikiEntry } from '../types/wiki'
 import { Search, Plus, Filter } from 'lucide-react'
 import { CreateNewModal } from '../components/Common/CreateNewModal'
 import { useWikiFilter } from '../hooks/useWikiFilter'
-import { FilterSidebar } from '../components/Archive/FilterSidebar'
+import { FilterBar } from '../components/Archive/FilterBar'
 
 interface GenericArchiveProps {
   title: string
@@ -45,19 +45,10 @@ export const GenericArchive = ({
   const entryType = createType || (data.length > 0 ? data[0].type : 'other')
 
   return (
-    <div className="flex h-screen animate-in fade-in duration-500 overflow-hidden">
-      {/* [NEW] Left Sidebar Filter */}
-      <FilterSidebar
-        filters={filters}
-        options={options}
-        onToggle={(cat, val) => toggleFilter(cat as any, val)}
-        onReset={resetFilters}
-        entryType={entryType}
-      />
-
-      {/* Main Content Area */}
-      <div className="flex-1 flex flex-col h-full overflow-hidden p-8">
-        <header className="mb-0 flex items-center justify-between border-b border-slate-800 pb-6 flex-shrink-0">
+    <div className="flex flex-col h-screen animate-in fade-in duration-500 overflow-hidden bg-slate-950 text-white">
+      {/* Main Content Area - No longer nested in a flex-row with sidebar */}
+      <div className="flex-1 flex flex-col h-full overflow-hidden p-6 md:p-8">
+        <header className="mb-0 flex items-center justify-between pb-6 flex-shrink-0">
           <div>
             <h2 className="text-3xl font-bold text-white mb-2">{title}</h2>
             <p className="text-slate-400 text-sm flex items-center gap-2">
@@ -90,8 +81,17 @@ export const GenericArchive = ({
           </div>
         </header>
 
+        {/* [NEW] Filter Bar (Horizontal) */}
+        <FilterBar
+          filters={filters}
+          options={options}
+          onToggle={(cat, val) => toggleFilter(cat as any, val)}
+          onReset={resetFilters}
+          entryType={entryType}
+        />
+
         {/* Scrollable Grid Area */}
-        <div className="flex-1 overflow-y-auto pr-2 pt-6 scrollbar-thin scrollbar-thumb-slate-700">
+        <div className="flex-1 overflow-y-auto pr-2 pt-2 scrollbar-thin scrollbar-thumb-slate-700">
           {finalFilteredData.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-64 text-slate-500 bg-slate-900/30 rounded-xl border border-dashed border-slate-800">
               <Filter size={48} className="mb-4 opacity-20" />
