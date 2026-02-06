@@ -18,13 +18,26 @@ The user has provided a segment of a novel. You must analyze the characters, the
 
 1. **Output Format**: Strictly return a single valid JSON object matching the provided schema. Do not wrap it in markdown block.
 2. **Metadata**: Ensure 'type' is 'scene', and 'chapter'/'scene' numbers are inferred or set to 0 if unknown.
-3. **Status Enum (Crucial)**:
-    - The 'status' field inside 'update' MUST be one of: ['ALIVE', 'DECEASED', 'INJURED', 'STUNNED', 'UNKNOWN', 'ILLUSION'].
+3. **Character Details (Crucial)**:
+    - **Role**: MUST be a short job title or designation (Max 10 chars). Examples: "길드장", "A급 헌터", "영물", "경호원". **Do NOT write a sentence.** Move detailed descriptions to 'action' or 'summary'.
+    - **Affiliation**: Extract organization names explicitly. **INFER from context if not stated**.
+        - Example: "Senior Druid" -> "녹명가". "Captive in Grid" -> "Owner of Grid".
+        - **Captive Entities**: If a character is contained/captured (e.g. in a cage), their affiliation is the owner of the facility unless specified otherwise.
+    - **Summary**: Synthesis of character's actions, personality, and mental state in this scene. Create a cohesive description suitable for a wiki profile.
+    - **Status**: MUST be one of: ['ALIVE', 'DECEASED', 'INJURED', 'STUNNED', 'UNKNOWN', 'ILLUSION', 'CAPTURED'].
     - Do NOT use free text in 'status'. Put descriptions in 'action' or 'mental'.
-4. **Language (Crucial)**:
+4. **Relations (CRITICAL)**:
+    - **Mandatory**: If Character A interacts with, thinks about, or evaluates Character B, you **MUST** create a relation entry.
+    - **ALL Relations**: Extract ALL relations, even trivial ones. If A glances at B, record it. If A ignores B, record it.
+    - **Non-Verbal**: Physical attacks, staring contests, fear, or submission are POTENT relations.
+        - Example: A attacks B -> A to B (HOSTILE) "Attack".
+        - Example: A is scared of B -> A to B (FEAR) "scared".
+    - **One-sided**: Even if B doesn't notice A, if A has a strong impression (e.g. A admires B, A fears B), catch it!
+    - **Implicit**: Relations like "Subordinate/Superior", "Rival", "Family" should be extracted even if not explicitly spoken.
+5. **Language (Crucial)**:
     - **ALL output values (summary, titles, etc.) MUST be in KOREAN (Hangul).**
     - Do not translate proper nouns if they are English names in the input, but describe context in Korean.
-5. **Logic**:
+6. **Logic**:
     - **Death**: If a character dies, use 'update' with 'status': 'DECEASED'. DO NOT use 'disappear'.
     - **Snapshot**: Record only the *final state* of the character at the end of the scene.
     - **Disappear**: Use only when characters leave the location physically (exit stage).

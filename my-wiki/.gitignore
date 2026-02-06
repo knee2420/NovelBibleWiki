@@ -4,4 +4,4 @@ out
 .DS_Store
 .eslintcache
 *.log*
-.obsidian
+public/NovelBibleWiki/.obsidian

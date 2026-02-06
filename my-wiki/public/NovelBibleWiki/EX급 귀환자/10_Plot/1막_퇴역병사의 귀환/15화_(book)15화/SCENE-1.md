@@ -2,129 +2,141 @@
 type: scene
 chapter: 15
 scene: 1
-title: 영물 관리원과 강진우의 교감
+title: 영물 관리원과의 만남
 summary: >-
-  강진우는 영물 관리원에 방문하여 선임 드루이드 김중헌의 안내를 받는다. 구형 강화복을 입고 A구역의 영물들에게 먹이를 주는데, 난폭하다고
-  알려진 강철 뿔 엘크, 삼미호, 공작, 은빛 멧돼지 등 모든 영물이 강진우에게 순종적인 모습을 보인다. 김중헌은 강진우의 특별한 영물 교감
-  능력에 놀라 그를 C구역으로 안내하며 더 시험해 볼 계획을 세운다.
+  강진우는 녹명가의 영물 관리원 김중헌을 만나 영물 관리 시설을 둘러본다. 김중헌은 진우의 과거와 능력에 대해 궁금해하며, 그의 영물 교감
+  능력에 큰 기대를 품게 된다. 진우는 다양한 영물들과 만나 예상외의 교감을 나누며 김중헌을 놀라게 한다.
 characters:
   - 강진우
   - 김중헌
+  - 윤서준
+  - 카이저
   - 강철 뿔 엘크
   - 삼미호
   - 공작
   - 은빛 멧돼지
 locations:
-  - 영물 관리원
-  - 장비실
+  - 도심 숲
+  - 녹명가 시설
   - A-13 구역
+  - C구역
 wiki-data:
   appear:
     - 강진우
     - 김중헌
-    - 녹명가
+    - 윤서준
+    - 카이저
     - 강철 뿔 엘크
     - 삼미호
     - 공작
     - 은빛 멧돼지
-  disappear: []
-  relations:
-    - source: 김중헌
-      name: 강진우
-      mood: NEUTRAL
-      tense: CURRENT
-      display: 강진우를 안내하고 관찰함
-    - source: 강진우
-      name: 김중헌
-      mood: NEUTRAL
-      tense: CURRENT
-      display: 김중헌의 안내를 받음
-    - source: 윤서준
-      name: 강진우
-      mood: NEUTRAL
-      tense: PAST
-      display: 강진우를 영물 관리원에 직접 부탁함
-    - source: 김중헌
-      name: 녹명가
-      mood: FRIENDLY
-      tense: CURRENT
-      display: 녹명가의 선임 드루이드이자 일원
-    - source: 녹명가
-      name: 영물
-      mood: FRIENDLY
-      tense: CURRENT
-      display: 영물과의 계약으로 힘을 빌림
-    - source: 강진우
-      name: 강철 뿔 엘크
-      mood: FRIENDLY
-      tense: CURRENT
-      display: 강철 뿔 엘크의 복종을 이끌어냄
-    - source: 강진우
-      name: 삼미호
-      mood: FRIENDLY
-      tense: CURRENT
-      display: 삼미호의 애교를 받음
-    - source: 강진우
-      name: 공작
-      mood: NEUTRAL
-      tense: CURRENT
-      display: 공작이 강진우를 피하게 함
-    - source: 강진우
-      name: 은빛 멧돼지
-      mood: FRIENDLY
-      tense: CURRENT
-      display: 은빛 멧돼지를 쓰다듬음
-    - source: 카이저
-      name: 강진우
-      mood: NEUTRAL
-      tense: PAST
-      display: 강진우에게 신형 강화복을 제안했었음
-    - source: 윤서준
-      name: 천세희
-      mood: NEUTRAL
-      tense: CURRENT
-      display: 천세희의 측근
-    - source: 녹명가
-      name: 쌍둥이 남매
-      mood: FRIENDLY
-      tense: CURRENT
-      display: 가문의 미래로 기대하는 역대급 재능
-    - source: 김중헌
-      name: 쌍둥이 남매
-      mood: FRIENDLY
-      tense: CURRENT
-      display: 본가 쌍둥이 남매의 재능에 기대를 품음
-    - source: 김중헌
-      name: 강진우
-      mood: NEUTRAL
-      tense: CURRENT
-      display: 강진우의 영물 교감 재능을 시험하려 함
+    - 녹명가
   update:
     - name: 강진우
       changes:
         status: ALIVE
-        action: 영물들과 탁월하게 교감함
-        mental: 아프리카 영물들과의 경험으로 영물 다루는 법을 무의식적으로 익힘
+        role: 퇴역 군인
+        affiliation: UNKNOWN
+        mental: 침착함
+        action: 영물과의 교감
+        image: null
     - name: 김중헌
       changes:
         status: ALIVE
-        mental: 강진우의 영물 교감 능력에 충격받고 그 재능을 녹명가에 활용할 방안을 모색함
+        role: 선임 드루이드
+        affiliation: 녹명가
+        mental: 기대감
+        action: 진우 안내
+        image: null
     - name: 강철 뿔 엘크
       changes:
         status: ALIVE
-        action: 강진우에게 무릎 꿇고 복종함
+        role: 영물
+        affiliation: 녹명가 시설
+        mental: 복종
+        action: 먹이 먹기
+        image: null
     - name: 삼미호
       changes:
         status: ALIVE
-        action: 강진우에게 배를 보이며 애교를 부림
+        role: 영물
+        affiliation: 녹명가 시설
+        mental: 애교
+        action: 배 까뒤집기
+        image: null
     - name: 공작
       changes:
         status: ALIVE
-        action: 강진우 앞에서 날개를 접고 숨음
+        role: 영물
+        affiliation: 녹명가 시설
+        mental: 두려움
+        action: 숨기
+        image: null
     - name: 은빛 멧돼지
       changes:
         status: ALIVE
-        action: 강진우의 손길에 머리를 내밀고 쓰다듬을 받음
+        role: 영물
+        affiliation: 녹명가 시설
+        mental: 순종
+        action: 머리 내밀기
+        image: null
+  relations:
+    - source: 김중헌
+      name: 강진우
+      display: 존중
+      mood: FRIENDLY
+      tense: CURRENT
+    - source: 김중헌
+      name: 윤서준
+      display: 의뢰
+      mood: NEUTRAL
+      tense: PAST
+    - source: 강진우
+      name: 김중헌
+      display: 관찰
+      mood: NEUTRAL
+      tense: CURRENT
+    - source: 강진우
+      name: 강철 뿔 엘크
+      display: 교감
+      mood: FRIENDLY
+      tense: CURRENT
+    - source: 강철 뿔 엘크
+      name: 강진우
+      display: 복종
+      mood: FRIENDLY
+      tense: CURRENT
+    - source: 김중헌
+      name: 강철 뿔 엘크
+      display: 관리
+      mood: NEUTRAL
+      tense: CURRENT
+    - source: 강진우
+      name: 삼미호
+      display: 교감
+      mood: FRIENDLY
+      tense: CURRENT
+    - source: 삼미호
+      name: 강진우
+      display: 애교
+      mood: FRIENDLY
+      tense: CURRENT
+    - source: 강진우
+      name: 공작
+      display: 두려움 유발
+      mood: HOSTILE
+      tense: CURRENT
+    - source: 강진우
+      name: 은빛 멧돼지
+      display: 쓰다듬기
+      mood: FRIENDLY
+      tense: CURRENT
+    - source: 김중헌
+      name: 녹명가
+      display: 소속
+      mood: NEUTRAL
+      tense: CURRENT
+  disappear: []
 ---
 ## 15화
 

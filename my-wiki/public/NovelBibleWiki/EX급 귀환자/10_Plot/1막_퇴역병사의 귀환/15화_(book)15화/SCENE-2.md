@@ -2,86 +2,97 @@
 type: scene
 chapter: 15
 scene: 2
-title: 위기의 녹시연과 강진우의 등장
+title: 7번 특수 격리실
 summary: >-
-  C-7번 특수 격리실에서 녹시우와 녹시연 남매가 뇌전 오소리를 길들이기 위한 내기를 한다. 녹시연이 먼저 공명 마력을 사용하지만, 뇌전
-  오소리는 이에 저항하며 철창을 부수고 녹시연을 공격한다. 녹시연이 위기에 처한 순간, 강진우가 나타나 뇌전 오소리를 제압하고 그녀를 구한다.
+  녹시우와 녹시연 남매가 뇌전 벌꿀 오소리를 길들이기 위한 내기에 참여한다. 녹시연의 공명 마법이 오소리에게 효과가 없자, 오소리가 격리실을
+  파괴하고 녹시연을 공격하려 한다. 강진우가 나타나 오소리를 제압한다.
 characters:
   - 녹시우
   - 녹시연
-  - 경호원들
-  - 뇌전 오소리
+  - 뇌전 벌꿀 오소리
   - 강진우
+  - 경호원들
 locations:
-  - C-7번 특수 격리실
+  - 7번 특수 격리실
 wiki-data:
   appear:
     - 녹시우
     - 녹시연
-    - 경호원들
-    - 뇌전 오소리
+    - 뇌전 벌꿀 오소리
     - 강진우
-  disappear: []
-  relations:
-    - source: 녹시우
-      name: 녹시연
-      mood: NEUTRAL
-      tense: CURRENT
-      display: '남매 관계, 내기 중'
-    - source: 녹시연
-      name: 녹시우
-      mood: NEUTRAL
-      tense: CURRENT
-      display: '남매 관계, 내기 중'
-    - source: 녹시연
-      name: 뇌전 오소리
-      mood: NEUTRAL
-      tense: CURRENT
-      display: 길들이려 함
-    - source: 뇌전 오소리
-      name: 녹시연
-      mood: HOSTILE
-      tense: CURRENT
-      display: '적대감, 공격'
-    - source: 경호원들
-      name: 녹시연
-      mood: FRIENDLY
-      tense: CURRENT
-      display: 보호 대상
-    - source: 녹시우
-      name: 녹시연
-      mood: FRIENDLY
-      tense: CURRENT
-      display: '걱정, 보호'
-    - source: 강진우
-      name: 뇌전 오소리
-      mood: HOSTILE
-      tense: CURRENT
-      display: 제압 시도
-    - source: 강진우
-      name: 녹시연
-      mood: FRIENDLY
-      tense: CURRENT
-      display: 구조
+    - 경호원들
+    - 녹명가
   update:
+    - name: 녹시우
+      changes:
+        status: ALIVE
+        role: A급 헌터
+        affiliation: 녹명가
+        mental: 동생을 걱정
+        action: 동생을 구하려 함
     - name: 녹시연
       changes:
         status: ALIVE
-        mental: 공포에 질렸으나 강진우에게 구조됨
-    - name: 뇌전 오소리
+        role: A급 헌터
+        affiliation: 녹명가
+        mental: '자신감, 당황'
+        action: 오소리를 길들이려 시도
+    - name: 뇌전 벌꿀 오소리
       changes:
-        status: STUNNED
-        action: 강진우에게 제압당함
-        mental: 공격적이었으나 제압되어 분노함
+        status: CAPTURED
+        role: 영물
+        affiliation: 격리실 (강진우)
+        mental: '광기, 적대감'
+        action: '격리실 파괴, 공격 시도'
     - name: 강진우
       changes:
         status: ALIVE
-        action: 뇌전 오소리를 제압하고 녹시연을 구함
-        role: 구원자
-    - name: 경호원들
-      changes:
-        status: ALIVE
-        action: 뇌전 오소리 탈출 저지 실패
+        role: 경호원
+        affiliation: 미상
+        mental: 무뚝뚝함
+        action: 오소리를 제압
+  relations:
+    - source: 녹시우
+      name: 녹시연
+      display: 동생
+      mood: FRIENDLY
+      tense: CURRENT
+    - source: 녹시연
+      name: 녹시우
+      display: 오빠
+      mood: NEUTRAL
+      tense: CURRENT
+    - source: 녹시연
+      name: 뇌전 벌꿀 오소리
+      display: 오소리
+      mood: HOSTILE
+      tense: CURRENT
+    - source: 뇌전 벌꿀 오소리
+      name: 녹시연
+      display: 녹시연
+      mood: HOSTILE
+      tense: CURRENT
+    - source: 녹시우
+      name: 녹시연
+      display: 아가씨
+      mood: FRIENDLY
+      tense: CURRENT
+    - source: 강진우
+      name: 뇌전 벌꿀 오소리
+      display: 오소리
+      mood: HOSTILE
+      tense: CURRENT
+    - source: 녹명가
+      name: 녹시우
+      display: 직계 쌍둥이
+      mood: FRIENDLY
+      tense: CURRENT
+    - source: 녹명가
+      name: 녹시연
+      display: 직계 쌍둥이
+      mood: FRIENDLY
+      tense: CURRENT
+  disappear: []
 ---
 [C - 7번 특수 격리실]
 
