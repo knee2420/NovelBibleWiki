@@ -38,6 +38,7 @@ export const BulkImportModal = ({ isOpen, onClose, onComplete, actPath, wikiData
       pendingReviews, 
       reviewIndex, 
       decisions, 
+      getDecisions, // [FIX] Added
       detectNewCharacters, 
       handleReviewAction, 
       waitForReview,
@@ -254,15 +255,38 @@ export const BulkImportModal = ({ isOpen, onClose, onComplete, actPath, wikiData
              setProcessingLog((prev) => [...prev, `     👤 캐릭터 정보 동기화 중...`])
              
              // Include Decisions
-             // [FIX] aiResult.characters is string[], so use 'c' directly key
-             const decisionsForScene = aiResult.characters?.map((c: any) => {
-                 const name = typeof c === 'string' ? c : c.name
-                 return decisions[name]
+             // [FIX] Use getDecisions() to access latest state in async loop
+             const currentDecisions = getDecisions()
+             
+             // [Prevention] Filter out characters that are actually Factions/Locations in WikiData
+             // This prevents creating a Character file for "Nokmyeong Family" if it exists as a Faction.
+             const validCharacters = (aiResult.characters || []).filter((name: string) => {
+                 // Check if it exists in WikiData
+                 // We need to import findEntryByName or implement finding logic here.
+                 // Since we have wikiData prop, let's use it.
+                 // findEntryByName is imported from nameResolver.
+                 const existingEntry = wikiData.find(e => e.name === name || (e.info as any)?.alias?.includes(name))
+                 
+                 // If it exists and is NOT a character, SKIP IT.
+                 if (existingEntry && existingEntry.type !== 'character') {
+                     console.log(`[BulkImport] Skipping '${name}' (Existing Type: ${existingEntry.type})`)
+                     return false
+                 }
+                 return true
+             })
+
+             const safeAiResult = {
+                 ...finalData,
+                 characters: validCharacters
+             }
+
+             const decisionsForScene = validCharacters.map((name: string) => {
+                 return currentDecisions[name]
              }).filter(Boolean) || []
 
              // @ts-ignore
              const syncResult = await window.api.updateCharacter({
-                 aiResult: finalData,
+                 aiResult: safeAiResult,
                  sceneInfo: {
                      chapter: realChapterNum,
                      scene: realSceneNum,

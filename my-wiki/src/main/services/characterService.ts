@@ -1,6 +1,7 @@
 import path from 'path'
 import fs from 'fs/promises'
 import matter from 'gray-matter'
+import { CharacterFrontmatter, CharacterRelation } from '../../shared/types/character-schema'
 
 // [Configuration]
 const CHARACTER_DIR = path.join(process.cwd(), 'public/NovelBibleWiki/EX급 귀환자/20_Wiki/1.Characters')
@@ -56,27 +57,31 @@ export const characterService = {
      await ensureDir()
      
      let existingFile = await findCharacterFile(name)
-     
+     let targetPath = existingFile ? path.join(CHARACTER_DIR, existingFile) : null;
+
      // [Decision: Merge] Override existingFile
      if (decision?.action === 'merge' && decision.targetId) {
-         // targetId can be absolute path or just filename
-         // If absolute, clean it
-         const potentialName = decision.targetId.endsWith('.md') 
-            ? path.basename(decision.targetId) 
-            : decision.targetId + '.md' // Attempt to match
-            
-         // Check if this file exists in CHARACTER_DIR
-         const fullPath = path.join(CHARACTER_DIR, potentialName)
+         // Trust the targetId as the absolute path or resolved path from frontend
+         // Check if it exists exactly as provided
          try {
-             await fs.access(fullPath)
-             existingFile = potentialName
-             console.log(`[CharacterService] Merging '${name}' into existing file: ${existingFile}`)
+             await fs.access(decision.targetId);
+             targetPath = decision.targetId;
+             existingFile = path.basename(decision.targetId);
+             console.log(`[CharacterService] Merging '${name}' into existing file at: ${targetPath}`);
          } catch {
-             // If direct name match failed, try to fallback or search?
-             // But usually frontend sends correct ID.
-             // If frontend sends 'uuid' instead of path, we are in trouble. 
-             // Assuming frontend sends the 'id' which is 'FILE_PATH' in local filesystem mode.
-             existingFile = path.basename(decision.targetId)
+             console.warn(`[CharacterService] Target file for merge not found: ${decision.targetId}. Fallback to default search.`);
+             // Fallback logic remains: Check if it's in standard dir
+             const potentialName = path.basename(decision.targetId);
+             const stdPath = path.join(CHARACTER_DIR, potentialName);
+             try {
+                await fs.access(stdPath);
+                targetPath = stdPath;
+                existingFile = potentialName;
+             } catch {
+                console.error(`[CharacterService] Merge target truly not found. Creating new file instead.`);
+                targetPath = null;
+                existingFile = null;
+             }
          }
      }
 
@@ -112,22 +117,47 @@ export const characterService = {
          })
      }
 
-     if (existingFile) {
+     if (targetPath && existingFile) {
          // [UPDATE EXISTING]
-         const filePath = path.join(CHARACTER_DIR, existingFile)
+         // const filePath = path.join(CHARACTER_DIR, existingFile) <--- OLD
+         const filePath = targetPath; // Use resolved path
          const fileContent = await fs.readFile(filePath, 'utf-8')
          const parsed = matter(fileContent)
          
          // 1. Verify/Mix Frontmatter
-         const newFm = { ...parsed.data }
+         const newFm = { ...parsed.data } as any
          
-         // Merge Relations (Simple append/overwrite logic)
-         // We'll trust the latest if exists, or append.
-         // Actually, 'relations' in FM should be a cumulative current state.
-         // Let's just update 'status' for now.
+         // Merge Relations
+         // Strategy: Add NEW relations. If exist, Update?? 
+         // For now, we will ADD non-existing relations to the list (so we don't lose old ones).
+         // Or should we update existing ones? Usually "Update" is better for 'mood' changes.
+         if (aiData.relations && Array.isArray(aiData.relations)) {
+             const currentRels = (newFm.relations || []) as CharacterRelation[]
+             const newRels = aiData.relations as CharacterRelation[]
+             
+             newRels.forEach(newRel => {
+                 const idx = currentRels.findIndex(r => r.name === newRel.name)
+                 if (idx !== -1) {
+                     // Update existing
+                     currentRels[idx] = { ...currentRels[idx], ...newRel }
+                 } else {
+                     // Add new
+                     currentRels.push(newRel)
+                 }
+             })
+             newFm.relations = currentRels
+         }
+         
          // Let's just update 'status' for now.
          if (aiData.status) newFm.status = aiData.status
          if (aiData.rank) newFm.rank = aiData.rank // if AI extracts rank
+         if (aiData.role && aiData.role.length < 20) newFm.role = aiData.role // Only update role if it's short/new
+         if (aiData.affiliation && aiData.affiliation !== 'Unknown') newFm.affiliation = aiData.affiliation // Update affiliation
+         
+         // [Requirement] Update Grade if provided in decision
+         if (decision?.grade) {
+             newFm.grade = decision.grade
+         }
          
              // [Decision: Merge] Add Alias
              if (decision?.action === 'merge') {
@@ -141,14 +171,14 @@ export const characterService = {
                  if (!aliases.includes(name)) {
                      aliases.push(name)
                      newFm.alias = aliases.join(', ')
-                     logEntry += `- **별칭 추가(Alias)**: ${name}\n`
                  }
              }
          
          // Write back
-         const newContent = matter.stringify(parsed.content + logEntry, newFm)
+         // [Requirement] Do NOT append detailed logs to body. Only update frontmatter.
+         const newContent = matter.stringify(parsed.content, newFm)
          await fs.writeFile(filePath, newContent)
-         console.log(`[Character] Updated ${existingFile}`)
+         console.log(`[Character] Updated Frontmatter for ${existingFile} (Path: ${filePath})`)
           return { type: decision?.action === 'merge' ? 'merged' : 'updated', file: existingFile }
 
      } else {
@@ -156,17 +186,17 @@ export const characterService = {
          const fileName = `${name}.md`
          const filePath = path.join(CHARACTER_DIR, fileName)
          
-         const frontmatter = {
+         const frontmatter: CharacterFrontmatter = {
              name: name,
              role: aiData.role || 'Unknown',
-             grade: 'EXTRA', // Default
-             status: aiData.status || 'Active',
-             affiliation: 'Unknown',
+             grade: decision?.grade || 'EXTRA', // [NEW] Use user selected grade
+             status: (aiData.status as any) || 'ALIVE',
+             affiliation: aiData.affiliation || 'Unknown',
              type: 'character',
-             relations: aiData.relations || []
+             relations: (aiData.relations || []) as CharacterRelation[]
          }
          
-         const initialBody = `\n## 개요\n신규 등장한 캐릭터입니다.\n${logEntry}`
+         const initialBody = `\n## 개요\n신규 등장한 캐릭터입니다.\n${aiData.summary ? `> ${aiData.summary}\n` : ''}\n${logEntry}`
          
          const newContent = matter.stringify(initialBody, frontmatter)
          await fs.writeFile(filePath, newContent)

@@ -12,6 +12,7 @@ export interface CharacterDecision {
   action: 'create' | 'merge' | 'skip'
   targetId?: string // if merge
   targetName?: string // if merge
+  grade?: 'MAIN' | 'SUB' | 'MINOR' | 'EXTRA' // [NEW] User selected grade
 }
 
 interface CharacterReviewModalProps {
@@ -19,8 +20,10 @@ interface CharacterReviewModalProps {
   pendingReviews: PendingReview[]
   reviewIndex: number
   wikiData?: WikiEntry[]
-  onAction: (action: 'create' | 'merge' | 'skip', targetId?: string, targetName?: string) => void
+  onAction: (action: 'create' | 'merge' | 'skip', targetId?: string, targetName?: string, grade?: 'MAIN' | 'SUB' | 'MINOR' | 'EXTRA') => void
 }
+
+import { useState, useEffect } from 'react'
 
 export const CharacterReviewModal = ({
   isOpen,
@@ -29,6 +32,13 @@ export const CharacterReviewModal = ({
   wikiData = [],
   onAction
 }: CharacterReviewModalProps) => {
+  const [selectedGrade, setSelectedGrade] = useState<'MAIN' | 'SUB' | 'MINOR' | 'EXTRA'>('EXTRA')
+
+  // Reset grade on new review
+  useEffect(() => {
+    setSelectedGrade('EXTRA')
+  }, [reviewIndex])
+
   if (!isOpen || pendingReviews.length === 0) return null
 
   const currentReview = pendingReviews[reviewIndex]
@@ -64,16 +74,31 @@ export const CharacterReviewModal = ({
         </div>
 
         <div className="grid grid-cols-3 gap-4">
-          <button
-            onClick={() => onAction('create')}
-            className="flex flex-col items-center justify-center gap-2 p-4 bg-purple-600 hover:bg-purple-500 rounded-xl transition-all hover:scale-[1.02] group"
-          >
-            <UserPlus className="w-6 h-6 text-white" />
-            <span className="font-bold text-white">신규 생성</span>
-            <span className="text-xs text-purple-200 opacity-60 group-hover:opacity-100">
-              새 파일 생성
-            </span>
-          </button>
+          {/* Create New Block */}
+          <div className="relative group flex flex-col gap-2">
+            <button
+              onClick={() => onAction('create', undefined, undefined, selectedGrade)}
+              className="flex-1 w-full flex flex-col items-center justify-center gap-2 p-4 bg-purple-600 hover:bg-purple-500 rounded-xl transition-all hover:scale-[1.02]"
+            >
+              <UserPlus className="w-6 h-6 text-white" />
+              <span className="font-bold text-white">신규 생성</span>
+              <span className="text-xs text-purple-200 opacity-60">
+                 Grade: {selectedGrade}
+              </span>
+            </button>
+            
+            {/* Grade Selector (Small dropdown below button) */}
+            <select
+               value={selectedGrade}
+               onChange={(e) => setSelectedGrade(e.target.value as any)}
+               className="w-full bg-slate-800 text-slate-200 text-xs py-1 px-2 rounded border border-slate-700 focus:outline-none focus:border-purple-500"
+            >
+               <option value="MAIN">MAIN (주연)</option>
+               <option value="SUB">SUB (조연)</option>
+               <option value="MINOR">MINOR (단역)</option>
+               <option value="EXTRA">EXTRA (엑스트라)</option>
+            </select>
+          </div>
 
           <div className="relative group">
             <button className="w-full h-full flex flex-col items-center justify-center gap-2 p-4 bg-slate-800 hover:bg-slate-700 rounded-xl transition-all hover:scale-[1.02]">

@@ -8,6 +8,7 @@ interface UseCharacterReviewReturn {
   pendingReviews: PendingReview[]
   reviewIndex: number
   decisions: Record<string, CharacterDecision>
+  getDecisions: () => Record<string, CharacterDecision> // [FIX] Added
   detectNewCharacters: (aiResult: any) => boolean // Returns true if review needed
   handleReviewAction: (action: 'create' | 'merge' | 'skip', targetId?: string, targetName?: string) => void
   waitForReview: () => Promise<void>
@@ -69,22 +70,36 @@ export const useCharacterReview = (wikiData: WikiEntry[]): UseCharacterReviewRet
     return false
   }
 
+  // [FIX] Use ref to access latest decisions in async callbacks
+  const decisionsRef = useRef<Record<string, CharacterDecision>>({})
+
+  // Sync state and ref
+  const updateDecisions = (newDecisions: Record<string, CharacterDecision> | ((prev: Record<string, CharacterDecision>) => Record<string, CharacterDecision>)) => {
+      setDecisions(prev => {
+          const next = typeof newDecisions === 'function' ? newDecisions(prev) : newDecisions
+          decisionsRef.current = next
+          return next
+      })
+  }
+
   const handleReviewAction = (
     action: 'create' | 'merge' | 'skip',
     targetId?: string,
-    targetName?: string
+    targetName?: string,
+    grade?: 'MAIN' | 'SUB' | 'MINOR' | 'EXTRA' // [NEW] Accept grade
   ) => {
     const currentReview = pendingReviews[reviewIndex]
     if (!currentReview) return
 
     // Save Decision
-    setDecisions((prev) => ({
+    updateDecisions((prev) => ({
       ...prev,
       [currentReview.name]: {
         name: currentReview.name,
         action,
         targetId,
-        targetName
+        targetName,
+        grade // [NEW] Store grade
       }
     }))
 
@@ -117,7 +132,7 @@ export const useCharacterReview = (wikiData: WikiEntry[]): UseCharacterReviewRet
     setIsReviewing(false)
     setPendingReviews([])
     setReviewIndex(0)
-    setDecisions({})
+    updateDecisions({})
     resolveRef.current = null
   }
 
@@ -126,6 +141,7 @@ export const useCharacterReview = (wikiData: WikiEntry[]): UseCharacterReviewRet
     pendingReviews,
     reviewIndex,
     decisions,
+    getDecisions: () => decisionsRef.current, // [FIX] Expose ref getter
     detectNewCharacters,
     handleReviewAction,
     waitForReview,
