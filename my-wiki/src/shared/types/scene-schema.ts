@@ -20,7 +20,6 @@ export interface CharacterUpdate {
     affiliation?: string;
     mental?: string;
     action?: string;
-    image?: string;
     [key: string]: any; // For flexibility
   };
 }
