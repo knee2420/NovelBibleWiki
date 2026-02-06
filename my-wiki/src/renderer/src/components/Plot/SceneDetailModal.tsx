@@ -11,7 +11,7 @@ import {
   Trash2,
   Plus,
   MinusCircle,
-  Sparkles, // [NEW] Icon for AI
+  Sparkles,
   ChevronDown,
   ChevronUp
 } from 'lucide-react'
@@ -21,13 +21,15 @@ import remarkGfm from 'remark-gfm'
 import { WikiEntry } from '../../types/wiki'
 import { CharacterReviewModal } from '../AI/CharacterReviewModal'
 import { useCharacterReview } from '../../hooks/useCharacterReview'
+import { SceneFieldConfig } from '../../../../shared/types/field-config'
+import { WikiDataRenderer } from '../Shared/WikiDataRenderer'
 
 interface SceneDetailModalProps {
   filePath: string
   isOpen: boolean
   onClose: () => void
-  onUpdate?: () => void // 데이터 갱신 요청 콜백 (PlotDashboard에서 넘겨줘야 함)
-  wikiData?: WikiEntry[] // [NEW]
+  onUpdate?: () => void
+  wikiData?: WikiEntry[]
 }
 
 export const SceneDetailModal = ({
@@ -38,26 +40,25 @@ export const SceneDetailModal = ({
   wikiData = []
 }: SceneDetailModalProps) => {
   const [loading, setLoading] = useState(false)
-
+  
   // --- Data State ---
-  const [originalData, setOriginalData] = useState<any>(null) // 비교 및 취소용
+  const [originalData, setOriginalData] = useState<any>(null)
+  const [fieldConfig, setFieldConfig] = useState<SceneFieldConfig[]>([])
   const [isEditing, setIsEditing] = useState(false)
 
   // --- Edit Mode State ---
+  // Title and Content are special - Title maps to filename, Content to body
   const [editTitle, setEditTitle] = useState('')
   const [editContent, setEditContent] = useState('')
-  const [editSummary, setEditSummary] = useState('')
-  const [editCharacters, setEditCharacters] = useState('') // Comma separated string
-  const [editLocations, setEditLocations] = useState('') // Comma separated string
-  const [editTags, setEditTags] = useState('') // Comma separated string
-  const [editWikiData, setEditWikiData] = useState<any>(null) // [NEW] Wiki Data State
+  
+  // Universal Metadata State (Includes Summary, Characters, etc.)
   const [editMetadata, setEditMetadata] = useState<Record<string, any>>({})
+
+  // Ad-hoc field addition
   const [newMetaKey, setNewMetaKey] = useState('')
   const [newMetaValue, setNewMetaValue] = useState('')
 
-  const [isGraphDataExpanded, setIsGraphDataExpanded] = useState(false) // [NEW] Expand state
-
-  // [NEW] AI Panel State
+  const [isGraphDataExpanded, setIsGraphDataExpanded] = useState(false)
   const [isAIPanelOpen, setIsAIPanelOpen] = useState(false)
 
   // [Hook] Use Character Review
@@ -72,22 +73,22 @@ export const SceneDetailModal = ({
     resetReview
   } = useCharacterReview(wikiData)
 
-  // Focus Control
   const titleInputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     if (isOpen && filePath) {
       loadDetail()
     } else {
-      // 닫힐 때 상태 초기화
       setIsEditing(false)
       setOriginalData(null)
-      setIsAIPanelOpen(false) // [NEW] Reset AI panel
+      setIsAIPanelOpen(false)
       resetReview()
+      setEditMetadata({})
+      setEditTitle('')
+      setEditContent('')
     }
   }, [isOpen, filePath])
 
-  // [FIX] 포커스 잠금 해결 로직
   useEffect(() => {
     if (isEditing) {
       const timer = setTimeout(() => {
@@ -103,10 +104,27 @@ export const SceneDetailModal = ({
     setLoading(true)
     try {
       // @ts-ignore
-      const result = await window.api.getSceneDetail(filePath)
-      if (result) {
-        setOriginalData(result)
-        syncStateFromData(result)
+      const [detailData, configData] = await Promise.all([
+          (window as any).api.getSceneDetail(filePath),
+          (window as any).api.getFieldConfig()
+      ])
+      
+      const config = configData?.scene || []
+      // Sort config by order
+      config.sort((a, b) => (a.order || 99) - (b.order || 99))
+      
+      setFieldConfig(config)
+      
+      if (detailData) {
+        setOriginalData(detailData)
+        setEditTitle(detailData.frontmatter?.title || '')
+        setEditContent(detailData.content || '')
+        
+        // Sync Metadata
+        const reserved = ['title', 'updatedAt'] // fields handled internally or specially
+        const meta = { ...detailData.frontmatter }
+        reserved.forEach(k => delete meta[k])
+        setEditMetadata(meta)
       }
     } catch (error) {
       console.error(error)
@@ -115,66 +133,27 @@ export const SceneDetailModal = ({
     }
   }
 
-  const syncStateFromData = (data: any) => {
-    const fm = data.frontmatter || {}
-    setEditTitle(fm.title || '')
-    setEditContent(data.content || '')
-    setEditSummary(fm.summary || '')
-    setEditCharacters(Array.isArray(fm.characters) ? fm.characters.join(', ') : '')
-    setEditLocations(Array.isArray(fm.locations) ? fm.locations.join(', ') : '')
-    setEditTags(Array.isArray(fm.tags) ? fm.tags.join(', ') : '')
-    setEditWikiData(fm['wiki-data'] || null) // [NEW] Sync Wiki Data
-
-    const reserved = [
-      'title',
-      'summary',
-      'characters',
-      'locations',
-      'tags',
-      'type',
-      'scene',
-      'updatedAt',
-      'wiki-data' // [NEW] Reserved
-    ]
-    const meta = { ...fm }
-    reserved.forEach((key) => delete meta[key])
-    setEditMetadata(meta)
-  }
-
   const handleSave = async () => {
     try {
-      // 배열 변환 유틸
-      const toArray = (str: string) =>
-        str
-          .split(',')
-          .map((s) => s.trim())
-          .filter((s) => s !== '')
-
-      // Collect decisions from hook
       const activeDecisions = Object.keys(decisions).length > 0 ? Object.values(decisions) : undefined
 
       const payload = {
         path: filePath,
         content: editContent,
         data: {
-          ...originalData.frontmatter, // 기존 데이터 유지 (scene number 등)
-          title: editTitle,
-          summary: editSummary,
-          characters: toArray(editCharacters),
-          locations: toArray(editLocations),
-          tags: toArray(editTags),
-          'wiki-data': editWikiData, // [NEW] Save Wiki Data
-          ...editMetadata,
+          ...originalData.frontmatter,
+          title: editTitle, // Explicitly set title
+          ...editMetadata,  // Spread all dynamic fields
           updatedAt: new Date().toISOString()
         },
-        decisions: activeDecisions // [NEW] Pass decisions
+        decisions: activeDecisions
       }
 
       // @ts-ignore
       const res = await window.api.updateScene(payload)
       if (res.success) {
         setIsEditing(false)
-        loadDetail() // 최신 데이터로 다시 로드
+        loadDetail()
         if (onUpdate) onUpdate()
         window.focus()
       } else {
@@ -211,8 +190,30 @@ export const SceneDetailModal = ({
   }
 
   const handleCancel = () => {
-    if (originalData) syncStateFromData(originalData)
-    setIsEditing(false)
+     // Revert
+     if (originalData) {
+        setEditTitle(originalData.frontmatter?.title || '')
+        setEditContent(originalData.content || '')
+        const reserved = ['title', 'updatedAt']
+        const meta = { ...originalData.frontmatter }
+        reserved.forEach(k => delete meta[k])
+        setEditMetadata(meta)
+     }
+     setIsEditing(false)
+  }
+
+  // --- Dynamic Metadata Handlers ---
+
+  const handleMetaChange = (key: string, val: any) => {
+    setEditMetadata((prev) => ({ ...prev, [key]: val }))
+  }
+  
+  const handleArrayChange = (key: string, strVal: string) => {
+      // Convert comma-separated string back to array on change (or on blur? keeping simple on change for now)
+      // Actually, better to store as Array in state, but use string for input
+      // Wait, if we use setEditMetadata, we should store what we want in JSON
+      const arr = strVal.split(',').map(s => s.trim()).filter(s => s !== '')
+      setEditMetadata((prev) => ({ ...prev, [key]: arr }))
   }
 
   const handleAddMeta = () => {
@@ -225,8 +226,8 @@ export const SceneDetailModal = ({
     setNewMetaKey('')
     setNewMetaValue('')
   }
-
-  const handleRemoveMeta = (key: string) => {
+  
+   const handleRemoveMeta = (key: string) => {
     setEditMetadata((prev) => {
       const next = { ...prev }
       delete next[key]
@@ -234,35 +235,141 @@ export const SceneDetailModal = ({
     })
   }
 
-  const handleMetaChange = (key: string, val: string) => {
-    setEditMetadata((prev) => ({ ...prev, [key]: val }))
-  }
-
   const getFileName = (path: string) => path.split(/[\\/]/).pop()?.replace(/\.md$/i, '') || ''
 
-  // [NEW] AI Apply Handler
   const handleAIApply = async (data: any) => {
-    // 1. Check for New Characters
     const needsReview = detectNewCharacters(data)
+    if (needsReview) await waitForReview()
 
-    if (needsReview) {
-      await waitForReview()
-    }
-
-    // 2. Apply Data
     if (data.title) setEditTitle(data.title)
-    if (data.summary) setEditSummary(data.summary)
-    if (data.characters) setEditCharacters(data.characters.join(', '))
-    if (data.locations) setEditLocations(data.locations.join(', '))
-    if (data.tags) setEditTags(data.tags.join(', '))
-    if (data['wiki-data']) setEditWikiData(data['wiki-data']) // [NEW] Apply Wiki Data
     
-    // Switch to edit mode automatically to show changes
+    // Apply all other fields dynamically
+    setEditMetadata(prev => {
+        const next = { ...prev }
+        // Exclude internal
+        const exclude = ['title'] 
+        Object.keys(data).forEach(key => {
+            if (!exclude.includes(key)) {
+                next[key] = data[key]
+            }
+        })
+        return next
+    })
+    
     setIsEditing(true)
-    
-    // Close AI Panel
     setIsAIPanelOpen(false)
   }
+  
+  // --- Render Helper ---
+  const renderField = (field: SceneFieldConfig) => {
+      const val = editMetadata[field.key]
+      
+      // Special Handling for Wiki Data (Graph)
+      if (field.key === 'wiki-data') {
+          return renderWikiData(val, field)
+      }
+      
+      // Icons for known fields (Legacy support / Visuals)
+      let Icon: any = null
+      if (field.key === 'characters') Icon = User
+      if (field.key === 'locations') Icon = MapPin
+      if (field.key === 'tags') Icon = Tag
+      if (field.key === 'summary') Icon = FileText
+
+      return (
+        <div key={field.key} className="space-y-2">
+           <label className="text-[10px] uppercase tracking-wider text-slate-500 font-bold flex items-center gap-1">
+             {Icon && <Icon size={12} />} {field.label}
+           </label>
+           
+           {field.type === 'textarea' ? (
+                isEditing ? (
+                    <textarea
+                        value={val || ''}
+                        onChange={(e) => handleMetaChange(field.key, e.target.value)}
+                        className="w-full h-32 bg-slate-900 border border-slate-700 rounded-lg p-3 text-sm text-slate-300 focus:border-blue-500 outline-none resize-none leading-relaxed"
+                        placeholder={`${field.label}...`}
+                    />
+                ) : (
+                    <div className="text-sm text-slate-300 bg-slate-900/50 p-3 rounded-lg border border-slate-800 leading-relaxed min-h-[60px] whitespace-pre-wrap">
+                        {val || <span className="text-slate-600 italic">No {field.label}</span>}
+                    </div>
+                )
+           ) : field.type === 'array' ? (
+                isEditing ? (
+                    <input
+                        type="text"
+                        // If generic array, join by comma.
+                        defaultValue={Array.isArray(val) ? val.join(', ') : val || ''} 
+                        // Using onBlur to commit array split to save re-renders? Or onChange?
+                        // Let's use onChange but careful with cursor storage if we reconstruct array every time.
+                        // Actually, easiest is to control a local string input, commit on blur. 
+                        // But for simplicity in this turn, I'll just use onChange -> split
+                        onChange={(e) => handleArrayChange(field.key, e.target.value)}
+                        placeholder="Comma separated"
+                        className="w-full bg-slate-900 border border-slate-700 rounded px-3 py-2 text-sm text-slate-200 focus:border-blue-500 outline-none"
+                    />
+                ) : (
+                    <div className="flex flex-wrap gap-2">
+                        {Array.isArray(val) && val.length > 0 ? val.map((item: string, i: number) => (
+                             <span key={i} className="px-2 py-1 bg-slate-800 border border-slate-700 text-slate-300 text-xs rounded-md">{String(item || '').trim()}</span>
+                        )) : <span className="text-xs text-slate-600">- None -</span>}
+                    </div>
+                )
+           ) : field.type === 'select' ? (
+                 <select 
+                    disabled={!isEditing}
+                    value={val || ''}
+                    onChange={(e) => handleMetaChange(field.key, e.target.value)}
+                    className="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1.5 text-xs text-slate-200 focus:border-blue-500 outline-none disabled:opacity-50"
+                 >
+                    <option value="">Select...</option>
+                    {field.options?.map(opt => <option key={opt} value={opt}>{opt}</option>)}
+                 </select>
+           ) : (
+                // Default Text / Number
+                isEditing ? (
+                    <input
+                        type={field.type === 'number' ? 'number' : 'text'}
+                        value={val || ''}
+                        onChange={(e) => handleMetaChange(field.key, e.target.value)}
+                        className="w-full bg-slate-900 border border-slate-700 rounded px-3 py-2 text-sm text-slate-200 focus:border-blue-500 outline-none"
+                    />
+                ) : (
+                     <div className="text-sm text-slate-300 px-3 py-2 bg-slate-900/50 rounded border border-slate-800">
+                        {val || <span className="text-slate-600 italic">-</span>}
+                     </div>
+                )
+           )}
+        </div>
+      )
+  }
+  
+  const renderWikiData = (wikiDataVal: any, field: SceneFieldConfig) => {
+      // Logic from previous implementation, but scoped
+      if (!wikiDataVal) return null;
+      return (
+          <div key={field.key} className="space-y-2 pt-4 border-t border-slate-800">
+                <button 
+                  onClick={() => setIsGraphDataExpanded(!isGraphDataExpanded)}
+                  className="w-full flex items-center justify-between group"
+                >
+                    <div className="text-[10px] uppercase tracking-wider text-purple-400 font-bold flex items-center gap-1">
+                      <Sparkles size={12} /> {field.label} (Active)
+                    </div>
+                    {isGraphDataExpanded ? <ChevronUp size={12} className="text-slate-500" /> : <ChevronDown size={12} className="text-slate-500" />}
+                </button>
+                
+                {isGraphDataExpanded && (
+                    <div className="pl-2 animate-in slide-in-from-top-2 duration-200 mt-2">
+                        <WikiDataRenderer data={wikiDataVal} />
+                    </div>
+                )}
+          </div>
+      )
+  }
+
+  // --- Main Render ---
 
   if (!isOpen) return null
 
@@ -271,7 +378,6 @@ export const SceneDetailModal = ({
       <div className="bg-slate-900 w-full max-w-6xl h-[85vh] rounded-2xl border border-slate-700 shadow-2xl flex overflow-hidden relative">
         {/* --- Left Column: Metadata Sidebar --- */}
         <div className="w-80 bg-slate-950 flex flex-col border-r border-slate-800 flex-shrink-0">
-          {/* Header Info */}
           <div className="p-6 border-b border-slate-800">
             <div className="flex items-center gap-2 mb-2">
               <div className="bg-blue-600/20 p-1.5 rounded text-blue-400">
@@ -286,265 +392,57 @@ export const SceneDetailModal = ({
             </div>
           </div>
 
-          {/* Form Fields */}
           <div className="flex-1 overflow-y-auto custom-scrollbar p-6 space-y-6">
-            {/* Summary */}
-            <div className="space-y-2">
-              <label className="text-[10px] uppercase tracking-wider text-slate-500 font-bold block">
-                Summary (요약)
-              </label>
-              {isEditing ? (
-                <textarea
-                  value={editSummary}
-                  onChange={(e) => setEditSummary(e.target.value)}
-                  className="w-full h-32 bg-slate-900 border border-slate-700 rounded-lg p-3 text-sm text-slate-300 focus:border-blue-500 outline-none resize-none leading-relaxed"
-                  placeholder="씬의 내용을 요약하세요..."
-                />
-              ) : (
-                <div className="text-sm text-slate-300 bg-slate-900/50 p-3 rounded-lg border border-slate-800 leading-relaxed min-h-[100px]">
-                  {editSummary || <span className="text-slate-600 italic">요약 없음</span>}
+            {/* Dynamic Fields Loop */}
+            {fieldConfig
+                .filter(f => f.key !== 'title' && f.type !== 'system') // Hide title (in header)
+                .map(field => renderField(field))
+            }
+
+            {/* Ad-hoc Metadata (Undefined Fields) */}
+             <div className="space-y-2 mt-8 pt-8 border-t border-slate-800/50">
+                     <label className="text-[10px] uppercase tracking-wider text-slate-600 font-bold block mb-2">
+                       Extra Metadata
+                     </label>
+                     {Object.entries(editMetadata)
+                        .filter(([k]) => !fieldConfig.some(f => f.key === k)) // Show only undefined keys
+                        .map(([key, value]) => (
+                        <div key={key} className="flex justify-between items-center text-xs border-b border-slate-800/30 pb-1 min-h-[28px]">
+                            <span className="text-slate-500 capitalize flex items-center gap-1 w-1/3 truncate" title={key}>
+                                {key}
+                                {isEditing && (
+                                    <button onClick={() => handleRemoveMeta(key)} className="text-slate-600 hover:text-red-400 transition-colors">
+                                        <MinusCircle size={10} />
+                                    </button>
+                                )}
+                            </span>
+                            {isEditing ? (
+                                <input
+                                    type="text"
+                                    value={String(value)}
+                                    onChange={(e) => handleMetaChange(key, e.target.value)}
+                                    className="bg-slate-900 border border-slate-700 rounded px-1.5 py-0.5 text-right text-slate-200 focus:border-blue-500 outline-none flex-1 min-w-0"
+                                />
+                            ) : (
+                                <span className="text-slate-300 font-medium truncate flex-1 text-right">{String(value)}</span>
+                            )}
+                        </div>
+                    ))}
+                    
+                    {isEditing && (
+                        <div className="mt-2 pt-2 border-t border-dashed border-slate-800 flex gap-1 items-center">
+                            <input type="text" placeholder="Key" value={newMetaKey} onChange={(e) => setNewMetaKey(e.target.value)} className="w-1/3 bg-slate-900 border border-slate-700 rounded px-1.5 py-1 text-[10px] text-slate-300 focus:border-blue-500 outline-none" />
+                            <input type="text" placeholder="Value" value={newMetaValue} onChange={(e) => setNewMetaValue(e.target.value)} className="flex-1 bg-slate-900 border border-slate-700 rounded px-1.5 py-1 text-[10px] text-slate-300 focus:border-blue-500 outline-none" />
+                            <button onClick={handleAddMeta} className="p-1 bg-slate-800 hover:bg-blue-600 text-slate-400 hover:text-white rounded border border-slate-700 transition-colors"><Plus size={12} /></button>
+                        </div>
+                    )}
                 </div>
-              )}
-            </div>
-
-            {/* Characters */}
-            <div className="space-y-2">
-              <label className="text-[10px] uppercase tracking-wider text-slate-500 font-bold flex items-center gap-1">
-                <User size={12} /> Characters
-              </label>
-              {isEditing ? (
-                <input
-                  type="text"
-                  value={editCharacters}
-                  onChange={(e) => setEditCharacters(e.target.value)}
-                  placeholder="콤마(,)로 구분 (예: 철수, 영희)"
-                  className="w-full bg-slate-900 border border-slate-700 rounded px-3 py-2 text-sm text-slate-200 focus:border-blue-500 outline-none"
-                />
-              ) : (
-                <div className="flex flex-wrap gap-2">
-                  {editCharacters ? (
-                    editCharacters.split(',').map((char, i) => (
-                      <span
-                        key={i}
-                        className="px-2 py-1 bg-indigo-900/30 border border-indigo-500/30 text-indigo-300 text-xs rounded-md"
-                      >
-                        {char.trim()}
-                      </span>
-                    ))
-                  ) : (
-                    <span className="text-xs text-slate-600">- None -</span>
-                  )}
-                </div>
-              )}
-            </div>
-
-            {/* Locations */}
-            <div className="space-y-2">
-              <label className="text-[10px] uppercase tracking-wider text-slate-500 font-bold flex items-center gap-1">
-                <MapPin size={12} /> Locations
-              </label>
-              {isEditing ? (
-                <input
-                  type="text"
-                  value={editLocations}
-                  onChange={(e) => setEditLocations(e.target.value)}
-                  placeholder="콤마(,)로 구분"
-                  className="w-full bg-slate-900 border border-slate-700 rounded px-3 py-2 text-sm text-slate-200 focus:border-blue-500 outline-none"
-                />
-              ) : (
-                <div className="flex flex-wrap gap-2">
-                  {editLocations ? (
-                    editLocations.split(',').map((loc, i) => (
-                      <span
-                        key={i}
-                        className="px-2 py-1 bg-emerald-900/30 border border-emerald-500/30 text-emerald-300 text-xs rounded-md"
-                      >
-                        {loc.trim()}
-                      </span>
-                    ))
-                  ) : (
-                    <span className="text-xs text-slate-600">- None -</span>
-                  )}
-                </div>
-              )}
-            </div>
-
-            {/* Tags */}
-            <div className="space-y-2">
-              <label className="text-[10px] uppercase tracking-wider text-slate-500 font-bold flex items-center gap-1">
-                <Tag size={12} /> Tags
-              </label>
-              {isEditing ? (
-                <input
-                  type="text"
-                  value={editTags}
-                  onChange={(e) => setEditTags(e.target.value)}
-                  placeholder="태그 입력..."
-                  className="w-full bg-slate-900 border border-slate-700 rounded px-3 py-2 text-sm text-slate-200 focus:border-blue-500 outline-none"
-                />
-              ) : (
-                <div className="flex flex-wrap gap-2">
-                  {editTags ? (
-                    editTags.split(',').map((tag, i) => (
-                      <span key={i} className="text-xs text-slate-500">
-                        #{tag.trim()}
-                      </span>
-                    ))
-                  ) : (
-                    <span className="text-xs text-slate-600">- None -</span>
-                  )}
-                </div>
-              )}
-            </div>
-            {(Object.keys(editMetadata).length > 0 || isEditing) && (
-              <div className="space-y-2 pt-4 border-t border-slate-800">
-                <label className="text-[10px] uppercase tracking-wider text-slate-500 font-bold block">
-                  Metadata
-                </label>
-                <div className="grid grid-cols-1 gap-2">
-                  {Object.entries(editMetadata).map(([key, value]) => (
-                    <div
-                      key={key}
-                      className="flex justify-between items-center text-xs border-b border-slate-800/50 pb-1 min-h-[28px]"
-                    >
-                      <span className="text-slate-500 capitalize flex items-center gap-1">
-                        {key}
-                        {isEditing && (
-                          <button
-                            onClick={() => handleRemoveMeta(key)}
-                            className="text-slate-600 hover:text-red-400 transition-colors"
-                          >
-                            <MinusCircle size={10} />
-                          </button>
-                        )}
-                      </span>
-                      {isEditing ? (
-                        <input
-                          type="text"
-                          value={String(value)}
-                          onChange={(e) => handleMetaChange(key, e.target.value)}
-                          className="bg-slate-900 border border-slate-700 rounded px-1.5 py-0.5 text-right text-slate-200 focus:border-blue-500 outline-none w-[120px]"
-                        />
-                      ) : (
-                        <span className="text-slate-300 font-medium truncate max-w-[120px] text-right">
-                          {String(value)}
-                        </span>
-                      )}
-                    </div>
-                  ))}
-
-                  {/* Add New Meta Row */}
-                  {isEditing && (
-                    <div className="mt-2 pt-2 border-t border-dashed border-slate-800 flex gap-1 items-center">
-                      <input
-                        type="text"
-                        placeholder="Key"
-                        value={newMetaKey}
-                        onChange={(e) => setNewMetaKey(e.target.value)}
-                        className="w-1/3 bg-slate-900 border border-slate-700 rounded px-1.5 py-1 text-[10px] text-slate-300 focus:border-blue-500 outline-none"
-                      />
-                      <input
-                        type="text"
-                        placeholder="Value"
-                        value={newMetaValue}
-                        onChange={(e) => setNewMetaValue(e.target.value)}
-                        className="flex-1 bg-slate-900 border border-slate-700 rounded px-1.5 py-1 text-[10px] text-slate-300 focus:border-blue-500 outline-none"
-                      />
-                      <button
-                        onClick={handleAddMeta}
-                        className="p-1 bg-slate-800 hover:bg-blue-600 text-slate-400 hover:text-white rounded border border-slate-700 transition-colors"
-                      >
-                        <Plus size={12} />
-                      </button>
-                    </div>
-                  )}
-                </div>
-              </div>
-            )}
-
-            {/* [NEW] Wiki Data Indicator (Expandable) */}
-            {editWikiData && (
-              <div className="space-y-2 pt-4 border-t border-slate-800">
-                <button 
-                  onClick={() => setIsGraphDataExpanded(!isGraphDataExpanded)}
-                  className="w-full flex items-center justify-between group"
-                >
-                    <div className="text-[10px] uppercase tracking-wider text-purple-400 font-bold flex items-center gap-1">
-                      <Sparkles size={12} /> Graph Data (Active)
-                    </div>
-                    {isGraphDataExpanded ? <ChevronUp size={12} className="text-slate-500" /> : <ChevronDown size={12} className="text-slate-500" />}
-                </button>
-                
-                {!isGraphDataExpanded && (
-                    <div className="text-xs text-slate-500 pl-4 border-l-2 border-slate-800">
-                      {(editWikiData.appear?.length || 0)} New, {(editWikiData.update?.length || 0)} Updates, {(editWikiData.relations?.length || 0)} Relations
-                    </div>
-                )}
-
-                {isGraphDataExpanded && (
-                    <div className="space-y-3 pl-2 animate-in slide-in-from-top-2 duration-200">
-                        {/* 1. Appear */}
-                        {editWikiData.appear?.length > 0 && (
-                            <div>
-                                <div className="text-[10px] text-slate-500 font-bold mb-1">NEW ({editWikiData.appear.length})</div>
-                                <div className="flex flex-wrap gap-1">
-                                    {editWikiData.appear.map((c: string, i: number) => (
-                                        <span key={i} className="text-[10px] px-1.5 py-0.5 bg-green-900/30 text-green-400 rounded border border-green-500/20">{c}</span>
-                                    ))}
-                                </div>
-                            </div>
-                        )}
-
-                        {/* 2. Update */}
-                        {editWikiData.update?.length > 0 && (
-                            <div>
-                                <div className="text-[10px] text-slate-500 font-bold mb-1">UPDATES ({editWikiData.update.length})</div>
-                                <div className="space-y-1">
-                                    {editWikiData.update.map((u: any, i: number) => (
-                                        <div key={i} className="text-[10px] bg-slate-800/50 p-1.5 rounded border border-slate-700/50">
-                                            <span className="text-purple-300 font-bold">{u.name}</span>
-                                            {u.changes.role && <div className="text-slate-500 truncate">Role: {u.changes.role}</div>}
-                                            {u.changes.mental && <div className="text-slate-500 truncate">Mood: {u.changes.mental}</div>}
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                        )}
-
-                        {/* 3. Relations */}
-                        {editWikiData.relations?.length > 0 && (
-                            <div>
-                                <div className="text-[10px] text-slate-500 font-bold mb-1">RELATIONS ({editWikiData.relations.length})</div>
-                                <div className="space-y-1">
-                                    {editWikiData.relations.map((r: any, i: number) => (
-                                        <div key={i} className="text-[10px] bg-slate-800/50 p-1.5 rounded border border-slate-700/50 flex flex-col">
-                                            <div className="flex items-center gap-1">
-                                                <span className="text-blue-300">{r.source}</span>
-                                                <span className="text-slate-600">→</span>
-                                                <span className="text-blue-300">{r.target}</span>
-                                            </div>
-                                            <div className="text-slate-400">{r.display} <span className="text-slate-600">({r.mood})</span></div>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                        )}
-                        
-                        {(!editWikiData.appear?.length && !editWikiData.update?.length && !editWikiData.relations?.length) && (
-                            <div className="text-xs text-slate-600 italic">No graph data found.</div>
-                        )}
-                    </div>
-                )}
-              </div>
-            )}
           </div>
         </div>
 
         {/* --- Right Column: Content Editor/Viewer --- */}
         <div className="flex-1 flex flex-col bg-[#0b0e14] relative z-0">
-          {/* Top Bar (Actions) */}
           <div className="h-16 border-b border-slate-800 flex items-center px-6 bg-[#0b0e14] relative shrink-0 z-20">
-            {/* Title Area */}
             <div className="w-full min-w-0 pr-36">
               {isEditing ? (
                 <input
@@ -553,21 +451,17 @@ export const SceneDetailModal = ({
                   value={editTitle}
                   onChange={(e) => setEditTitle(e.target.value)}
                   className="bg-transparent text-xl font-bold text-white border-b border-blue-500 focus:outline-none w-full pb-1"
-                  placeholder="씬 제목"
+                  placeholder="Scene Title"
                   autoComplete="off"
                 />
               ) : (
-                <h2
-                  className="text-xl font-bold text-white truncate"
-                  title={editTitle || getFileName(filePath)}
-                >
+                <h2 className="text-xl font-bold text-white truncate" title={editTitle || getFileName(filePath)}>
                   {editTitle || getFileName(filePath)}
                 </h2>
               )}
             </div>
 
             <div className="absolute right-6 top-0 h-full flex items-center gap-2">
-              {/* [NEW] Smart Analyze Button */}
               {!isAIPanelOpen && (
                 <button
                   onClick={() => setIsAIPanelOpen(true)}
@@ -579,37 +473,22 @@ export const SceneDetailModal = ({
 
               {isEditing ? (
                 <>
-                  <button
-                    onClick={handleCancel}
-                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-slate-400 hover:text-slate-200 hover:bg-slate-800 transition-colors"
-                  >
-                    <XCircle size={14} /> 취소
+                  <button onClick={handleCancel} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-slate-400 hover:text-slate-200 hover:bg-slate-800 transition-colors">
+                    <XCircle size={14} /> Cancel
                   </button>
-                  <button
-                    onClick={handleSave}
-                    className="flex items-center gap-1.5 px-4 py-1.5 rounded-lg text-xs font-bold text-white bg-blue-600 hover:bg-blue-500 transition-colors shadow-lg shadow-blue-500/20"
-                  >
-                    <Save size={14} /> 저장
+                  <button onClick={handleSave} className="flex items-center gap-1.5 px-4 py-1.5 rounded-lg text-xs font-bold text-white bg-blue-600 hover:bg-blue-500 transition-colors shadow-lg shadow-blue-500/20">
+                    <Save size={14} /> Save
                   </button>
                 </>
               ) : (
                 <>
-                  <button
-                    onClick={handleDelete}
-                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-red-400 hover:text-white hover:bg-red-500/20 border border-transparent transition-colors mr-2"
-                  >
-                    <Trash2 size={14} /> 삭제
+                  <button onClick={handleDelete} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-red-400 hover:text-white hover:bg-red-500/20 border border-transparent transition-colors mr-2">
+                    <Trash2 size={14} /> Delete
                   </button>
-                  <button
-                    onClick={() => setIsEditing(true)}
-                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-slate-300 hover:text-white hover:bg-slate-800 border border-slate-700 transition-colors"
-                  >
-                    <Edit2 size={14} /> 수정
+                  <button onClick={() => setIsEditing(true)} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-slate-300 hover:text-white hover:bg-slate-800 border border-slate-700 transition-colors">
+                    <Edit2 size={14} /> Edit
                   </button>
-                  <button
-                    onClick={onClose}
-                    className="flex items-center justify-center w-8 h-8 rounded-full text-slate-500 hover:text-white hover:bg-slate-800 transition-colors"
-                  >
+                  <button onClick={onClose} className="flex items-center justify-center w-8 h-8 rounded-full text-slate-500 hover:text-white hover:bg-slate-800 transition-colors">
                     <X size={20} />
                   </button>
                 </>
@@ -617,9 +496,8 @@ export const SceneDetailModal = ({
             </div>
           </div>
 
-          {/* Editor/Viewer Body */}
           {loading ? (
-            <div className="flex-1 flex items-center justify-center text-slate-500">로딩 중...</div>
+            <div className="flex-1 flex items-center justify-center text-slate-500">Loading...</div>
           ) : (
             <div className="flex-1 overflow-y-auto custom-scrollbar p-8 w-full min-w-0">
               {isEditing ? (
@@ -627,13 +505,13 @@ export const SceneDetailModal = ({
                   value={editContent}
                   onChange={(e) => setEditContent(e.target.value)}
                   className="w-full h-full min-h-[500px] bg-transparent text-slate-300 text-sm leading-relaxed focus:outline-none resize-none font-mono"
-                  placeholder="씬의 내용을 작성하세요..."
+                  placeholder="Scene content..."
                   spellCheck={false}
                 />
               ) : (
                 <article className="prose prose-invert prose-slate max-w-none prose-p:leading-relaxed prose-headings:text-slate-200 prose-pre:whitespace-pre-wrap prose-pre:break-words w-full break-words">
                   <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                    {editContent || '*내용이 없습니다.*'}
+                    {editContent || '*No content*'}
                   </ReactMarkdown>
                 </article>
               )}
@@ -641,7 +519,6 @@ export const SceneDetailModal = ({
           )}
         </div>
 
-        {/* [NEW] AI Side Panel */}
         {isAIPanelOpen && (
           <AIAnalyzePanel
             initialText={editContent}
@@ -650,7 +527,6 @@ export const SceneDetailModal = ({
           />
         )}
         
-        {/* [NEW] Review Overlay */}
         <CharacterReviewModal
            isOpen={isReviewing}
            pendingReviews={pendingReviews}

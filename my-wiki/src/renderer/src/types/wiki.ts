@@ -1,4 +1,4 @@
-export type EntryType = 'character' | 'item' | 'location' | 'faction' | 'other'
+export type EntryType = 'character' | 'item' | 'location' | 'faction' | 'other' | 'scene'
 export type CharacterGrade = 'MAIN' | 'SUB' | 'MINOR' | 'EXTRA'
 export type RelationMood = 'FRIENDLY' | 'HOSTILE' | 'NEUTRAL'
 export type RelationTense = 'CURRENT' | 'PAST'
@@ -32,6 +32,7 @@ export interface CharacterEntry extends BaseEntry {
     status?: string // 상태 (생존, 사망)
     alias?: string // 이명
     relations?: Relation[]
+    [key: string]: any // Dynamic fields
   }
 }
 
@@ -69,4 +70,10 @@ export interface OtherEntry extends BaseEntry {
   info?: Record<string, any>
 }
 
-export type WikiEntry = CharacterEntry | ItemEntry | LocationEntry | FactionEntry | OtherEntry
+// 6. 씬 (WikiDetailModal 등에서 참조 가능하도록 추가)
+export interface SceneEntry extends BaseEntry {
+  type: 'scene'
+  info: Record<string, any>
+}
+
+export type WikiEntry = CharacterEntry | ItemEntry | LocationEntry | FactionEntry | OtherEntry | SceneEntry

@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react'
-import { Sparkles, Check, X, RotateCcw, Key, Activity, Heart, UserPlus, ArrowRight } from 'lucide-react'
+import { Sparkles, Check, X, RotateCcw, Key } from 'lucide-react'
 import { aiService } from '../../services/aiService'
-import { SceneSchema } from '../../../../shared/types/scene-schema'
+import { SceneSchema } from '../../../../shared/types/ai-schema'
+import { SceneFieldConfig } from '../../../../shared/types/field-config'
+import { WikiDataRenderer } from '../Shared/WikiDataRenderer'
 
 interface AIAnalyzePanelProps {
   initialText?: string
@@ -19,14 +21,31 @@ export const AIAnalyzePanel = ({ initialText = '', onApply, onClose }: AIAnalyze
   const [apiKeyInput, setApiKeyInput] = useState('')
   const [showKeyInput, setShowKeyInput] = useState(false)
 
+  // [NEW] Field Config for Dynamic Display
+  const [fieldConfig, setFieldConfig] = useState<SceneFieldConfig[]>([])
+
   useEffect(() => {
     checkKey()
+    loadConfig()
   }, [])
 
   const checkKey = async () => {
     const exists = await aiService.hasApiKey()
     setHasKey(exists)
     if (!exists) setShowKeyInput(true)
+  }
+
+  const loadConfig = async () => {
+      try {
+          // @ts-ignore
+          const config = await window.api.getFieldConfig()
+          if (config) {
+              // Sort by order so preview matches edit form
+              setFieldConfig(config.scene.sort((a,b) => (a.order||99) - (b.order||99)))
+          }
+      } catch (e) {
+          console.error(e)
+      }
   }
 
   const handleSaveKey = async () => {
@@ -70,6 +89,27 @@ export const AIAnalyzePanel = ({ initialText = '', onApply, onClose }: AIAnalyze
       onApply(result)
       onClose()
     }
+  }
+
+  // Helper to render dynamic values
+  const renderValue = (_key: string, value: any, type: string) => {
+      if (type === 'array' || Array.isArray(value)) {
+          return (
+             <div className="flex flex-wrap gap-1">
+                {(value as string[]).map((v, i) => (
+                    <span key={i} className="px-1.5 py-0.5 bg-indigo-500/10 text-indigo-400 rounded text-[10px] border border-indigo-500/20">{v}</span>
+                ))}
+             </div>
+          )
+      }
+      if (type === 'textarea' && typeof value === 'string') {
+          return (
+              <div className="text-slate-300 leading-relaxed bg-slate-900 p-2 rounded border border-slate-800/50 whitespace-pre-wrap">
+                  {value}
+              </div>
+          )
+      }
+      return <div className="text-slate-200 font-bold break-all">{String(value)}</div>
   }
 
   return (
@@ -159,115 +199,59 @@ export const AIAnalyzePanel = ({ initialText = '', onApply, onClose }: AIAnalyze
             </div>
             
             <div className="bg-slate-950/50 border border-slate-800 rounded-lg p-3 space-y-4 text-xs">
-              {/* Basic Info */}
-              <div className="space-y-3 pb-3 border-b border-slate-800/50">
-                <div>
-                  <span className="text-slate-500 block mb-1">제목 (ep.{result.chapter}-{result.scene})</span>
-                  <div className="text-slate-200 font-bold">{result.title}</div>
-                </div>
-                <div>
-                  <span className="text-slate-500 block mb-1">요약</span>
-                  <div className="text-slate-300 leading-relaxed bg-slate-900 p-2 rounded border border-slate-800/50">
-                    {result.summary}
-                  </div>
-                </div>
-                <div className="grid grid-cols-2 gap-2">
-                  <div>
-                    <span className="text-slate-500 block mb-1">등장인물</span>
-                    <div className="flex flex-wrap gap-1">
-                      {result.characters?.map((c: string, i: number) => (
-                        <span key={i} className="px-1.5 py-0.5 bg-indigo-500/10 text-indigo-400 rounded text-[10px] border border-indigo-500/20">{c}</span>
-                      ))}
-                    </div>
-                  </div>
-                  <div>
-                    <span className="text-slate-500 block mb-1">장소</span>
-                    <div className="flex flex-wrap gap-1">
-                      {result.locations?.map((l: string, i: number) => (
-                        <span key={i} className="px-1.5 py-0.5 bg-emerald-500/10 text-emerald-400 rounded text-[10px] border border-emerald-500/20">{l}</span>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </div>
+              {/* Dynamic Field Loop */}
+              {fieldConfig.map(field => {
+                  // Internal fields are handled separately or hidden? 
+                  // Title is header, Type/Chapter/Scene usually hidden or header
+                  if (field.isInternal && field.key !== 'title' && field.key !== 'wiki-data') return null;
+                  
+                  const value = result[field.key]
+                  if (!value && field.key !== 'wiki-data') return null // Skip empty
+                  
+                  // Special Header for Title
+                  if (field.key === 'title') {
+                      return (
+                           <div key={field.key} className="pb-3 border-b border-slate-800/50">
+                                <span className="text-slate-500 block mb-1">제목 (ep.{result.chapter}-{result.scene})</span>
+                                <div className="text-slate-200 font-bold text-lg">{value}</div>
+                           </div>
+                      )
+                  }
+                  
+                  // Wiki Data Special Render
+                  if (field.key === 'wiki-data') {
+                      return <WikiDataRenderer data={result['wiki-data']} key={field.key} />
+                  }
 
-              {/* Wiki Data / Graph Info */}
-              {result['wiki-data'] && (
-                <div className="space-y-3">
-                  <div className="flex items-center gap-2 text-slate-400 font-bold border-b border-slate-800/50 pb-1 mb-2">
-                    <Activity size={12} /> Graph Data
-                  </div>
-
-                  {/* Appear / Disappear */}
-                  {(result['wiki-data'].appear?.length || 0) > 0 && (
-                    <div>
-                         <span className="text-slate-500 block mb-1 flex items-center gap-1"><UserPlus size={10} /> 첫 등장 / 아이템</span>
-                        <div className="flex flex-wrap gap-1">
-                        {result['wiki-data'].appear?.map((c, i) => (
-                            <span key={i} className="px-1.5 py-0.5 bg-blue-500/10 text-blue-400 rounded text-[10px] border border-blue-500/20">{c}</span>
-                        ))}
-                        </div>
-                    </div>
-                  )}
-
-                   {/* Updates */}
-                   {(result['wiki-data'].update?.length || 0) > 0 && (
-                     <div>
-                        <span className="text-slate-500 block mb-1">상태 업데이트</span>
-                        <div className="space-y-1">
-                          {result['wiki-data'].update?.map((u, i) => (
-                            <div key={i} className="bg-slate-900 p-2 rounded border border-slate-800/50">
-                                <div className="font-bold text-amber-400 mb-1">{u.name}</div>
-                                <div className="grid grid-cols-2 gap-x-2 gap-y-1 text-[10px]">
-                                    {Object.entries(u.changes).map(([k, v]) => (
-                                        <div key={k} className="flex gap-1">
-                                            <span className="text-slate-500">{k}:</span>
-                                            <span className="text-slate-300">{String(v)}</span>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                          ))}
-                        </div>
-                     </div>
-                   )}
-
-                   {/* Relations */}
-                   {(result['wiki-data'].relations?.length || 0) > 0 && (
-                     <div>
-                        <span className="text-slate-500 block mb-1">관계 / 상태 변화</span>
-                         <div className="space-y-1">
-                          {result['wiki-data'].relations?.map((r, i) => (
-                             <div key={i} className="flex items-center justify-between bg-slate-900 p-1.5 rounded border border-slate-800/50 text-[10px]">
-                                <div className="flex items-center gap-1 text-slate-300">
-                                    <span className="font-bold text-indigo-300">{r.source}</span>
-                                    <ArrowRight size={10} className="text-slate-600" />
-                                    <span className="font-bold text-indigo-300">{r.name}</span>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                    <span className="text-slate-400">{r.display}</span>
-                                    {r.mood === 'FRIENDLY' && <Heart size={10} className="text-green-500" />}
-                                    {r.mood === 'HOSTILE' && <X size={10} className="text-red-500" />}
-                                </div>
-                             </div>
-                          ))}
+                  // Generic Render
+                  return (
+                      <div key={field.key}>
+                          <span className="text-slate-500 block mb-1">{field.label}</span>
+                          {renderValue(field.key, value, field.type)}
+                      </div>
+                  )
+              })}
+              
+              {/* Fallback for keys NOT in config (if any) e.g. leftovers from experiment */}
+               <div className="pt-2 border-t border-slate-800/30">
+                  {Object.keys(result)
+                      .filter(k => 
+                          !fieldConfig.some(f => f.key === k) && 
+                          !['type', 'chapter', 'scene'].includes(k) // omit these
+                      )
+                      .map(key => (
+                         <div key={key} className="mt-2 text-slate-500">
+                             <div className="uppercase text-[10px] font-bold">{key}</div>
+                             {key === 'wiki-data' ? (
+                                <WikiDataRenderer data={result[key]} />
+                             ) : (
+                                <div className="text-slate-400 break-all">{JSON.stringify(result[key])}</div>
+                             )}
                          </div>
-                     </div>
-                   )}
-                </div>
-              )}
+                      ))
+                  }
+               </div>
 
-              {/* Tags */}
-              {result.tags && result.tags.length > 0 && (
-                <div>
-                    <span className="text-slate-500 block mb-1">태그</span>
-                    <div className="flex flex-wrap gap-1">
-                    {result.tags.map((t: string, i: number) => (
-                        <span key={i} className="text-[10px] text-slate-400">#{t}</span>
-                    ))}
-                    </div>
-                </div>
-              )}
             </div>
 
             <button
@@ -282,4 +266,3 @@ export const AIAnalyzePanel = ({ initialText = '', onApply, onClose }: AIAnalyze
     </div>
   )
 }
-

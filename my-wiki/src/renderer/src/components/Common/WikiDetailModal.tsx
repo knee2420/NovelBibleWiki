@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
 import { WikiEntry } from '../../types/wiki'
+import { CharacterFieldConfig, SceneFieldConfig } from '../../../../shared/types/field-config'
 import {
   X,
   Edit2,
@@ -32,6 +33,7 @@ export const WikiDetailModal = ({ entry, onClose, onUpdate }: WikiDetailModalPro
   // --- View Mode Data ---
   const [activeTab, setActiveTab] = useState<'overview' | 'status' | 'history'>('overview')
   const [isMaximized, setIsMaximized] = useState(false) // [NEW] Window State
+  const [fieldConfig, setFieldConfig] = useState<(CharacterFieldConfig | SceneFieldConfig)[]>([])
 
   // --- Edit Mode State ---
   const [isEditing, setIsEditing] = useState(false)
@@ -46,6 +48,25 @@ export const WikiDetailModal = ({ entry, onClose, onUpdate }: WikiDetailModalPro
   const [newMetaValue, setNewMetaValue] = useState('')
   const [previewImage, setPreviewImage] = useState(entry.image || '')
   const titleInputRef = useRef<HTMLInputElement>(null)
+
+  useEffect(() => {
+    const fetchConfig = async () => {
+        try {
+            // @ts-ignore
+            const res = await window.api.getFieldConfig()
+            if (entry.type === 'character') {
+                setFieldConfig((res.character || []) as CharacterFieldConfig[])
+            } else if (entry.type === 'scene') {
+                setFieldConfig((res.scene || []) as SceneFieldConfig[])
+            } else {
+                setFieldConfig([]) // No config for item/location yet
+            }
+        } catch (e) {
+            console.error(e)
+        }
+    }
+    fetchConfig()
+  }, [entry.type])
 
   // ... (Keep existing hooks and handlers unchanged)
   // Just copying handlers to ensure context exists, or I can use the same pattern as before if I don't need to change them.
@@ -299,75 +320,123 @@ export const WikiDetailModal = ({ entry, onClose, onUpdate }: WikiDetailModalPro
             </div>
 
             {/* Info (Read-only for now) */}
-            {(Object.keys(editInfo || {}).length > 0 || isEditing) && (
-              <div className="space-y-2 pt-4 border-t border-slate-900">
-                <label className="text-[10px] uppercase tracking-wider text-slate-500 font-bold">
+            {/* Dynamic Metadata Section */}
+            {(fieldConfig.length > 0 || Object.keys(editInfo || {}).length > 0 || isEditing) && (
+              <div className="space-y-4 pt-4 border-t border-slate-900">
+                <label className="text-[10px] uppercase tracking-wider text-slate-500 font-bold block mb-2">
                   Metadata
                 </label>
-                <div className="grid grid-cols-1 gap-2">
-                  {Object.entries(editInfo || {}).map(([key, value]) => {
-                    // title, type, tags, date 등은 제외하고 보여주기
-                    if (['title', 'type', 'tags', 'image', 'created', 'updated'].includes(key))
-                      return null
+
+                {/* 1. Configured Fields */}
+                {fieldConfig.map(field => {
+                    const val = editInfo[field.key]
+                    if (field.isInternal) return null // Hide internal fields
+                    if (!val && !isEditing) return null // Skip empty in view mode
+
                     return (
-                      <div
-                        key={key}
-                        className="flex justify-between items-center text-xs border-b border-slate-800/50 pb-1 min-h-[28px]"
-                      >
-                        <span className="text-slate-500 capitalize flex items-center gap-1">
-                          {key}
-                          {isEditing && (
+                        <div key={field.key} className="space-y-1">
+                             <div className="flex justify-between items-center">
+                                <label className="text-[10px] text-slate-500 uppercase font-bold tracking-wider">{field.label}</label>
+                                {isEditing && (
+                                    <button onClick={() => handleRemoveMeta(field.key)} className="text-slate-700 hover:text-red-400"><MinusCircle size={10} /></button> 
+                                )}
+                             </div>
+                             
+                             {isEditing ? (
+                                 field.type === 'textarea' ? (
+                                     <textarea 
+                                         value={val || ''}
+                                         onChange={(e) => handleInfoChange(field.key, e.target.value)}
+                                         className="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-xs text-slate-200 outline-none h-20 resize-none"
+                                     />
+                                 ) : field.type === 'select' ? (
+                                    <select
+                                        value={val || ''}
+                                        onChange={(e) => handleInfoChange(field.key, e.target.value)}
+                                        className="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-xs text-slate-200 outline-none"
+                                    >
+                                        <option value="">Select...</option>
+                                        {field.options?.map(o => <option key={o} value={o}>{o}</option>)}
+                                    </select> 
+                                 ) : (
+                                     <input 
+                                         type={field.type === 'number' ? 'number' : 'text'}
+                                         value={val || ''}
+                                         onChange={(e) => handleInfoChange(field.key, e.target.value)}
+                                         className="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-xs text-slate-200 outline-none"
+                                     />
+                                 )
+                             ) : (
+                                 <div className="text-xs text-slate-300 bg-slate-900/50 px-2 py-1 rounded border border-slate-800/50 min-h-[24px]">
+                                     {field.type === 'textarea' ? <span className="whitespace-pre-wrap">{val}</span> : val}
+                                 </div>
+                             )}
+                        </div>
+                    )
+                })}
+
+                {/* 2. Extra Fields (Legacy or Ad-hoc) */}
+                {Object.entries(editInfo || {}).map(([key, value]) => {
+                    // Check if already rendered via Config
+                    if (fieldConfig.some(f => f.key === key)) return null
+                    if (['title', 'type', 'tags', 'image', 'created', 'updated'].includes(key)) return null
+                    
+                    return (
+                      <div key={key} className="space-y-1 relative group">
+                        <div className="flex justify-between items-center">
+                           <span className="text-[10px] text-slate-500 capitalize">{key}</span>
+                           {isEditing && (
                             <button
-                              onClick={() => handleRemoveMeta(key)}
-                              className="text-slate-600 hover:text-red-400 transition-colors"
-                              title="삭제"
-                            >
-                              <MinusCircle size={10} />
-                            </button>
-                          )}
-                        </span>
+                               onClick={() => handleRemoveMeta(key)}
+                               className="text-slate-600 hover:text-red-400 transition-colors"
+                             >
+                               <MinusCircle size={10} />
+                             </button>
+                           )}
+                        </div>
                         {isEditing ? (
-                          /* [NEW] 수정 모드: Input 필드 */
                           <input
                             type="text"
                             value={String(value)}
                             onChange={(e) => handleInfoChange(key, e.target.value)}
-                            className="bg-slate-900 border border-slate-700 rounded px-1.5 py-0.5 text-right text-slate-200 focus:border-blue-500 outline-none w-[140px]"
+                            className="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-xs text-slate-200 focus:border-blue-500 outline-none"
                           />
                         ) : (
-                          /* 보기 모드: 텍스트 */
-                          <span className="text-slate-300 font-medium truncate max-w-[120px] text-right">
-                            {String(value)}
-                          </span>
+                          <div className="text-xs text-slate-300 bg-slate-900/50 px-2 py-1 rounded border border-slate-800/50 truncate">
+                             {String(value)}
+                          </div>
                         )}
                       </div>
                     )
-                  })}
-                  {isEditing && (
-                    <div className="mt-2 pt-2 border-t border-dashed border-slate-800 flex gap-1 items-center">
-                      <input
-                        type="text"
-                        placeholder="Key (e.g. Age)"
-                        value={newMetaKey}
-                        onChange={(e) => setNewMetaKey(e.target.value)}
-                        className="w-1/3 bg-slate-900 border border-slate-700 rounded px-1.5 py-1 text-[10px] text-slate-300 focus:border-blue-500 outline-none"
-                      />
-                      <input
-                        type="text"
-                        placeholder="Value"
-                        value={newMetaValue}
-                        onChange={(e) => setNewMetaValue(e.target.value)}
-                        className="flex-1 bg-slate-900 border border-slate-700 rounded px-1.5 py-1 text-[10px] text-slate-300 focus:border-blue-500 outline-none"
-                      />
-                      <button
-                        onClick={handleAddMeta}
-                        className="p-1 bg-slate-800 hover:bg-blue-600 text-slate-400 hover:text-white rounded border border-slate-700 transition-colors"
-                      >
-                        <Plus size={12} />
-                      </button>
-                    </div>
+                })}
+
+                {/* Add New Field (Only for Ad-hoc, or prompt user to use Builder?) */}
+                {isEditing && (
+                     <div className="pt-2 border-t border-dashed border-slate-800 mt-4">
+                        <div className="flex gap-1 items-center">
+                          <input
+                            type="text"
+                            placeholder="New Key"
+                            value={newMetaKey}
+                            onChange={(e) => setNewMetaKey(e.target.value)}
+                            className="w-1/3 bg-slate-900 border border-slate-700 rounded px-1.5 py-1 text-[10px] text-slate-300 focus:border-blue-500 outline-none"
+                          />
+                          <input
+                            type="text"
+                            placeholder="Value"
+                            value={newMetaValue}
+                            onChange={(e) => setNewMetaValue(e.target.value)}
+                            className="flex-1 bg-slate-900 border border-slate-700 rounded px-1.5 py-1 text-[10px] text-slate-300 focus:border-blue-500 outline-none"
+                          />
+                          <button
+                            onClick={handleAddMeta}
+                            className="p-1 bg-slate-800 hover:bg-blue-600 text-slate-400 hover:text-white rounded border border-slate-700 transition-colors"
+                          >
+                            <Plus size={12} />
+                          </button>
+                        </div>
+                     </div>
                   )}
-                </div>
               </div>
             )}
           </div>
