@@ -33,7 +33,6 @@ wiki-data:
         affiliation: UNKNOWN
         mental: '과거 회상, 그리움, 결심'
         action: '귀가, 회상, 결심'
-        image: null
     - name: 한예린
       changes:
         status: ALIVE
@@ -41,7 +40,6 @@ wiki-data:
         affiliation: UNKNOWN
         mental: 새로운 보금자리
         action: 새 집으로 이사
-        image: null
     - name: 천무진
       changes:
         status: DECEASED
@@ -49,7 +47,6 @@ wiki-data:
         affiliation: UNKNOWN
         mental: '그리움, 기억'
         action: 회상
-        image: null
   relations:
     - source: 강진우
       name: 한예린
