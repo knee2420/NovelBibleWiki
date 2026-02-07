@@ -1,4 +1,4 @@
-import { SceneSchema } from '../../../shared/types/scene-schema'
+import { SceneSchema } from '../../../shared/types/ai-schema'
 
 export const aiService = {
   // 1. Analyze Scene (Single)

@@ -1,7 +1,7 @@
 import path from 'path'
 import fs from 'fs/promises'
 import matter from 'gray-matter'
-import { CharacterFrontmatter, CharacterRelation } from '../../shared/types/character-schema'
+import { CharacterFrontmatter, CharacterRelation } from '../../shared/types/ai-schema'
 
 // [Configuration]
 const CHARACTER_DIR = path.join(process.cwd(), 'public/NovelBibleWiki/EX급 귀환자/20_Wiki/1.Characters')
@@ -85,7 +85,7 @@ export const characterService = {
          }
      }
 
-     const timestamp = new Date().toISOString()
+
      const sourceHeader = `[[${sceneInfo.chapter}화.${sceneInfo.title.replace(/ /g, '_')} - SCENE${sceneInfo.scene}]]`
      
      // [Log Entry Construction]
@@ -148,11 +148,20 @@ export const characterService = {
              newFm.relations = currentRels
          }
          
-         // Let's just update 'status' for now.
-         if (aiData.status) newFm.status = aiData.status
-         if (aiData.rank) newFm.rank = aiData.rank // if AI extracts rank
-         if (aiData.role && aiData.role.length < 20) newFm.role = aiData.role // Only update role if it's short/new
-         if (aiData.affiliation && aiData.affiliation !== 'Unknown') newFm.affiliation = aiData.affiliation // Update affiliation
+
+         
+         // [Dynamic Update] Apply all other fields from AI Data
+         // Exclude fields handled separately or that shouldn't be overwritten blindly
+         const exclude = ['name', 'relations', 'summary', 'grade']; 
+         Object.keys(aiData).forEach(key => {
+             if (exclude.includes(key)) return;
+             
+             const val = aiData[key];
+             // Only update if value is meaningful (simple check)
+             if (val !== undefined && val !== null && val !== 'Unknown') {
+                 newFm[key] = val;
+             }
+         });
          
          // [Requirement] Update Grade if provided in decision
          if (decision?.grade) {
@@ -188,13 +197,21 @@ export const characterService = {
          
          const frontmatter: CharacterFrontmatter = {
              name: name,
-             role: aiData.role || 'Unknown',
-             grade: decision?.grade || 'EXTRA', // [NEW] Use user selected grade
-             status: (aiData.status as any) || 'ALIVE',
-             affiliation: aiData.affiliation || 'Unknown',
              type: 'character',
-             relations: (aiData.relations || []) as CharacterRelation[]
+             relations: (aiData.relations || []) as CharacterRelation[],
+             // [Dynamic] Spread other fields
+             // We can provide some defaults if needed, or rely on AI
+             grade: decision?.grade || aiData.grade || 'EXTRA',
+             status: aiData.status || 'ALIVE',
+             ...aiData
          }
+
+         // Clean up potentially duplicate keys if aiData has them
+         // (Name and Relations are already set, but purely overwriting is fine if value matches)
+         // Ensure 'name' is strictly the filename/argument name
+         frontmatter.name = name;
+         delete frontmatter['summary']; // Don't put summary in frontmatter unless config says so? defaults say no.
+
          
          const initialBody = `\n## 개요\n신규 등장한 캐릭터입니다.\n${aiData.summary ? `> ${aiData.summary}\n` : ''}\n${logEntry}`
          

@@ -1,4 +1,4 @@
-import { SceneSchema } from '../../../shared/types/scene-schema'
+import { SceneSchema } from '../../../shared/types/ai-schema'
 
 // Mock delay to simulate network request
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))

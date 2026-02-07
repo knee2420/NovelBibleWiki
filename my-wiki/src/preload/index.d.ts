@@ -24,6 +24,21 @@ declare global {
     saveAIKey: (key: string) => Promise<{ success: boolean }>
     getAIKey: () => Promise<string | null>
     analyzeScene: (text: string) => Promise<{ success: boolean; data?: any; message?: string }>
+    selectMultipleFiles: () => Promise<string[]>
+    updateCharacter: (payload: any) => Promise<any>
+    
+    // AI Settings
+    saveAISchema: (schema: string) => Promise<any>
+    getAISchema: () => Promise<any>
+    saveAIInstructions: (instructions: string) => Promise<any>
+    getAIInstructions: () => Promise<string>
+    resetAISettings: () => Promise<any>
+
+    // Dynamic Fields
+    saveFieldConfig: (fields: any[]) => Promise<any>
+    saveSceneFieldConfig: (fields: any[]) => Promise<any>
+    saveCharacterFieldConfig: (fields: any[]) => Promise<any>
+    getFieldConfig: () => Promise<{ scene: any[]; character: any[] }>
   }
 
   interface Window {

@@ -3,14 +3,28 @@ import { X, Share2, Download } from 'lucide-react'
 import Markdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 
+import { CharacterFieldConfig } from '../../../../shared/types/field-config'
+
 interface CharacterDetailProps {
   data: CharacterEntry
+  config?: CharacterFieldConfig[]
   onClose: () => void
 }
 
-export const CharacterDetail = ({ data, onClose }: CharacterDetailProps) => {
+export const CharacterDetail = ({ data, config = [], onClose }: CharacterDetailProps) => {
   // info가 없을 경우를 대비해 빈 객체로 초기화
   const info = data.info || {}
+  
+  // [Dynamic]
+  const primaryField = config.find(f => f.isPrimary)?.key || 'role';
+  const subtitle = info['alias'] || info[primaryField] || 'Unknown';
+
+  // Sort fields
+  const displayFields = config
+      .filter(f => f.isFilter || f.isPrimary || (f.order && f.order < 50)) // Arbitrary filter for "Important" fields to show in Attributes?
+      // Actually, let's just show all defined fields in config that are NOT internal/system
+      .filter(f => !['name', 'image', 'tags', 'content'].includes(f.key) && f.type !== 'system')
+      .sort((a,b) => (a.order || 99) - (b.order || 99));
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
@@ -38,7 +52,7 @@ export const CharacterDetail = ({ data, onClose }: CharacterDetailProps) => {
 
           <h2 className="text-3xl font-bold text-white mb-1 text-center">{data.name}</h2>
           <span className="text-cyan-400 font-medium tracking-widest text-sm mb-6 uppercase">
-            {info.alias || info.role || 'Unknown'}
+            {subtitle}
           </span>
 
           {/* Quick Actions */}
@@ -74,13 +88,22 @@ export const CharacterDetail = ({ data, onClose }: CharacterDetailProps) => {
             </h3>
           </div>
 
-          {/* Attribute Table */}
+          {/* Attribute Table - Dynamic */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-y-4 gap-x-8 mb-10 text-sm">
-            {/* data.attributes 대신 info 사용, undefined 방지를 위해 || '-' 추가 */}
-            <AttributeRow label="소속" value={info.affiliation || '-'} />
-            <AttributeRow label="이명" value={info.alias || '-'} />
-            <AttributeRow label="역할" value={info.role || '-'} />
-            <AttributeRow label="현재 상태" value={info.status || '-'} />
+             {displayFields.length > 0 ? (
+                 displayFields.map(f => {
+                     let val = info[f.key];
+                     if (Array.isArray(val)) val = val.join(', ');
+                     return <AttributeRow key={f.key} label={f.label} value={val || '-'} />
+                 })
+             ) : (
+                 // Fallback if config is empty (show common fields)
+                 <>
+                    <AttributeRow label="소속" value={info.affiliation || '-'} />
+                    <AttributeRow label="역할" value={info.role || '-'} />
+                    <AttributeRow label="상태" value={info.status || '-'} />
+                 </>
+             )}
 
             <div className="col-span-full mt-6 p-6 bg-slate-800/50 rounded-xl border border-slate-700/50">
               <span className="block text-slate-400 text-xs mb-4 font-bold uppercase tracking-wider flex items-center gap-2">

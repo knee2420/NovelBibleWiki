@@ -1,5 +1,6 @@
 import { Settings } from '../components/Default/Settings'
-import { Database, FolderGit2, AlertTriangle } from 'lucide-react'
+import { AISchemaSettings } from '../components/AI/AISchemaSettings'
+import { Database, FolderGit2, AlertTriangle, Bot } from 'lucide-react'
 
 interface SettingsPageProps {
   onImportComplete: () => void
@@ -7,7 +8,7 @@ interface SettingsPageProps {
 
 export const SettingsPage = ({ onImportComplete }: SettingsPageProps) => {
   return (
-    <div className="max-w-4xl mx-auto animate-in fade-in duration-500">
+    <div className="max-w-7xl mx-auto animate-in fade-in duration-500">
       {/* 헤더 */}
       <div className="mb-10 border-b border-slate-800 pb-6">
         <h2 className="text-3xl font-bold text-white flex items-center gap-3">
@@ -20,7 +21,28 @@ export const SettingsPage = ({ onImportComplete }: SettingsPageProps) => {
       </div>
 
       {/* 설정 카드 영역 */}
-      <div className="space-y-6">
+      <div className="space-y-6 pb-20">
+        
+        {/* 0. AI 설정 카드 (NEW) */}
+        <div className="bg-slate-900 border border-slate-800 rounded-xl p-6 shadow-lg">
+          <div className="flex items-start gap-4 mb-6">
+            <div className="p-3 bg-purple-500/10 rounded-lg text-purple-400">
+              <Bot size={24} />
+            </div>
+            <div>
+              <h3 className="text-xl font-bold text-white">AI Analysis Configuration</h3>
+              <p className="text-sm text-slate-400 mt-1">
+                Customize the Data Schema and System Instructions used by Gemini.<br/>
+                Advanced users can modify the JSON structure to extract different fields.
+              </p>
+            </div>
+          </div>
+          
+          <div className="h-[500px]">
+             <AISchemaSettings />
+          </div>
+        </div>
+
         {/* 1. 데이터 연동 카드 */}
         <div className="bg-slate-900 border border-slate-800 rounded-xl p-6 shadow-lg">
           <div className="flex items-start gap-4 mb-6">

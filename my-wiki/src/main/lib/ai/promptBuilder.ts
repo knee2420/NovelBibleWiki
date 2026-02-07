@@ -6,8 +6,11 @@
 
 import { SCENE_DATA_JSON_SCHEMA } from './geminiSchema';
 
-export function generateSceneAnalysisPrompt(novelText: string): string {
-  return `
+export function generateSceneAnalysisPrompt(novelText: string, customSchema?: any, customInstructions?: string): string {
+  const schemaToUse = customSchema || SCENE_DATA_JSON_SCHEMA;
+
+  // Default instructions if not provided
+  const baseInstructions = `
 # Role
 You are a 'Scene Data Architect' for a web novel visualization tool. Your task is to extract event data from the provided novel text and format it into a specific JSON structure.
 
@@ -47,10 +50,24 @@ The user has provided a segment of a novel. You must analyze the characters, the
     - **No Orphans**: If an entity is mentioned in 'relations' or 'update', it **MUST** be explicitly listed in 'appear'.
     - **Groups/Mobs**: If a group (e.g., "철기 길드원", "구상웅 일당") is acting or being acted upon, that **collective name** MUST be added to 'appear'.
     - **Name Exactness**: The name used in 'appear' must EXACTLY match the name used in 'relations' and 'update'. Do not use inconsistencies like putting "Guild Members" in 'appear' but "Cheolgi Guild" in 'update'.
+7. **Strict JSON Structure (CRITICAL - DO NOT FAIL THIS)**:
+    - **NO Merged Strings**: Do NOT merge attributes into the 'name' field. 
+        - BAD: "Leo (Paladin / Injured)"
+        - GOOD: "name": "Leo", "changes": { "role": "Paladin", "status": "Injured" }
+    - **Pure Names Only**: The 'name' field must contain ONLY the character/entity name. No status, no role, no parentheses.
+    - **Objects, Not Strings**: 'update', 'relations', 'wiki-item-data', 'wiki-location-data', and 'wiki-faction-data' must be arrays of OBJECTS with specific keys, NOT strings.
+    - **Nulls**: Do not omit required fields. If a value is unknown, use an empty string "" or "UNKNOWN".
+    - **Wiki Data**: For 'wiki-data', 'wiki-item-data', 'wiki-location-data', and 'wiki-faction-data', you MUST return the full object structure defined in the schema. Do not simplify or summarize.
+`;
+
+  const instructions = customInstructions || baseInstructions;
+
+  return `
+${instructions}
 
 # Schema Reference
 Refrain from improvising fields. Stick to this structure:
-${JSON.stringify(SCENE_DATA_JSON_SCHEMA, null, 2)}
+${JSON.stringify(schemaToUse, null, 2)}
 
 # Input Novel Text
 ---

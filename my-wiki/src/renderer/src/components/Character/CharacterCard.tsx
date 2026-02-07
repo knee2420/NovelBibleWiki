@@ -1,14 +1,26 @@
 import { CharacterEntry } from '../../types/wiki'
 import { User } from 'lucide-react'
 
+import { CharacterFieldConfig } from '../../../../shared/types/field-config'
+
 interface CharacterCardProps {
   data: CharacterEntry
+  config?: CharacterFieldConfig[]
   onClick: (id: string) => void
 }
 
-export const CharacterCard = ({ data, onClick }: CharacterCardProps) => {
+export const CharacterCard = ({ data, config = [], onClick }: CharacterCardProps) => {
   const typeSymbol = data.tags[0] ? data.tags[0].charAt(0) : '?'
   const info = data.info || {}
+
+  // [Dynamic Logic] Find Primary Field (e.g. Role)
+  const primaryField = config.find(f => f.isPrimary)?.key || 'role';
+  const primaryValue = info[primaryField];
+  
+  // Find Subtitle (e.g. Alias or Role if not primary)
+  // Logic: Show Alias if available, else Primary Field if not shown in name? 
+  // Let's stick to: Alias OR Primary Field value OR 'Unknown'
+  const subtitle = info['alias'] || primaryValue || 'Unknown';
 
   // [Logic] Draft 판별
   const isDraft = data.id.includes('00_Draft')
@@ -93,7 +105,7 @@ export const CharacterCard = ({ data, onClick }: CharacterCardProps) => {
               {data.name}
             </h3>
             <p className="text-xs font-medium text-slate-500 uppercase tracking-wider mt-1 text-center truncate w-full px-2 group-hover:text-slate-400">
-              {info.alias || info.role || 'Unknown'}
+              {subtitle}
             </p>
           </div>
         </div>

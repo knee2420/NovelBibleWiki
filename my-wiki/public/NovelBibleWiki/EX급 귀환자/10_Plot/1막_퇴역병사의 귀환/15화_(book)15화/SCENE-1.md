@@ -39,7 +39,6 @@ wiki-data:
         affiliation: UNKNOWN
         mental: 침착함
         action: 영물과의 교감
-        image: null
     - name: 김중헌
       changes:
         status: ALIVE
@@ -47,7 +46,6 @@ wiki-data:
         affiliation: 녹명가
         mental: 기대감
         action: 진우 안내
-        image: null
     - name: 강철 뿔 엘크
       changes:
         status: ALIVE
@@ -55,7 +53,6 @@ wiki-data:
         affiliation: 녹명가 시설
         mental: 복종
         action: 먹이 먹기
-        image: null
     - name: 삼미호
       changes:
         status: ALIVE
@@ -63,7 +60,6 @@ wiki-data:
         affiliation: 녹명가 시설
         mental: 애교
         action: 배 까뒤집기
-        image: null
     - name: 공작
       changes:
         status: ALIVE
@@ -71,7 +67,6 @@ wiki-data:
         affiliation: 녹명가 시설
         mental: 두려움
         action: 숨기
-        image: null
     - name: 은빛 멧돼지
       changes:
         status: ALIVE
@@ -79,7 +74,6 @@ wiki-data:
         affiliation: 녹명가 시설
         mental: 순종
         action: 머리 내밀기
-        image: null
   relations:
     - source: 김중헌
       name: 강진우

@@ -37,7 +37,31 @@ const api = {
   analyzeScene: (text: string) => ipcRenderer.invoke('ai:analyzeScene', text),
   selectMultipleFiles: () => ipcRenderer.invoke('select-multiple-files'),
   // [NEW] Character Sync
-  updateCharacter: (payload: any) => ipcRenderer.invoke('ai:updateCharacter', payload)
+  updateCharacter: (payload: any) => ipcRenderer.invoke('ai:updateCharacter', payload),
+
+  // [NEW] AI Settings (Schema/Prompt)
+  // [NEW] AI Settings (Schema/Prompt)
+  saveAISchema: (schema: string) => ipcRenderer.invoke('ai:saveSchema', schema),
+  getAISchema: () => ipcRenderer.invoke('ai:getSchema'),
+  saveAIInstructions: (instructions: string) => ipcRenderer.invoke('ai:saveInstructions', instructions),
+  getAIInstructions: () => ipcRenderer.invoke('ai:getInstructions'),
+  resetAISettings: () => ipcRenderer.invoke('ai:resetSettings'),
+  
+  // [NEW] Dynamic Fields
+  // [NEW] Dynamic Fields (Legacy Support + New Schema)
+  saveFieldConfig: (fields: any[]) => ipcRenderer.invoke('ai:saveFieldConfig', fields), // Legacy?
+  saveSceneFieldConfig: (fields: any[]) => ipcRenderer.invoke('ai:saveSceneFieldConfig', fields),
+  saveCharacterFieldConfig: (fields: any[]) => ipcRenderer.invoke('ai:saveCharacterFieldConfig', fields),
+  getFieldConfig: () => ipcRenderer.invoke('ai:getFieldConfig'),
+
+  // [NEW] Recursive Schema Builder
+  saveSchemaConfig: (config: any) => ipcRenderer.invoke('ai:saveSchemaConfig', config),
+  getSchemaConfig: (target?: string) => ipcRenderer.invoke('ai:getSchemaConfig', target),
+
+  // [NEW] AI Model & Usage
+  saveAIModel: (model: string) => ipcRenderer.invoke('ai:setModel', model),
+  getAIModel: () => ipcRenderer.invoke('ai:getModel'),
+  getAIUsage: () => ipcRenderer.invoke('ai:getUsageStats'),
 }
 
 if (process.contextIsolated) {
