@@ -57,6 +57,11 @@ const api = {
   // [NEW] Recursive Schema Builder
   saveSchemaConfig: (config: any) => ipcRenderer.invoke('ai:saveSchemaConfig', config),
   getSchemaConfig: (target?: string) => ipcRenderer.invoke('ai:getSchemaConfig', target),
+
+  // [NEW] AI Model & Usage
+  saveAIModel: (model: string) => ipcRenderer.invoke('ai:setModel', model),
+  getAIModel: () => ipcRenderer.invoke('ai:getModel'),
+  getAIUsage: () => ipcRenderer.invoke('ai:getUsageStats'),
 }
 
 if (process.contextIsolated) {

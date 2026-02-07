@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Sparkles, Check, X, RotateCcw, Key } from 'lucide-react'
+import { Sparkles, Check, X, RotateCcw, Key, Activity, Box, Map, Shield } from 'lucide-react'
 import { aiService } from '../../services/aiService'
 import { SceneSchema } from '../../../../shared/types/ai-schema'
 import { SceneFieldConfig } from '../../../../shared/types/field-config'
@@ -218,9 +218,18 @@ export const AIAnalyzePanel = ({ initialText = '', onApply, onClose }: AIAnalyze
                       )
                   }
                   
-                  // Wiki Data Special Render
+                  // Wiki Data Special Renders
                   if (field.key === 'wiki-data') {
-                      return <WikiDataRenderer data={result['wiki-data']} key={field.key} />
+                      return <WikiDataRenderer data={result['wiki-data']} key={field.key} title="Character Graph Data" icon={Activity} />
+                  }
+                  if (field.key === 'wiki-item-data') {
+                      return <WikiDataRenderer data={result['wiki-item-data']} key={field.key} title="Item Updates" icon={Box} />
+                  }
+                  if (field.key === 'wiki-location-data') {
+                      return <WikiDataRenderer data={result['wiki-location-data']} key={field.key} title="Location Updates" icon={Map} />
+                  }
+                  if (field.key === 'wiki-faction-data') {
+                      return <WikiDataRenderer data={result['wiki-faction-data']} key={field.key} title="Faction Updates" icon={Shield} />
                   }
 
                   // Generic Render
@@ -239,16 +248,19 @@ export const AIAnalyzePanel = ({ initialText = '', onApply, onClose }: AIAnalyze
                           !fieldConfig.some(f => f.key === k) && 
                           !['type', 'chapter', 'scene'].includes(k) // omit these
                       )
-                      .map(key => (
-                         <div key={key} className="mt-2 text-slate-500">
-                             <div className="uppercase text-[10px] font-bold">{key}</div>
-                             {key === 'wiki-data' ? (
-                                <WikiDataRenderer data={result[key]} />
-                             ) : (
-                                <div className="text-slate-400 break-all">{JSON.stringify(result[key])}</div>
-                             )}
-                         </div>
-                      ))
+                      .map(key => {
+                          if (key === 'wiki-data') return <WikiDataRenderer data={result[key]} title="Character Graph Data" icon={Activity} key={key} />
+                          if (key === 'wiki-item-data') return <WikiDataRenderer data={result[key]} title="Item Updates" icon={Box} key={key} />
+                          if (key === 'wiki-location-data') return <WikiDataRenderer data={result[key]} title="Location Updates" icon={Map} key={key} />
+                          if (key === 'wiki-faction-data') return <WikiDataRenderer data={result[key]} title="Faction Updates" icon={Shield} key={key} />
+                          
+                          return (
+                             <div key={key} className="mt-2 text-slate-500">
+                                 <div className="uppercase text-[10px] font-bold">{key}</div>
+                                 <div className="text-slate-400 break-all">{JSON.stringify(result[key])}</div>
+                             </div>
+                          )
+                      })
                   }
                </div>
 

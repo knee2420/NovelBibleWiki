@@ -36,7 +36,9 @@ declare global {
 
     // Dynamic Fields
     saveFieldConfig: (fields: any[]) => Promise<any>
-    getFieldConfig: () => Promise<any[]>
+    saveSceneFieldConfig: (fields: any[]) => Promise<any>
+    saveCharacterFieldConfig: (fields: any[]) => Promise<any>
+    getFieldConfig: () => Promise<{ scene: any[]; character: any[] }>
   }
 
   interface Window {

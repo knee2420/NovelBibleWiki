@@ -16,6 +16,9 @@ const STORE_KEY_FIELD_CONFIG = 'scene_field_config'
 const STORE_KEY_CHAR_FIELD_CONFIG = 'character_field_config'
 const STORE_KEY_CUSTOM_SCHEMA = 'custom_scene_schema'
 const STORE_KEY_SCHEMA_ROOT_CONFIG = 'schema_root_config'
+// [NEW] Model & Usage Keys
+const STORE_KEY_AI_MODEL_SELECTED = 'ai_model_selection'
+const STORE_KEY_AI_USAGE_STATS = 'ai_usage_stats_daily'
 
 // Helper to get keys
 function getSchemaStoreKeys(target: string = 'scene') {
@@ -264,6 +267,27 @@ export function setupAIHandlers(store: Store): void {
       return DEFAULT_SCHEMAS[t] || DEFAULT_SCHEMAS.scene
   })
 
+  // [NEW] Model Selection Handlers
+  ipcMain.handle('ai:setModel', async (_, modelId: string) => {
+      store.set(STORE_KEY_AI_MODEL_SELECTED, modelId)
+      return { success: true }
+  })
+
+  ipcMain.handle('ai:getModel', async () => {
+      // Default to Gemini 1.5 Flash if not set
+      return store.get(STORE_KEY_AI_MODEL_SELECTED) || 'gemini-1.5-flash'
+  })
+
+  // [NEW] Usage Stats Handler
+  ipcMain.handle('ai:getUsageStats', async () => {
+      const today = new Date().toISOString().split('T')[0] // YYYY-MM-DD
+      const allStats = (store.get(STORE_KEY_AI_USAGE_STATS) as any) || {}
+      
+      // Clean up old stats (keep last 7 days maybe? or just return today)
+      // For now, just return today's stats for current model context
+      return allStats[today] || {}
+  }) 
+
 
   // 3. Analyze Scene
   ipcMain.handle('ai:analyzeScene', async (_, text: string) => {
@@ -273,19 +297,19 @@ export function setupAIHandlers(store: Store): void {
         throw new Error('API Key not found')
       }
 
-      // [CONFIG] Load Custom Settings
       const customSchema = store.get(STORE_KEY_CUSTOM_SCHEMA)
       const customInstructions = store.get(STORE_KEY_CUSTOM_INSTRUCTIONS) as string
       
       const effectiveSchema = (customSchema || SCENE_DATA_JSON_SCHEMA) as Schema
 
+      // [NEW] Dynamic Model Selection
+      const selectedModel = (store.get(STORE_KEY_AI_MODEL_SELECTED) as string) || 'gemini-1.5-flash'
+      const isGemma = selectedModel.includes('gemma')
+
       const genAI = new GoogleGenerativeAI(apiKey)
       
-      const modelName = 'gemma-3-27b-it' 
-      const isGemma = modelName.includes('gemma')
-
       const model = genAI.getGenerativeModel({
-        model: modelName,
+        model: selectedModel,
         generationConfig: isGemma ? undefined : {
           responseMimeType: 'application/json',
           responseSchema: effectiveSchema 
@@ -314,6 +338,39 @@ export function setupAIHandlers(store: Store): void {
           const result = await model.generateContent(prompt)
           const response = await result.response
           responseText = response.text()
+          // [NEW] Extract Usage Metadata if available
+          const usage = response.usageMetadata
+          
+          if (usage) {
+             // Save usage to store immediately
+             try {
+                const today = new Date().toISOString().split('T')[0]
+                const stats = (store.get(STORE_KEY_AI_USAGE_STATS) as any) || {}
+                
+                if (!stats[today]) stats[today] = {}
+                if (!stats[today][selectedModel]) {
+                    stats[today][selectedModel] = { requests: 0, tokens: 0 }
+                }
+                
+                stats[today][selectedModel].requests += 1
+                stats[today][selectedModel].tokens += (usage.totalTokenCount || 0)
+                
+                store.set(STORE_KEY_AI_USAGE_STATS, stats)
+             } catch (e) {
+                 console.error('[AI] Failed to update usage stats', e)
+             }
+          } else {
+             // Fallback for requests count if usageMetadata missing
+             try {
+                const today = new Date().toISOString().split('T')[0]
+                const stats = (store.get(STORE_KEY_AI_USAGE_STATS) as any) || {}
+                if (!stats[today]) stats[today] = {}
+                if (!stats[today][selectedModel]) stats[today][selectedModel] = { requests: 0, tokens: 0 }
+                stats[today][selectedModel].requests += 1
+                store.set(STORE_KEY_AI_USAGE_STATS, stats)
+             } catch(e) {}
+          }
+
           break // Success
         } catch (e: any) {
           lastError = e
@@ -351,8 +408,9 @@ export function setupAIHandlers(store: Store): void {
           throw new Error('No JSON object found in AI response')
       }
 
-      const aiResult = JSON.parse(cleanText)
       
+      const aiResult = JSON.parse(cleanText)
+
       return { success: true, data: aiResult }
     } catch (error: any) {
       console.error('Gemini API Error:', error)

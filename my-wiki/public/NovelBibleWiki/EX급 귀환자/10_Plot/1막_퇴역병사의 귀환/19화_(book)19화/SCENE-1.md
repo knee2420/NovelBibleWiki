@@ -1,9 +1,12 @@
 ---
 type: scene
 chapter: 19
-scene: 1
+scene: '1'
 title: 반복
-summary: 강진우는 평범하고 반복적인 일상 속에서 안전과 안정을 느끼며 과거의 전장에서 망가졌던 감각들을 회복해 나간다. 사우나, 러닝, 영물원, 보육원, 한예린과의 만남 등 일상적인 활동들을 통해 주변 사람들과 관계를 맺고 변화를 경험한다. 과거의 자신은 반복을 지루함으로 여겼지만, 이제는 그 반복 속에서 삶의 의미를 찾고 충만함을 느낀다.
+summary: >-
+  강진우는 일상적인 반복 속에서 안전과 평화를 느끼며 변화된 삶에 적응해간다. 사우나, 러닝, 영물원, 보육원, 한예린과의 만남 등 다양한
+  활동을 통해 과거의 전사에서 평범한 일상인으로 변화하는 모습을 보여준다. 주변 사람들과의 관계가 점차 깊어지고, 반복되는 일상 속에서 삶의
+  의미를 찾아가는 과정을 그린다.
 characters:
   - 강진우
   - 한예린
@@ -32,65 +35,68 @@ wiki-data:
     - name: 강진우
       changes:
         status: ALIVE
-        role: 사육사
+        role: 전사
         affiliation: UNKNOWN
-        mental: 안정, 충만
-        action: 일상 생활, 관계 형성
+        mental: 평온함
+        action: 일상 생활 적응
     - name: 한예린
       changes:
         status: ALIVE
-        role: 러닝 메이트
+        role: 트레이너
         affiliation: UNKNOWN
-        mental: 즐거움, 친근함
-        action: 러닝, 집 정리, 식사
+        mental: 긍정적
+        action: 진우와 함께 훈련
     - name: 뇌전 오소리
       changes:
         status: ALIVE
         role: 영물
         affiliation: 영물원
-        mental: 관심 끌기, 투정
-        action: 바짓단 물어뜯기
+        mental: 애정
+        action: 진우에게 애착
   relations:
     - source: 강진우
       name: 한예린
-      display: 함께 러닝하며 친밀한 관계를 유지한다.
+      display: 함께 훈련하며 관계 발전
       mood: FRIENDLY
       tense: CURRENT
     - source: 강진우
       name: 김민규
-      display: 친근하게 대화를 나눈다.
+      display: 친근한 관계 형성
       mood: FRIENDLY
       tense: CURRENT
     - source: 강진우
       name: 김중헌
-      display: 영물원 업무를 함께하며 소통한다.
+      display: 사육사로서 협력 관계
       mood: NEUTRAL
       tense: CURRENT
     - source: 강진우
       name: 뇌전 오소리
-      display: 오소리가 진우의 바짓단을 물어뜯는다. 진우는 오소리를 쓰다듬어준다.
-      mood: NEUTRAL
+      display: 애착 관계 형성
+      mood: FRIENDLY
       tense: CURRENT
     - source: 강진우
       name: 철진이
-      display: 철진이가 진우에게 축구공을 건넨다.
+      display: 친밀한 관계
       mood: FRIENDLY
       tense: CURRENT
     - source: 강진우
       name: 민수
-      display: 민수가 받아쓰기 백 점을 자랑한다.
+      display: 보육원 아이들과 교류
       mood: FRIENDLY
       tense: CURRENT
   disappear: []
-updatedAt: 2026-02-06T12:46:55.042Z
+updatedAt: '2026-02-07T03:54:51.474Z'
 tags:
   - 일상
   - 반복
-  - 안전
-  - 관계
   - 변화
-  - 회복
-conflict_type: RISING_ACTION
+  - 관계
+  - 안전
+  - 평화
+  - 영물
+  - 보육원
+conflict_type: PERSON_VS_SELF
+narrative_function: RISING_ACTION
 ---
 ## 19화
 

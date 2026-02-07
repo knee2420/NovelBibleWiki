@@ -13,7 +13,7 @@ export default function CharacterArchive(): ReactElement {
   useEffect(() => {
     const fetchData = async (): Promise<void> => {
       try {
-        // @ts-ignore
+
         const [allData, configData] = await Promise.all([
              window.api.getWikiData(),
              window.api.getFieldConfig()

@@ -1,6 +1,12 @@
 import { Activity, UserPlus, ArrowRight, Heart, X } from 'lucide-react'
 
-export const WikiDataRenderer = ({ data }: { data: any }) => {
+interface WikiDataRendererProps {
+    data: any
+    title?: string
+    icon?: any
+}
+
+export const WikiDataRenderer = ({ data, title = 'Graph Data', icon: Icon = Activity }: WikiDataRendererProps) => {
     if (!data) return null;
     const hasData = (data.appear?.length > 0) || (data.update?.length > 0) || (data.relations?.length > 0) || (data.disappear?.length > 0)
     if (!hasData) return null
@@ -8,7 +14,7 @@ export const WikiDataRenderer = ({ data }: { data: any }) => {
     return (
         <div className="space-y-3 pt-2">
             <div className="flex items-center gap-2 text-slate-400 font-bold border-b border-slate-800/50 pb-1 mb-2">
-            <Activity size={12} /> Graph Data
+            <Icon size={12} /> {title}
             </div>
 
             {/* Appear */}
