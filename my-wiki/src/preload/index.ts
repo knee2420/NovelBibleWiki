@@ -38,6 +38,7 @@ const api = {
   selectMultipleFiles: () => ipcRenderer.invoke('select-multiple-files'),
   // [NEW] Character Sync
   updateCharacter: (payload: any) => ipcRenderer.invoke('ai:updateCharacter', payload),
+  processEntityDecisions: (payload: any) => ipcRenderer.invoke('ai:processEntityDecisions', payload),
 
   // [NEW] AI Settings (Schema/Prompt)
   // [NEW] AI Settings (Schema/Prompt)

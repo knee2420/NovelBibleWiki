@@ -1,4 +1,5 @@
 import { ipcMain } from 'electron'
+import { wikiService } from '../services/wikiService'
 import Store from 'electron-store'
 import { GoogleGenerativeAI, Schema, SchemaType } from '@google/generative-ai'
 import { generateSceneAnalysisPrompt } from '../lib/ai/promptBuilder'
@@ -300,7 +301,27 @@ export function setupAIHandlers(store: Store): void {
       const customSchema = store.get(STORE_KEY_CUSTOM_SCHEMA)
       const customInstructions = store.get(STORE_KEY_CUSTOM_INSTRUCTIONS) as string
       
-      const effectiveSchema = (customSchema || SCENE_DATA_JSON_SCHEMA) as Schema
+      // [FIX] Force merge strict protocol schemas into effective schema
+      // This prevents stale custom schemas from omitting new entity fields or having loose descriptions.
+      let effectiveSchema = (customSchema ? JSON.parse(JSON.stringify(customSchema)) : JSON.parse(JSON.stringify(SCENE_DATA_JSON_SCHEMA))) as any
+      
+      const strictBase = SCENE_DATA_JSON_SCHEMA as any
+      if (strictBase.properties) {
+          if (!effectiveSchema.properties) effectiveSchema.properties = {}
+          
+          effectiveSchema.properties['wiki-data'] = strictBase.properties['wiki-data']
+          effectiveSchema.properties['wiki-item-data'] = strictBase.properties['wiki-item-data']
+          effectiveSchema.properties['wiki-location-data'] = strictBase.properties['wiki-location-data']
+          effectiveSchema.properties['wiki-faction-data'] = strictBase.properties['wiki-faction-data']
+          
+          // Ensure required fields
+          const reqSet = new Set(effectiveSchema.required || [])
+          reqSet.add('wiki-data')
+          reqSet.add('wiki-item-data')
+          reqSet.add('wiki-location-data')
+          reqSet.add('wiki-faction-data')
+          effectiveSchema.required = Array.from(reqSet)
+      }
 
       // [NEW] Dynamic Model Selection
       const selectedModel = (store.get(STORE_KEY_AI_MODEL_SELECTED) as string) || 'gemini-1.5-flash'
@@ -450,5 +471,73 @@ export function setupAIHandlers(store: Store): void {
         console.error('Character Update Error:', error)
         return { success: false, message: error.message }
     }
+    })
+
+// 5. Process Entity Decisions (Generic)
+  ipcMain.handle('ai:processEntityDecisions', async (_, payload: { aiResult: any, sceneInfo: any, decisions: any }) => {
+      try {
+          const { aiResult, sceneInfo, decisions } = payload
+          const results: any[] = []
+
+          // Helper to process a category
+          const processCategory = async (type: string, dataKey: string) => {
+               const wikiData = aiResult[dataKey]
+               if (!wikiData) return
+
+               const updates = wikiData.update || []
+               // Distinct names from Appear + Update
+               const distinctNames = new Set<string>([
+                   ...(wikiData.appear || []), 
+                   ...(updates.map((u:any) => u.name) || [])
+               ])
+               
+               for (const name of distinctNames) {
+                   if (!name || typeof name !== 'string') continue
+                   
+                   // Find Data
+                   const updateInfo = updates.find((u: any) => u.name === name)
+                   
+                   // Construct AI Data for Service
+                   // Basic changes
+                   const changes = updateInfo ? (updateInfo.changes || {}) : {}
+                   const fullAiData = { ...changes }
+                   
+                   // Attach Relations
+                   // Case 1: Nested relations (Faction)
+                   if (updateInfo?.relations) {
+                       fullAiData.relations = updateInfo.relations
+                   }
+                   // Case 2: Root relations (Character)
+                   if (type === 'character' && wikiData.relations) {
+                       const myRels = wikiData.relations.filter((r: any) => r.source === name)
+                       if (myRels.length > 0) {
+                           // Merge if existing (priority to nested if any?)
+                           fullAiData.relations = [...(fullAiData.relations || []), ...myRels]
+                       }
+                   }
+
+                   // Attach Summary/Desc if available (Character desc is in changes usually)
+                   
+                   // Check Decision
+                   // Decisions keyed by Type -> Name
+                   const decision = decisions[type]?.[name]
+                   
+                   // Execute
+                   // wikiService will skip if no file exists and action != create
+                   const res = await wikiService.upsertWikiEntry(type, name, fullAiData, sceneInfo, decision)
+                   if (res) results.push(res)
+               }
+          }
+
+          if (decisions.character) await processCategory('character', 'wiki-data')
+          if (decisions.item) await processCategory('item', 'wiki-item-data')
+          if (decisions.location) await processCategory('location', 'wiki-location-data')
+          if (decisions.faction) await processCategory('faction', 'wiki-faction-data')
+          
+          return { success: true, results }
+      } catch (e: any) {
+          console.error(e)
+          return { success: false, message: e.message }
+      }
   })
 }

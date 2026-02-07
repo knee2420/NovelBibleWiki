@@ -19,8 +19,8 @@ import { AIAnalyzePanel } from '../AI/AIAnalyzePanel'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import { WikiEntry } from '../../types/wiki'
-import { CharacterReviewModal } from '../AI/CharacterReviewModal'
-import { useCharacterReview } from '../../hooks/useCharacterReview'
+import { EntityReviewDashboard } from '../AI/EntityReviewDashboard'
+import { useEntityReview } from '../../hooks/useEntityReview'
 import { SceneFieldConfig } from '../../../../shared/types/field-config'
 import { WikiDataRenderer } from '../Shared/WikiDataRenderer'
 
@@ -31,6 +31,8 @@ interface SceneDetailModalProps {
   onUpdate?: () => void
   wikiData?: WikiEntry[]
 }
+
+
 
 export const SceneDetailModal = ({
   filePath,
@@ -61,17 +63,29 @@ export const SceneDetailModal = ({
   const [isGraphDataExpanded, setIsGraphDataExpanded] = useState(false)
   const [isAIPanelOpen, setIsAIPanelOpen] = useState(false)
 
-  // [Hook] Use Character Review
+  // [Hook] Use Entity Review
   const { 
     isReviewing, 
-    pendingReviews, 
-    reviewIndex, 
+    pendingEntities, 
     decisions, 
-    detectNewCharacters, 
-    handleReviewAction, 
+    detectEntities, 
+    handleDecision, 
     waitForReview,
-    resetReview
-  } = useCharacterReview(wikiData)
+    finishReview,
+    resetReview,
+    hasPendingDecisions
+  } = useEntityReview(wikiData)
+
+  const handleDashboardApply = () => {
+      finishReview()
+  }
+
+  const handleDashboardCancel = () => {
+      finishReview() // Just close/resolve, decisions state clears if we resetEntityReview? 
+      // If we want to cancel changes, we should probably clear decisions before finishing.
+      // But typically cancel means "don't apply".
+      // Let's assume user just wants to close modal and maybe continue editing scene manually.
+  }
 
   const titleInputRef = useRef<HTMLInputElement>(null)
 
@@ -135,23 +149,54 @@ export const SceneDetailModal = ({
 
   const handleSave = async () => {
     try {
-      const activeDecisions = Object.keys(decisions).length > 0 ? Object.values(decisions) : undefined
-
       const payload = {
         path: filePath,
         content: editContent,
         data: {
           ...originalData.frontmatter,
-          title: editTitle, // Explicitly set title
-          ...editMetadata,  // Spread all dynamic fields
+          title: editTitle,
+          ...editMetadata,
           updatedAt: new Date().toISOString()
         },
-        decisions: activeDecisions
+        decisions: decisions // Pass decisions map mainly for reference, actually processed separately below
       }
 
+      // 1. Update File (Plot Handler)
       // @ts-ignore
       const res = await window.api.updateScene(payload)
+      
       if (res.success) {
+        // [NEW] 2. Process Entity Decisions (AI Handler)
+        if (hasPendingDecisions) {
+             // Reconstruct basic aiResult structure based on current metadata
+             // (Since we lost original full AI result object, we approximate it from what we have stored in metadata)
+             const aiResultProxy = {
+                 'wiki-data': editMetadata['wiki-data'] || {},
+                 'wiki-item-data': editMetadata['wiki-item-data'] || {},
+                 'wiki-location-data': editMetadata['wiki-location-data'] || {},
+                 'wiki-faction-data': editMetadata['wiki-faction-data'] || {}
+             }
+
+             // @ts-ignore
+             const entityRes = await window.api.processEntityDecisions({ 
+                 aiResult: aiResultProxy,
+                 sceneInfo: {
+                     chapter: originalData.frontmatter.chapter,
+                     scene: originalData.frontmatter.scene,
+                     title: editTitle
+                 },
+                 decisions: decisions
+             })
+             
+             if (entityRes.success) {
+                 console.log('Entities updated:', entityRes.results)
+             } else {
+                 console.error('Entity update failed', entityRes)
+             }
+             
+             resetReview()
+        }
+
         setIsEditing(false)
         loadDetail()
         if (onUpdate) onUpdate()
@@ -238,15 +283,21 @@ export const SceneDetailModal = ({
   const getFileName = (path: string) => path.split(/[\\/]/).pop()?.replace(/\.md$/i, '') || ''
 
   const handleAIApply = async (data: any) => {
-    const needsReview = detectNewCharacters(data)
-    if (needsReview) await waitForReview()
+    // 1. Detect
+    const needsReview = detectEntities(data)
+    
+    // 2. Review UI blocks here until finishReview() is called
+    if (needsReview) {
+         await waitForReview()
+         // Check if we still have decisions (user didn't just cancel)?
+         // Actually detectEntities sets pendingEntities.
+         // If user cancelled, decisions might be empty but we proceed to edit metadata.
+    }
 
     if (data.title) setEditTitle(data.title)
     
-    // Apply all other fields dynamically
     setEditMetadata(prev => {
         const next = { ...prev }
-        // Exclude internal
         const exclude = ['title'] 
         Object.keys(data).forEach(key => {
             if (!exclude.includes(key)) {
@@ -265,7 +316,7 @@ export const SceneDetailModal = ({
       const val = editMetadata[field.key]
       
       // Special Handling for Wiki Data (Graph)
-      if (field.key === 'wiki-data') {
+      if (field.key.startsWith('wiki-')) {
           return renderWikiData(val, field)
       }
       
@@ -527,12 +578,14 @@ export const SceneDetailModal = ({
           />
         )}
         
-        <CharacterReviewModal
+        <EntityReviewDashboard
            isOpen={isReviewing}
-           pendingReviews={pendingReviews}
-           reviewIndex={reviewIndex}
-           wikiData={wikiData}
-           onAction={handleReviewAction}
+           pendingEntities={pendingEntities}
+           decisions={decisions} 
+           existingEntities={wikiData}
+           onDecision={handleDecision}
+           onApply={handleDashboardApply}
+           onCancel={handleDashboardCancel}
         />
       </div>
     </div>

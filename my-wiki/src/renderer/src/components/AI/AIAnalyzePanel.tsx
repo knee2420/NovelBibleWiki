@@ -203,7 +203,7 @@ export const AIAnalyzePanel = ({ initialText = '', onApply, onClose }: AIAnalyze
               {fieldConfig.map(field => {
                   // Internal fields are handled separately or hidden? 
                   // Title is header, Type/Chapter/Scene usually hidden or header
-                  if (field.isInternal && field.key !== 'title' && field.key !== 'wiki-data') return null;
+                  if (field.isInternal && field.key !== 'title' && !field.key.startsWith('wiki-')) return null;
                   
                   const value = result[field.key]
                   if (!value && field.key !== 'wiki-data') return null // Skip empty

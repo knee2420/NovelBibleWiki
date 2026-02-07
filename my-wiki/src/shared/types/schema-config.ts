@@ -35,7 +35,7 @@ export const DEFAULT_SCENE_SCHEMA: SchemaProperty = {
          items: { id: 'p_tags_item', key: 'tag', type: 'string', description: '태그' }
      },
      {
-         id: 'p_wiki', key: 'wiki-data', type: 'object', description: '인물 관계도 그래프 생성을 위한 데이터 (Character Updates)',
+         id: 'p_wiki', key: 'wiki-data', type: 'object', description: '인물 관계도 그래프 생성을 위한 데이터 (Characters ONLY)',
          properties: [
              { 
                  id: 'p_wiki_appear', key: 'appear', type: 'array', description: '이 장면에 처음 등장한 인물 이름만 (e.g. ["John", "Jane"])',

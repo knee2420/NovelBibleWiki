@@ -58,6 +58,13 @@ The user has provided a segment of a novel. You must analyze the characters, the
     - **Objects, Not Strings**: 'update', 'relations', 'wiki-item-data', 'wiki-location-data', and 'wiki-faction-data' must be arrays of OBJECTS with specific keys, NOT strings.
     - **Nulls**: Do not omit required fields. If a value is unknown, use an empty string "" or "UNKNOWN".
     - **Wiki Data**: For 'wiki-data', 'wiki-item-data', 'wiki-location-data', and 'wiki-faction-data', you MUST return the full object structure defined in the schema. Do not simplify or summarize.
+8. **Entity Categorization (CRITICAL)**:
+    - **wiki-data**: EXCLUSIVELY for Characters (People, Monsters, Sentient Beings). **Do NOT put Locations or Items here.**
+    - **wiki-location-data**: For Places, Buildings, Regions, Dimensions (e.g. "Airport", "Dungeon", "Seoul").
+    - **wiki-item-data**: For Objects, Weapons, Artifacts, Consumables.
+    - **wiki-faction-data**: For Organizations, Guilds, Groups, Families.
+    - **Ambiguity**: If an entity is a "Living Dungeon", treat as Character if it speaks/acts, otherwise Location.
+    - **Strict Separation**: If "Incheon Airport" appears, it MUST be in 'wiki-location-data', NEVER in 'wiki-data'.
 `;
 
   const instructions = customInstructions || baseInstructions;
