@@ -27,6 +27,7 @@ declare global {
     analyzeScript: (text: string, characters?: string[]) => Promise<{ success: boolean; data?: any; message?: string }>
     saveScriptAnalysis: (path: string, data: any) => Promise<{ success: boolean; message?: string }>
     loadScriptAnalysis: (path: string) => Promise<any>
+    searchWikiMentions: (keywords: string[]) => Promise<any[]>
     selectMultipleFiles: () => Promise<string[]>
     updateCharacter: (payload: any) => Promise<any>
     

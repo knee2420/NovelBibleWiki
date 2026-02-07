@@ -66,6 +66,7 @@ const api = {
   analyzeScript: (text: string, characters?: string[]) => ipcRenderer.invoke('ai:analyzeScript', text, characters),
   saveScriptAnalysis: (path: string, data: any) => ipcRenderer.invoke('save-script-analysis', { path, data }),
   loadScriptAnalysis: (path: string) => ipcRenderer.invoke('load-script-analysis', path),
+  searchWikiMentions: (keywords: string[]) => ipcRenderer.invoke('search-wiki-mentions', keywords),
 }
 
 if (process.contextIsolated) {
