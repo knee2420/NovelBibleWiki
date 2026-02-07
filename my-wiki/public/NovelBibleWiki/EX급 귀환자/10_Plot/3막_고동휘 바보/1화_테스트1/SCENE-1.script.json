@@ -1,0 +1,321 @@
+{
+  "characters": [
+    "강진우",
+    "그렘린 늑대",
+    "초보 헌터 셋",
+    "남자아이",
+    "어머니"
+  ],
+  "segments": [
+    {
+      "text": "인천국제공항 입국장.",
+      "type": "description",
+      "actor": "Narrator"
+    },
+    {
+      "text": "자동문이 열리자마자 훅 끼쳐오는 냄새에 진우는 일순 멈칫했다.",
+      "type": "action",
+      "actor": "강진우"
+    },
+    {
+      "text": "인공 방향제 향기, 갓 볶은 원두의 고소함. 폐부 깊숙이 들어오는 그 ‘문명의 공기’가 모래바람보다 더 이질적이었다.",
+      "type": "description",
+      "actor": "Narrator"
+    },
+    {
+      "text": "수많은 인파가 물결처럼 흐르고 있었다. 누구 하나 등 뒤를 경계하지 않는다. 진우의 눈동자가 본능적으로 사람들의 주머니와 손, 골반을 훑었다.",
+      "type": "action",
+      "actor": "강진우"
+    },
+    {
+      "text": "위협 요소 파악을 끝낸 후에야 진우는 첫발을 내디뎠다.",
+      "type": "action",
+      "actor": "강진우"
+    },
+    {
+      "text": "지하철 진동, 전자기파, 말소리. 수백만 개의 소음들이 노이즈의 강이 되어 뇌를 찔러댔다. 차라리 바람 소리와 살기(殺氣)만 구분하면 되던 전장이 나을 지경이었다.",
+      "type": "description",
+      "actor": "Narrator"
+    },
+    {
+      "text": "그때.",
+      "type": "description",
+      "actor": "Narrator"
+    },
+    {
+      "text": "찌릿―.",
+      "type": "action",
+      "actor": "Narrator"
+    },
+    {
+      "text": "뒷목의 솜털이 곤두섰다. 감각이 아닌, 경험이 빚어낸 예지였다.",
+      "type": "action",
+      "actor": "강진우"
+    },
+    {
+      "text": "“환영 인사가 영 별로네.”",
+      "type": "dialogue",
+      "actor": "강진우"
+    },
+    {
+      "text": "진우의 고개가 홱 돌아갔다. 사람들은 웃으며 지나치는 버스 정류장 앞 허공. 진우의 눈에는 공간이 비명을 지르며 찢어지는 파동이 보였다.",
+      "type": "action",
+      "actor": "강진우"
+    },
+    {
+      "text": "치지직!",
+      "type": "action",
+      "actor": "Narrator"
+    },
+    {
+      "text": "멀쩡하던 허공에 검은색 실금 같은 균열이 갔다.",
+      "type": "description",
+      "actor": "Narrator"
+    },
+    {
+      "text": "“꺄아아악!”",
+      "type": "dialogue",
+      "actor": "Unknown"
+    },
+    {
+      "text": "“게이트다! 도망쳐!”",
+      "type": "dialogue",
+      "actor": "Unknown"
+    },
+    {
+      "text": "평화롭던 공항 광장이 아수라장으로 변했다.",
+      "type": "description",
+      "actor": "Narrator"
+    },
+    {
+      "text": "틈새가 벌어지며 무언가가 툭 튀어나왔다",
+      "type": "action",
+      "actor": "Narrator"
+    },
+    {
+      "text": "비명과 함께 튀어나온 것은 덩치가 제법 큰 늑대였다. 털이 듬성듬성 빠진 흉측한 외형. 머릿속에 정보가 떠오른다.",
+      "type": "description",
+      "actor": "Narrator"
+    },
+    {
+      "text": "‘그렘린 늑대.’",
+      "type": "description",
+      "actor": "강진우"
+    },
+    {
+      "text": "등급은 E.",
+      "type": "description",
+      "actor": "Narrator"
+    },
+    {
+      "text": "아프리카에선 거들떠보지도 않을 송사리.",
+      "type": "description",
+      "actor": "Narrator"
+    },
+    {
+      "text": "“다, 다들 물러서세요!”",
+      "type": "dialogue",
+      "actor": "초보 헌터 셋"
+    },
+    {
+      "text": "“쉴드 전개!”",
+      "type": "dialogue",
+      "actor": "초보 헌터 셋"
+    },
+    {
+      "text": "근처를 순찰 중이던 초보 헌터 셋이 허둥지둥 달려와 영창을 외웠다. 몇몇 이들은 도망가는 대신 스마트폰을 꺼내 찍느라 바빴다.",
+      "type": "action",
+      "actor": "Narrator"
+    },
+    {
+      "text": "‘이런.’",
+      "type": "description",
+      "actor": "강진우"
+    },
+    {
+      "text": "곤란하다. 마물은 기본적으로 약한 생물을 먼저 노리는 습성이 있다.",
+      "type": "description",
+      "actor": "Narrator"
+    },
+    {
+      "text": "헌터들이 마법진을 그리는 동안, 늑대의 뒷다리 근육이 이미 수축을 끝냈다.",
+      "type": "action",
+      "actor": "Narrator"
+    },
+    {
+      "text": "탁!",
+      "type": "action",
+      "actor": "Narrator"
+    },
+    {
+      "text": "그렘린 늑대가 도약했다.",
+      "type": "action",
+      "actor": "그렘린 늑대"
+    },
+    {
+      "text": "“어, 어?”",
+      "type": "dialogue",
+      "actor": "초보 헌터 셋"
+    },
+    {
+      "text": "헌터들이 당황한다. 애초에 놈의 목표는 헌터가 아니었기에. 홀로그램 워치를 들고 찍던 남자아이. 큼지막한 늑대의 도약에 아이의 표정이 멍하니 굳었다.",
+      "type": "action",
+      "actor": "Narrator"
+    },
+    {
+      "text": "“막아! 안 돼!”",
+      "type": "dialogue",
+      "actor": "초보 헌터 셋"
+    },
+    {
+      "text": "헌터들의 비명이 터졌지만 거리는 너무 멀었다. 그 찰나, 진우의 엄지와 중지가 교차했다.",
+      "type": "action",
+      "actor": "강진우"
+    },
+    {
+      "text": "아프리카, 그 죽음의 땅에는 온갖 신비(神秘)를 익힌 기인들이 병사라는 이름으로 모여들었다. 고위 마법사, 무의 극에 달한 무인, 땅을 뒤집는 염동술사 등등.",
+      "type": "description",
+      "actor": "Narrator"
+    },
+    {
+      "text": "진우는 그 곁에서 자신이 익힐 수 있는 건 훔치고 배웠으며, 끝내 모든 기술을 대성(大成)했다.",
+      "type": "description",
+      "actor": "Narrator"
+    },
+    {
+      "text": "하지만 그런 그들도 죽었다. 더욱 극한으로 치닫는 마경에서 살아남기 위해선 그 이상의 무언가가 필요했다.",
+      "type": "description",
+      "actor": "Narrator"
+    },
+    {
+      "text": "그래서 버렸다.",
+      "type": "description",
+      "actor": "강진우"
+    },
+    {
+      "text": "비우고, 깎아내고, 잊었다.",
+      "type": "description",
+      "actor": "강진우"
+    },
+    {
+      "text": "거창하고 화려한 형(形)들을 지우고 본질만을 남긴다.",
+      "type": "description",
+      "actor": "강진우"
+    },
+    {
+      "text": "그 끝에 진우의 손에 남은 건 단 두 가지.",
+      "type": "description",
+      "actor": "Narrator"
+    },
+    {
+      "text": "[압축(壓縮)과 발산(發散)]",
+      "type": "description",
+      "actor": "Narrator"
+    },
+    {
+      "text": "진우는 손끝에 맺힌 대기와 마력을 종이 접듯 수천 번 접어 우겨 넣었다. 그리고 가볍게 튕겼다.",
+      "type": "action",
+      "actor": "강진우"
+    },
+    {
+      "text": "투웅―",
+      "type": "action",
+      "actor": "Narrator"
+    },
+    {
+      "text": "묵직한 진동음. 손끝에서 쏘아진 비가시의 파동이 대기를 지우며 나아갔다.",
+      "type": "action",
+      "actor": "강진우"
+    },
+    {
+      "text": "퍽.",
+      "type": "action",
+      "actor": "Narrator"
+    },
+    {
+      "text": "파동은 정확히 늑대의 관자놀이를 꿰뚫었다. 외피는 멀쩡했지만, 뇌는 두부처럼 으깨졌으리라. 실 끊어진 인형처럼 늑대가 바닥에 처박혔다.",
+      "type": "action",
+      "actor": "Narrator"
+    },
+    {
+      "text": "콰, 과과광!!",
+      "type": "action",
+      "actor": "Narrator"
+    },
+    {
+      "text": "한 박자 늦게 헌터들의 마법이 마물의 시체 위로 쏟아졌다. 이미 죽은 늑대가 불타오르자 시민들의 환호와 박수가 터져 나왔다.",
+      "type": "action",
+      "actor": "Narrator"
+    },
+    {
+      "text": "“와, 선배님! 타이밍 죽였습니다!”",
+      "type": "dialogue",
+      "actor": "Unknown"
+    },
+    {
+      "text": "“그, 그래?”",
+      "type": "dialogue",
+      "actor": "초보 헌터 셋"
+    },
+    {
+      "text": "이내 시민들의 박수 소리가 파도처럼 쏟아졌다.",
+      "type": "description",
+      "actor": "Narrator"
+    },
+    {
+      "text": "플래시 세례가 터지고, 아이를 구한 헌터들은 의기양양하게 어깨를 폈다.",
+      "type": "action",
+      "actor": "Narrator"
+    },
+    {
+      "text": "진우는 그 모습을 덤덤히 지켜봤다.",
+      "type": "action",
+      "actor": "강진우"
+    },
+    {
+      "text": "쓸쓸히 죽어가던 동료들의 얼굴과, 화려한 조명 아래 웃고 있는 저들의 얼굴이 겹쳐졌다.",
+      "type": "description",
+      "actor": "강진우"
+    },
+    {
+      "text": "진우는 씁쓸함을 삼키며 버스에 몸을 실었다.",
+      "type": "action",
+      "actor": "강진우"
+    },
+    {
+      "text": "버스가 멈춘 곳은 강북의 어느 재개발 지구. 어머니와 살았던 낡은 붉은 벽돌집은 흔적도 없었다.",
+      "type": "description",
+      "actor": "Narrator"
+    },
+    {
+      "text": "대신 거대한 공사장이 그 자리를 차지하고 있었다.",
+      "type": "description",
+      "actor": "Narrator"
+    },
+    {
+      "text": "······하.",
+      "type": "action",
+      "actor": "강진우"
+    },
+    {
+      "text": "진우는 지갑 속 빛바랜 사진을 꺼내 보았다. 입대 전 어머니와 찍은 사진. 배경에 있던 슈퍼도, 전봇대도, 어머니도 이제는 없다. 재앙은 죽일 수 있었지만, 흐르는 세월은 베어낼 수 없었다.",
+      "type": "action",
+      "actor": "강진우"
+    },
+    {
+      "text": "“돌아갈 곳이 없구나.”",
+      "type": "dialogue",
+      "actor": "강진우"
+    },
+    {
+      "text": "이제 그는 영웅도, 군인도 아니었다. 그저 집 없는 민간인일 뿐.",
+      "type": "description",
+      "actor": "Narrator"
+    },
+    {
+      "text": "진우는 발걸음을 돌려 폐쇄적인 뒷골목으로 향했다.",
+      "type": "action",
+      "actor": "강진우"
+    }
+  ]
+}

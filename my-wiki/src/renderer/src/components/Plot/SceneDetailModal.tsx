@@ -15,6 +15,7 @@ import {
   ChevronDown,
   ChevronUp
 } from 'lucide-react'
+import { ScriptAnalysisPanel } from '../AI/ScriptAnalysisPanel'
 import { AIAnalyzePanel } from '../AI/AIAnalyzePanel'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
@@ -42,10 +43,17 @@ export const SceneDetailModal = ({
   wikiData = []
 }: SceneDetailModalProps) => {
   const [loading, setLoading] = useState(false)
+  const [viewMode, setViewMode] = useState<'editor' | 'script'>('editor')
+
+  useEffect(() => {
+    if (isOpen) setViewMode('editor')
+  }, [isOpen])
+
   
   // --- Data State ---
   const [originalData, setOriginalData] = useState<any>(null)
   const [fieldConfig, setFieldConfig] = useState<SceneFieldConfig[]>([])
+  const [scriptData, setScriptData] = useState<any>(null)
   const [isEditing, setIsEditing] = useState(false)
 
   // --- Edit Mode State ---
@@ -118,9 +126,10 @@ export const SceneDetailModal = ({
     setLoading(true)
     try {
       // @ts-ignore
-      const [detailData, configData] = await Promise.all([
+      const [detailData, configData, scriptAnalysis] = await Promise.all([
           (window as any).api.getSceneDetail(filePath),
-          (window as any).api.getFieldConfig()
+          (window as any).api.getFieldConfig(),
+          (window as any).api.loadScriptAnalysis(filePath)
       ])
       
       const config = configData?.scene || []
@@ -139,6 +148,13 @@ export const SceneDetailModal = ({
         const meta = { ...detailData.frontmatter }
         reserved.forEach(k => delete meta[k])
         setEditMetadata(meta)
+
+        // Set Sidecar Data
+        if (scriptAnalysis) {
+            setScriptData(scriptAnalysis)
+        } else {
+            setScriptData(null)
+        }
       }
     } catch (error) {
       console.error(error)
@@ -493,27 +509,47 @@ export const SceneDetailModal = ({
 
         {/* --- Right Column: Content Editor/Viewer --- */}
         <div className="flex-1 flex flex-col bg-[#0b0e14] relative z-0">
-          <div className="h-16 border-b border-slate-800 flex items-center px-6 bg-[#0b0e14] relative shrink-0 z-20">
-            <div className="w-full min-w-0 pr-36">
+          <div className="h-16 border-b border-slate-800 flex items-center justify-between px-6 bg-[#0b0e14] relative shrink-0 z-20">
+            {/* Left Side: Title & View Toggle */}
+            <div className="flex items-center gap-4 min-w-0 mr-4 flex-1">
               {isEditing ? (
                 <input
                   ref={titleInputRef}
                   type="text"
                   value={editTitle}
                   onChange={(e) => setEditTitle(e.target.value)}
-                  className="bg-transparent text-xl font-bold text-white border-b border-blue-500 focus:outline-none w-full pb-1"
+                  className="bg-transparent text-xl font-bold text-white border-b border-blue-500 focus:outline-none w-full pb-1 max-w-lg"
                   placeholder="Scene Title"
                   autoComplete="off"
                 />
               ) : (
-                <h2 className="text-xl font-bold text-white truncate" title={editTitle || getFileName(filePath)}>
-                  {editTitle || getFileName(filePath)}
-                </h2>
+                <>
+                    <h2 className="text-xl font-bold text-white truncate max-w-md shrink-1" title={editTitle || getFileName(filePath)}>
+                    {editTitle || getFileName(filePath)}
+                    </h2>
+                    
+                    {/* View Mode Tabs */}
+                    <div className="flex bg-slate-800/50 rounded-lg p-0.5 border border-slate-700/50 shrink-0">
+                        <button 
+                            onClick={() => setViewMode('editor')}
+                            className={`px-3 py-1 text-xs font-medium rounded-md transition-all flex items-center gap-1.5 ${viewMode === 'editor' ? 'bg-slate-700 text-white shadow-sm ring-1 ring-slate-600' : 'text-slate-400 hover:text-slate-200'}`}
+                        >
+                            <Edit2 size={12} /> Editor
+                        </button>
+                        <button 
+                            onClick={() => setViewMode('script')}
+                            className={`px-3 py-1 text-xs font-medium rounded-md transition-all flex items-center gap-1.5 ${viewMode === 'script' ? 'bg-purple-900/40 text-purple-200 shadow-sm ring-1 ring-purple-500/30' : 'text-slate-400 hover:text-slate-200'}`}
+                        >
+                            <User size={12} /> Script View
+                        </button>
+                    </div>
+                </>
               )}
             </div>
 
-            <div className="absolute right-6 top-0 h-full flex items-center gap-2">
-              {!isAIPanelOpen && (
+            {/* Right Side: Actions */}
+            <div className="flex items-center gap-2 shrink-0">
+              {!isAIPanelOpen && viewMode === 'editor' && (
                 <button
                   onClick={() => setIsAIPanelOpen(true)}
                   className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold text-purple-300 hover:text-white hover:bg-purple-900/30 border border-purple-500/30 transition-colors mr-4"
@@ -549,6 +585,25 @@ export const SceneDetailModal = ({
 
           {loading ? (
             <div className="flex-1 flex items-center justify-center text-slate-500">Loading...</div>
+          ) : viewMode === 'script' ? (
+              <div className="flex-1 overflow-hidden bg-white">
+                  <ScriptAnalysisPanel 
+                    initialText={editContent} 
+                    initialData={scriptData}
+                    knownCharacters={
+                        editMetadata['wiki-data']?.appear || 
+                        editMetadata['characters'] || 
+                        []
+                    }
+                    onResult={async (result) => {
+                        setScriptData(result)
+                        // Save immediately to sidecar
+                        // @ts-ignore
+                        await window.api.saveScriptAnalysis(filePath, result)
+                    }}
+                    onClose={() => setViewMode('editor')} 
+                  />
+              </div>
           ) : (
             <div className="flex-1 overflow-y-auto custom-scrollbar p-8 w-full min-w-0">
               {isEditing ? (

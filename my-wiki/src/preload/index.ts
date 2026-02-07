@@ -63,6 +63,9 @@ const api = {
   saveAIModel: (model: string) => ipcRenderer.invoke('ai:setModel', model),
   getAIModel: () => ipcRenderer.invoke('ai:getModel'),
   getAIUsage: () => ipcRenderer.invoke('ai:getUsageStats'),
+  analyzeScript: (text: string, characters?: string[]) => ipcRenderer.invoke('ai:analyzeScript', text, characters),
+  saveScriptAnalysis: (path: string, data: any) => ipcRenderer.invoke('save-script-analysis', { path, data }),
+  loadScriptAnalysis: (path: string) => ipcRenderer.invoke('load-script-analysis', path),
 }
 
 if (process.contextIsolated) {

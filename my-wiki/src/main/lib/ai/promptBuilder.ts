@@ -4,7 +4,7 @@
  * Generates strict system prompts for LLM based on Scene Data Standard Protocol v1.1
  */
 
-import { SCENE_DATA_JSON_SCHEMA } from './geminiSchema';
+import { SCENE_DATA_JSON_SCHEMA, SCRIPT_DATA_JSON_SCHEMA } from './geminiSchema';
 
 export function generateSceneAnalysisPrompt(novelText: string, customSchema?: any, customInstructions?: string): string {
   const schemaToUse = customSchema || SCENE_DATA_JSON_SCHEMA;
@@ -81,6 +81,43 @@ ${instructions}
 
 # Schema Reference
 Refrain from improvising fields. Stick to this structure:
+${JSON.stringify(schemaToUse, null, 2)}
+
+# Input Novel Text
+---
+${novelText}
+---
+
+Analyze the text above and produce the JSON output.
+`;
+}
+
+export function generateScriptAnalysisPrompt(novelText: string, knownCharacters?: string[]): string {
+  const schemaToUse = SCRIPT_DATA_JSON_SCHEMA;
+  
+  const charListString = knownCharacters && knownCharacters.length > 0 
+      ? `\n  - **Known Characters (PRIORITY)**: ${knownCharacters.join(', ')}\n    (Use these names exactly. Do not create new variations if the character is in this list.)`
+      : '';
+
+  const instructions = `
+  You are an expert literary editor and script analyzer.
+  Your task is to analyze the provided Korean novel text and convert it into a structured script format.
+
+  Instructions:
+  1. Read the text carefully.
+  2. Identify all unique characters. Consolidate names (e.g., 'Jin-woo', 'Kang Jin-woo', 'man' referring to him -> 'Kang Jin-woo').${charListString}
+  3. Split the text into logical segments (paragraphs or dialogue lines). 
+  4. For each segment, determine:
+     - Is it dialogue, action, or general description?
+     - Who is the primary actor or speaker? 
+  5. Be precise. If a sentence describes 'Han Ye-rin' coughing, the actor is 'Han Ye-rin'. If 'Ma Seok-doo' speaks, the actor is 'Ma Seok-doo'.
+  6. Return the result in strict JSON format matching the schema.
+  `;
+
+  return `
+${instructions}
+
+# Schema Reference
 ${JSON.stringify(schemaToUse, null, 2)}
 
 # Input Novel Text

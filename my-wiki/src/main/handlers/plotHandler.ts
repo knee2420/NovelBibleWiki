@@ -160,7 +160,17 @@ export function setupPlotHandlers(store: any): void {
       const prefix = prefixMatch ? prefixMatch[1] : ''
       // 새 이름에 접두사가 없으면 기존 접두사 유지
       const finalName = newName.startsWith(prefix) ? newName : `${prefix}${newName}`
-      await fs.rename(path, join(dir, finalName))
+      const newPath = join(dir, finalName)
+
+      await fs.rename(path, newPath)
+      
+      // Sidecar rename
+      const oldSidecar = path.replace(/\.md$/i, '.script.json')
+      const newSidecar = newPath.replace(/\.md$/i, '.script.json')
+      if (fs.existsSync(oldSidecar)) {
+          await fs.rename(oldSidecar, newSidecar)
+      }
+
       return true
     } catch (e) {
       console.error(e)
@@ -183,15 +193,47 @@ export function setupPlotHandlers(store: any): void {
     }
   })
 
-  // 5. 삭제 (휴지통 이동)
+  // 5. 삭제 (휴지통 이동) - Sidecar 파일도 함께 삭제
   ipcMain.handle('delete-item', async (_, path) => {
     try {
       await shell.trashItem(path)
+      
+      // Sidecar 삭제 (script.json)
+      const sidecarPath = path.replace(/\.md$/i, '.script.json')
+      if (fs.existsSync(sidecarPath)) {
+          await shell.trashItem(sidecarPath)
+      }
+      
       return true
     } catch (e) {
       console.error(e)
       return false
     }
+  })
+  
+  // [NEW] Script Analysis Sidecar Handling
+  ipcMain.handle('save-script-analysis', async (_, { path, data }) => {
+      try {
+          if (!path) return { success: false, message: 'Invalid path' }
+          const sidecarPath = path.replace(/\.md$/i, '.script.json')
+          await fs.writeJSON(sidecarPath, data, { spaces: 2 })
+          return { success: true }
+      } catch (err: any) {
+          console.error('Save Script Analysis failed:', err)
+          return { success: false, message: err.message }
+      }
+  })
+
+  ipcMain.handle('load-script-analysis', async (_, path) => {
+      try {
+          if (!path) return null
+          const sidecarPath = path.replace(/\.md$/i, '.script.json')
+          if (!fs.existsSync(sidecarPath)) return null
+          const data = await fs.readJSON(sidecarPath)
+          return data
+      } catch (err) {
+          return null
+      }
   })
 
   ipcMain.handle('get-timeline-flat', async () => {

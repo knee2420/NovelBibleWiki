@@ -2,8 +2,8 @@ import { ipcMain } from 'electron'
 import { wikiService } from '../services/wikiService'
 import Store from 'electron-store'
 import { GoogleGenerativeAI, Schema, SchemaType } from '@google/generative-ai'
-import { generateSceneAnalysisPrompt } from '../lib/ai/promptBuilder'
-import { SCENE_DATA_JSON_SCHEMA } from '../lib/ai/geminiSchema'
+import { generateSceneAnalysisPrompt, generateScriptAnalysisPrompt } from '../lib/ai/promptBuilder'
+import { SCENE_DATA_JSON_SCHEMA, SCRIPT_DATA_JSON_SCHEMA } from '../lib/ai/geminiSchema'
 import { characterService } from '../services/characterService'
 import { SceneFieldConfig, DEFAULT_SCENE_FIELDS, DEFAULT_CHARACTER_FIELDS, CharacterFieldConfig } from '../../shared/types/field-config'
 import { SchemaProperty, DEFAULT_ROOT_SCHEMA, DEFAULT_SCHEMAS } from '../../shared/types/schema-config'
@@ -436,6 +436,52 @@ export function setupAIHandlers(store: Store): void {
     } catch (error: any) {
       console.error('Gemini API Error:', error)
       return { success: false, message: error.message }
+    }
+  })
+
+  // 3.5. Analyze Script (Dialogue/Action)
+  ipcMain.handle('ai:analyzeScript', async (_, text: string, characters?: string[]) => {
+    try {
+      const apiKey = store.get(STORE_KEY_API_TOKEN) as string
+      if (!apiKey) {
+        throw new Error('API Key not found')
+      }
+
+      // Use the selected model, default to 1.5-flash for speed/cost, user can switch to Pro
+      const selectedModel = (store.get(STORE_KEY_AI_MODEL_SELECTED) as string) || 'gemini-1.5-flash'
+      const isGemma = selectedModel.includes('gemma')
+
+      const genAI = new GoogleGenerativeAI(apiKey)
+      
+      const model = genAI.getGenerativeModel({
+        model: selectedModel,
+        generationConfig: isGemma ? undefined : {
+          responseMimeType: 'application/json',
+          responseSchema: SCRIPT_DATA_JSON_SCHEMA
+        }
+      })
+
+      const prompt = generateScriptAnalysisPrompt(text, characters)
+      
+      console.log(`[AI] Analyzing Script with ${characters?.length || 0} known characters...`)
+      const result = await model.generateContent(prompt)
+      const response = await result.response
+      let responseText = response.text()
+      
+      const jsonStart = responseText.indexOf('{')
+      const jsonEnd = responseText.lastIndexOf('}')
+      if (jsonStart !== -1 && jsonEnd !== -1) {
+          responseText = responseText.substring(jsonStart, jsonEnd + 1)
+      } else {
+          throw new Error('No JSON object found in AI response')
+      }
+      
+      const aiResult = JSON.parse(responseText)
+      return { success: true, data: aiResult }
+
+    } catch (error: any) {
+        console.error('Gemini Script Analysis Error:', error)
+        return { success: false, message: error.message }
     }
   })
 

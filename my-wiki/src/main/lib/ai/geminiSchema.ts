@@ -241,3 +241,39 @@ export const SCENE_DATA_JSON_SCHEMA: Schema = {
   },
   required: ['type', 'chapter', 'scene', 'title', 'summary', 'characters', 'locations', 'items', 'factions', 'tags', 'wiki-character-data', 'wiki-item-data', 'wiki-location-data', 'wiki-faction-data']
 };
+
+/**
+ * JSON Schema for Script Analysis (Dialogue/Action)
+ */
+export const SCRIPT_DATA_JSON_SCHEMA: Schema = {
+  type: SchemaType.OBJECT,
+  properties: {
+    characters: {
+      type: SchemaType.ARRAY,
+      description: "List of all unique character names found in the text.",
+      items: { type: SchemaType.STRING }
+    },
+    segments: {
+      type: SchemaType.ARRAY,
+      description: "The text split into segments, identifying the speaker or actor for each.",
+      items: {
+        type: SchemaType.OBJECT,
+        properties: {
+          text: { type: SchemaType.STRING, description: "The content of the sentence or paragraph." },
+          type: { 
+            type: SchemaType.STRING, 
+            enum: ["dialogue", "action", "description"], 
+            format: 'enum',
+            description: "Type of the segment. Use 'dialogue' for spoken words, 'action' for specific character actions, 'description' for general narration or setting scenes."
+          },
+          actor: { 
+            type: SchemaType.STRING, 
+            description: "The name of the character speaking or acting. If it is general narration or the actor is unclear, use 'Narrator' or 'Unknown'." 
+          }
+        },
+        required: ["text", "type", "actor"]
+      }
+    }
+  },
+  required: ["characters", "segments"]
+};
