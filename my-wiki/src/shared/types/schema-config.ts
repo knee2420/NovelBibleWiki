@@ -18,168 +18,197 @@ export const DEFAULT_SCENE_SCHEMA: SchemaProperty = {
   type: 'object',
   description: '장면 분석 스키마',
   properties: [
-     { id: 'p_chapter', key: 'chapter', type: 'number', description: '챕터 번호 (숫자)', nullable: false },
-     { id: 'p_scene', key: 'scene', type: 'number', description: '장면 번호 (숫자)', nullable: false },
-     { id: 'p_title', key: 'title', type: 'string', description: '장면 제목', nullable: false },
-     { id: 'p_summary', key: 'summary', type: 'string', description: '장면의 전체 줄거리 요약 (300자 내외)', nullable: false },
-     { 
-         id: 'p_chars', key: 'characters', type: 'array', description: '등장한 모든 캐릭터 이름 목록', 
-         items: { id: 'p_chars_item', key: 'name', type: 'string', description: '캐릭터 이름' }
-     },
-     { 
-         id: 'p_locs', key: 'locations', type: 'array', description: '장소 목록 (List of locations)', 
-         items: { id: 'p_locs_item', key: 'name', type: 'string', description: '장소 이름' }
-     },
-     { 
-         id: 'p_tags', key: 'tags', type: 'array', description: '키워드 및 태그 (Keywords and tags)', 
-         items: { id: 'p_tags_item', key: 'tag', type: 'string', description: '태그' }
-     },
-     {
-         id: 'p_wiki', key: 'wiki-data', type: 'object', description: '인물 관계도 그래프 생성을 위한 데이터 (Characters ONLY)',
+    { id: 'p_chapter', key: 'chapter', type: 'number', description: '챕터 번호 (숫자)', nullable: false },
+    { id: 'p_scene', key: 'scene', type: 'number', description: '장면 번호 (숫자)', nullable: false },
+    { id: 'p_title', key: 'title', type: 'string', description: '장면 제목', nullable: false },
+    { id: 'p_summary', key: 'summary', type: 'string', description: '장면의 전체 줄거리 요약 (300자 내외)', nullable: false },
+    { 
+        id: 'p_chars', key: 'characters', type: 'array', description: '등장한 모든 캐릭터 이름 목록', 
+        items: { id: 'p_chars_item', key: 'name', type: 'string', description: '캐릭터 이름' }
+    },
+    { 
+        id: 'p_locs', key: 'locations', type: 'array', description: '장소 목록 (List of locations)', 
+        items: { id: 'p_locs_item', key: 'name', type: 'string', description: '장소 이름' }
+    },
+    { 
+        id: 'p_items', key: 'items', type: 'array', description: '등장한 아이템 목록 (List of items)', 
+        items: { id: 'p_items_item', key: 'name', type: 'string', description: '아이템 이름' }
+    },
+    { 
+        id: 'p_factions', key: 'factions', type: 'array', description: '등장한 세력 목록 (List of factions)', 
+        items: { id: 'p_factions_item', key: 'name', type: 'string', description: '세력 이름' }
+    },
+    { 
+        id: 'p_tags', key: 'tags', type: 'array', description: '키워드 및 태그 (Keywords and tags)', 
+        items: { id: 'p_tags_item', key: 'tag', type: 'string', description: '태그' }
+    },
+    {
+         id: 'p_wiki_char', key: 'wiki-character-data', type: 'object', description: '캐릭터 업데이트 및 관계 (Character Updates)',
          properties: [
              { 
-                 id: 'p_wiki_appear', key: 'appear', type: 'array', description: '이 장면에 처음 등장한 인물 이름만 (e.g. ["John", "Jane"])',
-                 items: { id: 'p_wiki_appear_item', key: 'name', type: 'string' }
+                 id: 'p_wc_appear', key: 'appear', type: 'array', description: '새로 등장한 캐릭터',
+                 items: { id: 'p_wc_appear_item', key: 'name', type: 'string' }
              },
              {
-                 id: 'p_wiki_update', key: 'update', type: 'array', description: '인물 상태 및 관계 업데이트',
+                 id: 'p_wc_update', key: 'update', type: 'array', description: '캐릭터 상태 업데이트',
                  items: {
-                     id: 'p_wiki_update_item', key: 'update_obj', type: 'object',
+                     id: 'p_wc_update_item', key: 'update_obj', type: 'object',
                      properties: [
-                         { id: 'p_wu_name', key: 'name', type: 'string', description: '대상 캐릭터 이름 (이름만 정확히, 괄호 금지)', nullable: false },
+                         { id: 'p_wcu_name', key: 'name', type: 'string', description: '이름' },
                          { 
-                             id: 'p_wu_changes', key: 'changes', type: 'object', description: '변경된 속성 객체', nullable: false,
+                             id: 'p_wcu_changes', key: 'changes', type: 'object', description: '변경된 속성',
                              properties: [
-                                 { 
-                                     id: 'p_wuc_status', key: 'status', type: 'string', description: '상태 (ALIVE, DECEASED, INJURED...)',
-                                     enum: ['ALIVE', 'DECEASED', 'INJURED', 'STUNNED', 'UNKNOWN', 'ILLUSION']
-                                 },
-                                 { id: 'p_wuc_role', key: 'role', type: 'string', description: '현재 역할/직업' },
-                                 { id: 'p_wuc_aff', key: 'affiliation', type: 'string', description: '소속 (Organization or Group)' },
-                                 { id: 'p_wuc_mental', key: 'mental', type: 'string', description: '심리 상태 (Mental State)' },
-                                 { id: 'p_wuc_action', key: 'action', type: 'string', description: '주요 행동 (Main Action)' }
+                                 { id: 'p_wcuc_status', key: 'status', type: 'string', description: '상태', enum: ['ALIVE', 'DECEASED', 'INJURED', 'STUNNED', 'UNKNOWN', 'ILLUSION'] },
+                                 { id: 'p_wcuc_role', key: 'role', type: 'string', description: '역할' },
+                                 { id: 'p_wcuc_aff', key: 'affiliation', type: 'string', description: '소속' },
+                                 { id: 'p_wcuc_mental', key: 'mental', type: 'string', description: '심리 상태' },
+                                 { id: 'p_wcuc_action', key: 'action', type: 'string', description: '행동' },
+                                 { id: 'p_wcuc_image', key: 'image', type: 'string', description: '이미지' }
                              ]
                          }
                      ]
                  }
              },
              {
-                 id: 'p_wiki_relations', key: 'relations', type: 'array', description: '인물 간 관계 변화',
+                 id: 'p_wc_relations', key: 'relations', type: 'array', description: '관계 데이터',
                  items: {
-                     id: 'p_wiki_rel_item', key: 'relation_obj', type: 'object',
+                     id: 'p_wc_rel_item', key: 'relation_obj', type: 'object',
                      properties: [
-                         { id: 'p_wr_source', key: 'source', type: 'string', description: '주체 (Subject)', nullable: false },
-                         { id: 'p_wr_name', key: 'name', type: 'string', description: '대상 (Target)', nullable: false },
-                         { id: 'p_wr_display', key: 'display', type: 'string', description: '관계 설명 (Display Text)', nullable: false },
-                         { 
-                             id: 'p_wr_mood', key: 'mood', type: 'string', description: '관계 분위기 (FRIENDLY, HOSTILE, NEUTRAL)',
-                             enum: ['FRIENDLY', 'HOSTILE', 'NEUTRAL']
-                         },
-                         { 
-                             id: 'p_wr_tense', key: 'tense', type: 'string', description: '시점 (CURRENT, PAST)',
-                             enum: ['CURRENT', 'PAST']
-                         }
+                         { id: 'p_wcr_source', key: 'source', type: 'string', description: '주체' },
+                         { id: 'p_wcr_name', key: 'name', type: 'string', description: '대상' },
+                         { id: 'p_wcr_display', key: 'display', type: 'string', description: '관계 명칭' },
+                         { id: 'p_wcr_mood', key: 'mood', type: 'string', description: '분위기', enum: ['FRIENDLY', 'HOSTILE', 'NEUTRAL'] },
+                         { id: 'p_wcr_tense', key: 'tense', type: 'string', description: '시점', enum: ['CURRENT', 'PAST'] }
                      ]
                  }
              },
              { 
-                 id: 'p_wiki_disappear', key: 'disappear', type: 'array', description: '퇴장/사망한 인물 (Disappeared Characters)',
-                 items: { id: 'p_wiki_disappear_item', key: 'name', type: 'string' }
+                 id: 'p_wc_disappear', key: 'disappear', type: 'array', description: '퇴장한 캐릭터',
+                 items: { id: 'p_wc_disappear_item', key: 'name', type: 'string' }
              }
          ]
-     },
-     {
-        id: 'p_wiki_item', key: 'wiki-item-data', type: 'object', description: '아이템 상태 업데이트 데이터 (Item Updates)',
+    },
+    {
+        id: 'p_wiki_item', key: 'wiki-item-data', type: 'object', description: '아이템 업데이트 및 관계',
         properties: [
-            {
-                id: 'p_wi_appear', key: 'appear', type: 'array', description: '새로 등장/획득한 아이템',
-                items: { id: 'p_wi_appear_item', key: 'name', type: 'string' }
-            },
-            {
-                id: 'p_wi_update', key: 'update', type: 'array', description: '아이템 상태 변화',
-                items: {
-                    id: 'p_wi_update_item', key: 'update_obj', type: 'object',
-                    properties: [
-                        { id: 'p_wiu_name', key: 'name', type: 'string', description: '대상 아이템 이름', nullable: false },
-                        {
-                            id: 'p_wiu_changes', key: 'changes', type: 'object', description: '변경된 속성', nullable: false,
-                            properties: [
-                                { id: 'p_wiu_owner', key: 'owner', type: 'string', description: '현재 소유자 (Owner)' },
-                                { id: 'p_wiu_status', key: 'status', type: 'string', description: '상태 (NORMAL, DAMAGED, LOST, DESTROYED)' },
-                                { id: 'p_wiu_loc', key: 'location', type: 'string', description: '현재 위치' }
-                            ]
-                        }
-                    ]
-                }
-            },
-            {
-                id: 'p_wi_disappear', key: 'disappear', type: 'array', description: '소실/파괴된 아이템',
-                items: { id: 'p_wi_disappear_item', key: 'name', type: 'string' }
-            }
+             { 
+                 id: 'p_wi_appear', key: 'appear', type: 'array', description: '새로 등장한 아이템',
+                 items: { id: 'p_wi_appear_item', key: 'name', type: 'string' }
+             },
+             {
+                 id: 'p_wi_update', key: 'update', type: 'array', description: '아이템 상태 업데이트',
+                 items: {
+                     id: 'p_wi_update_item', key: 'update_obj', type: 'object',
+                     properties: [
+                         { id: 'p_wiu_name', key: 'name', type: 'string', description: '이름' },
+                         { 
+                             id: 'p_wiu_changes', key: 'changes', type: 'object', description: '변경된 속성',
+                             properties: [
+                                 { id: 'p_wiuc_owner', key: 'owner', type: 'string', description: '소유자' },
+                                 { id: 'p_wiuc_status', key: 'status', type: 'string', description: '상태' },
+                                 { id: 'p_wiuc_loc', key: 'location', type: 'string', description: '위치' }
+                             ]
+                         }
+                     ]
+                 }
+             },
+             {
+                 id: 'p_wi_relations', key: 'relations', type: 'array', description: '아이템 관계 데이터',
+                 items: {
+                     id: 'p_wi_rel_item', key: 'relation_obj', type: 'object',
+                     properties: [
+                         { id: 'p_wir_source', key: 'source', type: 'string', description: '주체 (아이템)' },
+                         { id: 'p_wir_name', key: 'name', type: 'string', description: '대상' },
+                         { id: 'p_wir_display', key: 'display', type: 'string', description: '관계 명칭' },
+                         { id: 'p_wir_mood', key: 'mood', type: 'string', description: '분위기', enum: ['OWNER', 'CREATOR', 'LOCATED_AT', 'KEY_ITEM', 'FRIENDLY', 'HOSTILE', 'NEUTRAL'] },
+                         { id: 'p_wir_tense', key: 'tense', type: 'string', description: '시점', enum: ['CURRENT', 'PAST'] }
+                     ]
+                 }
+             },
+             { 
+                 id: 'p_wi_disappear', key: 'disappear', type: 'array', description: '소실된 아이템',
+                 items: { id: 'p_wi_disappear_item', key: 'name', type: 'string' }
+             }
         ]
-     },
-     {
-        id: 'p_wiki_location', key: 'wiki-location-data', type: 'object', description: '장소 상태 업데이트 데이터 (Location Updates)',
+    },
+    {
+        id: 'p_wiki_loc', key: 'wiki-location-data', type: 'object', description: '장소 업데이트 및 관계',
         properties: [
-            {
-                id: 'p_wl_appear', key: 'appear', type: 'array', description: '새로 등장한 장소',
-                items: { id: 'p_wl_appear_item', key: 'name', type: 'string' }
-            },
-            {
-                id: 'p_wl_update', key: 'update', type: 'array', description: '장소 상태 변화',
-                items: {
-                    id: 'p_wl_update_item', key: 'update_obj', type: 'object',
-                    properties: [
-                        { id: 'p_wlu_name', key: 'name', type: 'string', description: '장소 이름', nullable: false },
-                        {
-                            id: 'p_wlu_changes', key: 'changes', type: 'object', description: '변경된 속성', nullable: false,
-                            properties: [
-                                { id: 'p_wlu_danger', key: 'dangerLevel', type: 'string', description: '위험도 변경' },
-                                { id: 'p_wlu_status', key: 'status', type: 'string', description: '상태 (NORMAL, RUINED, OCCUPIED)' },
-                                { id: 'p_wlu_occupant', key: 'occupant', type: 'string', description: '점령 세력/인물' }
-                            ]
-                        }
-                    ]
-                }
-            }
+             { 
+                 id: 'p_wl_appear', key: 'appear', type: 'array', description: '새로 등장한 장소',
+                 items: { id: 'p_wl_appear_item', key: 'name', type: 'string' }
+             },
+             {
+                 id: 'p_wl_update', key: 'update', type: 'array', description: '장소 상태 업데이트',
+                 items: {
+                     id: 'p_wl_update_item', key: 'update_obj', type: 'object',
+                     properties: [
+                         { id: 'p_wlu_name', key: 'name', type: 'string', description: '이름' },
+                         { 
+                             id: 'p_wlu_changes', key: 'changes', type: 'object', description: '변경된 속성',
+                             properties: [
+                                 { id: 'p_wluc_danger', key: 'dangerLevel', type: 'string', description: '위험도' },
+                                 { id: 'p_wluc_status', key: 'status', type: 'string', description: '상태' },
+                                 { id: 'p_wluc_occupant', key: 'occupant', type: 'string', description: '점령자' }
+                             ]
+                         }
+                     ]
+                 }
+             },
+             {
+                 id: 'p_wl_relations', key: 'relations', type: 'array', description: '장소 관계 데이터',
+                 items: {
+                     id: 'p_wl_rel_item', key: 'relation_obj', type: 'object',
+                     properties: [
+                         { id: 'p_wlr_source', key: 'source', type: 'string', description: '주체 (장소)' },
+                         { id: 'p_wlr_name', key: 'name', type: 'string', description: '대상' },
+                         { id: 'p_wlr_display', key: 'display', type: 'string', description: '관계 명칭' },
+                         { id: 'p_wlr_mood', key: 'mood', type: 'string', description: '분위기', enum: ['BELONG', 'ADJACENT', 'OCCUPIED_BY', 'FRIENDLY', 'HOSTILE', 'NEUTRAL'] },
+                         { id: 'p_wlr_tense', key: 'tense', type: 'string', description: '시점', enum: ['CURRENT', 'PAST'] }
+                     ]
+                 }
+             }
         ]
-     },
-     {
-        id: 'p_wiki_faction', key: 'wiki-faction-data', type: 'object', description: '세력 상태 업데이트 데이터 (Faction Updates)',
+    },
+    {
+        id: 'p_wiki_fac', key: 'wiki-faction-data', type: 'object', description: '세력 업데이트 및 관계',
         properties: [
-            {
-                id: 'p_wf_appear', key: 'appear', type: 'array', description: '새로 언급/등장한 세력',
-                items: { id: 'p_wf_appear_item', key: 'name', type: 'string' }
-            },
-            {
-                id: 'p_wf_update', key: 'update', type: 'array', description: '세력 상태 변화 (지도자 교체, 멸망 등)',
-                items: {
-                    id: 'p_wf_update_item', key: 'update_obj', type: 'object',
-                    properties: [
-                        { id: 'p_wfu_name', key: 'name', type: 'string', description: '세력 이름 (정확히 이름만)', nullable: false },
-                        {
-                            id: 'p_wfu_changes', key: 'changes', type: 'object', description: '변경된 속성', nullable: false,
-                            properties: [
-                                { id: 'p_wfu_leader', key: 'leader', type: 'string', description: '지도자 (Leader)' },
-                                { id: 'p_wfu_scale', key: 'scale', type: 'string', description: '규모 (Scale)' },
-                                { id: 'p_wfu_status', key: 'status', type: 'string', description: '상태 (ACTIVE, DESTROYED, HIDING)' }
-                            ]
-                        },
-                        {
-                            id: 'p_wfu_rel', key: 'relations', type: 'array', description: '타 세력과의 관계 변화',
-                            items: {
-                                id: 'p_wfu_rel_item', key: 'relation', type: 'object',
-                                properties: [
-                                    { id: 'p_wfur_target', key: 'target', type: 'string', description: '대상 세력 이름', nullable: false },
-                                    { id: 'p_wfur_type', key: 'type', type: 'string', description: '관계 (ALLY, ENEMY, TRUCE)', nullable: false }
-                                ]
-                            }
-                        }
-                    ]
-                }
-            }
+             { 
+                 id: 'p_wf_appear', key: 'appear', type: 'array', description: '새로 등장한 세력',
+                 items: { id: 'p_wf_appear_item', key: 'name', type: 'string' }
+             },
+             {
+                 id: 'p_wf_update', key: 'update', type: 'array', description: '세력 상태 업데이트',
+                 items: {
+                     id: 'p_wf_update_item', key: 'update_obj', type: 'object',
+                     properties: [
+                         { id: 'p_wfu_name', key: 'name', type: 'string', description: '이름' },
+                         { 
+                             id: 'p_wfu_changes', key: 'changes', type: 'object', description: '변경된 속성',
+                             properties: [
+                                 { id: 'p_wfuc_leader', key: 'leader', type: 'string', description: '지도자' },
+                                 { id: 'p_wfuc_scale', key: 'scale', type: 'string', description: '규모' },
+                                 { id: 'p_wfuc_status', key: 'status', type: 'string', description: '상태' }
+                             ]
+                         }
+                     ]
+                 }
+             },
+             {
+                 id: 'p_wf_relations', key: 'relations', type: 'array', description: '세력 관계 데이터',
+                 items: {
+                     id: 'p_wf_rel_item', key: 'relation_obj', type: 'object',
+                     properties: [
+                         { id: 'p_wfr_source', key: 'source', type: 'string', description: '주체 (세력)' },
+                         { id: 'p_wfr_name', key: 'name', type: 'string', description: '대상' },
+                         { id: 'p_wfr_display', key: 'display', type: 'string', description: '관계 명칭' },
+                         { id: 'p_wfr_mood', key: 'mood', type: 'string', description: '분위기', enum: ['ALLY', 'ENEMY', 'SUB', 'LEADER', 'FRIENDLY', 'HOSTILE', 'NEUTRAL'] },
+                         { id: 'p_wfr_tense', key: 'tense', type: 'string', description: '시점', enum: ['CURRENT', 'PAST'] }
+                     ]
+                 }
+             }
         ]
-     }
+    }
   ]
 }
 
