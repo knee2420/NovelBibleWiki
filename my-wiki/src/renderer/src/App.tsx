@@ -14,6 +14,7 @@ function App(): ReactElement {
   const [wikiData, setWikiData] = useState<WikiEntry[]>([])
   const [sceneData, setSceneData] = useState<SceneCard[]>([])
   const [selectedEntryId, setSelectedEntryId] = useState<string | null>(null)
+  const [activeScenePath, setActiveScenePath] = useState<string | null>(null) // [NEW] Scene Link
   const [refreshKey, setRefreshKey] = useState(0)
   const selectedEntry = wikiData.find((entry) => entry.id === selectedEntryId) || null
 
@@ -46,6 +47,13 @@ function App(): ReactElement {
     setSelectedEntryId(entry.id)
   }
 
+  // [NEW] Handle Open Scene from Wiki
+  const handleOpenScene = (scenePath: string) => {
+    setSelectedEntryId(null) // Close Wiki Modal
+    setActiveScenePath(scenePath) // Set Active Scene
+    setCurrentPage('plot') // Switch to Plot Tab
+  }
+
   const renderContent = () => {
     switch (currentPage) {
       case 'home':
@@ -58,7 +66,7 @@ function App(): ReactElement {
         )
 
       case 'plot':
-        return <PlotDashboard wikiData={wikiData} />
+        return <PlotDashboard wikiData={wikiData} selectedScenePath={activeScenePath} onSelectScene={setActiveScenePath} />
       case 'board':
         return <RelationBoard wikiData={wikiData} sceneData={sceneData} />
       case 'characters':
@@ -122,6 +130,7 @@ function App(): ReactElement {
           entry={selectedEntry}
           onClose={() => setSelectedEntryId(null)}
           onUpdate={triggerRefresh}
+          onOpenScene={handleOpenScene}
         />
       )}
     </WikiLayout>

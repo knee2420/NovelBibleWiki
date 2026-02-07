@@ -29,9 +29,10 @@ interface WikiDetailModalProps {
   entry: WikiEntry
   onClose: () => void
   onUpdate?: () => void 
+  onOpenScene?: (sceneId: string) => void // [NEW] Navigation callback
 }
 
-export const WikiDetailModal = ({ entry, onClose, onUpdate }: WikiDetailModalProps) => {
+export const WikiDetailModal = ({ entry, onClose, onUpdate, onOpenScene }: WikiDetailModalProps) => {
   // --- View Mode Data ---
   const [activeTab, setActiveTab] = useState<'overview' | 'status' | 'history' | 'mentions'>('overview')
   const [isMaximized, setIsMaximized] = useState(false) // [NEW] Window State
@@ -572,7 +573,7 @@ export const WikiDetailModal = ({ entry, onClose, onUpdate }: WikiDetailModalPro
                         </div>
                     ) : activeTab === 'mentions' ? (
                         <div className="flex-1 min-h-0 animate-in fade-in slide-in-from-bottom-2 duration-300 h-full">
-                            <WikiMentionViewer characterName={entry.name} aliases={aliases} />
+                            <WikiMentionViewer characterName={entry.name} aliases={aliases} onOpenScene={onOpenScene} />
                         </div>
                     ) : (
                         <div className="flex-1 overflow-y-auto custom-scrollbar p-8">

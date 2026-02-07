@@ -528,35 +528,13 @@ export const SceneDetailModal = ({
                     {editTitle || getFileName(filePath)}
                     </h2>
                     
-                    {/* View Mode Tabs */}
-                    <div className="flex bg-slate-800/50 rounded-lg p-0.5 border border-slate-700/50 shrink-0">
-                        <button 
-                            onClick={() => setViewMode('editor')}
-                            className={`px-3 py-1 text-xs font-medium rounded-md transition-all flex items-center gap-1.5 ${viewMode === 'editor' ? 'bg-slate-700 text-white shadow-sm ring-1 ring-slate-600' : 'text-slate-400 hover:text-slate-200'}`}
-                        >
-                            <Edit2 size={12} /> Editor
-                        </button>
-                        <button 
-                            onClick={() => setViewMode('script')}
-                            className={`px-3 py-1 text-xs font-medium rounded-md transition-all flex items-center gap-1.5 ${viewMode === 'script' ? 'bg-purple-900/40 text-purple-200 shadow-sm ring-1 ring-purple-500/30' : 'text-slate-400 hover:text-slate-200'}`}
-                        >
-                            <User size={12} /> Script View
-                        </button>
-                    </div>
                 </>
               )}
             </div>
 
             {/* Right Side: Actions */}
             <div className="flex items-center gap-2 shrink-0">
-              {!isAIPanelOpen && viewMode === 'editor' && (
-                <button
-                  onClick={() => setIsAIPanelOpen(true)}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold text-purple-300 hover:text-white hover:bg-purple-900/30 border border-purple-500/30 transition-colors mr-4"
-                >
-                  <Sparkles size={14} /> Smart Analyze
-                </button>
-              )}
+
 
               {isEditing ? (
                 <>
@@ -583,6 +561,39 @@ export const SceneDetailModal = ({
             </div>
           </div>
 
+          {/* Sub Header: View Tabs & Actions */}
+          {!isEditing && !loading && (
+            <div className="h-12 border-b border-slate-800 bg-slate-950/30 flex items-center px-6 justify-between shrink-0 animate-in fade-in slide-in-from-top-1 duration-200">
+                {/* Left: View Tabs */}
+                <div className="flex gap-1 bg-slate-900/50 p-1 rounded-lg border border-slate-700/50">
+                    <button 
+                        onClick={() => setViewMode('editor')}
+                        className={`px-4 py-1.5 text-xs font-bold rounded-md transition-all flex items-center gap-2 ${viewMode === 'editor' ? 'bg-slate-700 text-white shadow-sm ring-1 ring-slate-500/50' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/30'}`}
+                    >
+                        <Edit2 size={13} /> Editor
+                    </button>
+                    <button 
+                         onClick={() => setViewMode('script')}
+                         className={`px-4 py-1.5 text-xs font-bold rounded-md transition-all flex items-center gap-2 ${viewMode === 'script' ? 'bg-purple-600/80 text-white shadow-sm ring-1 ring-purple-400/50' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/30'}`}
+                    >
+                        <User size={13} /> Script View
+                    </button>
+                </div>
+                
+                {/* Right: Actions */}
+                <div className="flex items-center gap-2">
+                    {!isAIPanelOpen && viewMode === 'editor' && (
+                        <button
+                          onClick={() => setIsAIPanelOpen(true)}
+                          className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-bold text-purple-300 hover:text-white hover:bg-purple-900/40 border border-purple-500/30 transition-all"
+                        >
+                          <Sparkles size={14} /> Smart Analyze
+                        </button>
+                    )}
+                </div>
+             </div>
+          )}
+
           {loading ? (
             <div className="flex-1 flex items-center justify-center text-slate-500">Loading...</div>
           ) : viewMode === 'script' ? (
@@ -591,9 +602,9 @@ export const SceneDetailModal = ({
                     initialText={editContent} 
                     initialData={scriptData}
                     knownCharacters={
-                        editMetadata['wiki-data']?.appear || 
-                        editMetadata['characters'] || 
-                        []
+                        (editMetadata['characters'] && editMetadata['characters'].length > 0) 
+                            ? editMetadata['characters'] 
+                            : (editMetadata['wiki-data']?.appear || []).filter((name: string) => !name.match(/\((장비|아이템|물건|도구|장소|위치|Item|Object|Location|Place)\)/i))
                     }
                     onResult={async (result) => {
                         setScriptData(result)
@@ -615,8 +626,14 @@ export const SceneDetailModal = ({
                   spellCheck={false}
                 />
               ) : (
-                <article className="prose prose-invert prose-slate max-w-none prose-p:leading-relaxed prose-headings:text-slate-200 prose-pre:whitespace-pre-wrap prose-pre:break-words w-full break-words">
-                  <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                <article className="prose prose-invert prose-slate max-w-3xl mx-auto prose-p:leading-relaxed prose-headings:text-slate-200 prose-pre:whitespace-pre-wrap prose-pre:break-words w-full break-words">
+                  <ReactMarkdown 
+                    remarkPlugins={[remarkGfm]}
+                    components={{
+                      pre: (props) => <pre {...props} style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word', overflowWrap: 'break-word' }} />,
+                      code: (props) => <code {...props} style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word', overflowWrap: 'break-word' }} />
+                    }}
+                  >
                     {editContent || '*No content*'}
                   </ReactMarkdown>
                 </article>

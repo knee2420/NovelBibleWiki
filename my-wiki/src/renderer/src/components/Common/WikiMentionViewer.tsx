@@ -19,9 +19,10 @@ interface MentionResult {
 interface WikiMentionViewerProps {
     characterName: string;
     aliases?: string[];
+    onOpenScene?: (sceneId: string) => void; // [NEW] Callback for navigation
 }
 
-export const WikiMentionViewer: React.FC<WikiMentionViewerProps> = ({ characterName, aliases = [] }) => {
+export const WikiMentionViewer: React.FC<WikiMentionViewerProps> = ({ characterName, aliases = [], onOpenScene }) => {
     const [loading, setLoading] = useState(true);
     const [results, setResults] = useState<MentionResult[]>([]);
     const [error, setError] = useState<string | null>(null);
@@ -170,7 +171,10 @@ export const WikiMentionViewer: React.FC<WikiMentionViewerProps> = ({ characterN
                                             
                                             {/* Action: Go to Scene (Not functional without parent handler yet, but UI placeholder) */}
                                             <div className="mt-4 pt-2 border-t border-slate-800/50 opacity-0 group-hover:opacity-100 transition-opacity">
-                                                <button className="flex items-center gap-1.5 text-[10px] font-bold text-blue-400 hover:text-blue-300">
+                                                <button 
+                                                    onClick={() => onOpenScene && onOpenScene(scene.sceneId)}
+                                                    className="flex items-center gap-1.5 text-[10px] font-bold text-blue-400 hover:text-blue-300"
+                                                >
                                                     OPEN SCENE <ArrowRight size={10} />
                                                 </button>
                                             </div>
