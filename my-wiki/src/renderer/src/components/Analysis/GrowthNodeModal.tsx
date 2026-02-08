@@ -6,6 +6,8 @@ interface GrowthNodeModalProps {
   node?: GrowthNode // If null, we are creating a new node
   actNumber?: number // If creating, which act?
   category?: string // If creating, which category?
+  tier?: number // If creating, which tier (horizontal level)?
+  availableNodes?: GrowthNode[] // Other nodes in same act for prerequisite selection
   isOpen: boolean
   onClose: () => void
   onSave: (node: Partial<GrowthNode>) => void
@@ -15,7 +17,9 @@ interface GrowthNodeModalProps {
 export const GrowthNodeModal = ({ 
   node, 
   actNumber, 
-  category, 
+  category,
+  tier,
+  availableNodes = [],
   isOpen, 
   onClose, 
   onSave, 
@@ -25,6 +29,8 @@ export const GrowthNodeModal = ({
   const [description, setDescription] = useState('')
   const [status, setStatus] = useState<GrowthNode['status']>('locked')
   const [levelReq, setLevelReq] = useState(1)
+  const [currentTier, setCurrentTier] = useState(1)
+  const [prerequisites, setPrerequisites] = useState<string[]>([])
 
   useEffect(() => {
     if (isOpen) {
@@ -33,14 +39,18 @@ export const GrowthNodeModal = ({
         setDescription(node.description || '')
         setStatus(node.status)
         setLevelReq(node.levelRequirement || 1)
+        setCurrentTier(node.tier || 1)
+        setPrerequisites(node.prerequisites || [])
       } else {
         setLabel('')
         setDescription('')
         setStatus('locked')
         setLevelReq(1)
+        setCurrentTier(tier || 1)
+        setPrerequisites([])
       }
     }
-  }, [isOpen, node])
+  }, [isOpen, node, tier])
 
   if (!isOpen) return null
 
@@ -53,6 +63,8 @@ export const GrowthNodeModal = ({
       description,
       status,
       levelRequirement: levelReq,
+      tier: currentTier,
+      prerequisites,
       // If new, these need to be handled by parent or passed here
       act: node ? node.act : actNumber!,
       category: node ? node.category : category!
@@ -99,6 +111,71 @@ export const GrowthNodeModal = ({
               placeholder="Describe the achievement or event..."
               className="bg-slate-950 border border-slate-800 rounded px-3 py-2 text-xs text-slate-300 h-24 resize-none focus:border-cyan-500 focus:outline-none custom-scrollbar placeholder-slate-700"
             />
+          </div>
+
+          {/* Tier (Horizontal Level) */}
+          <div className="flex flex-col gap-1">
+            <label className="text-[10px] uppercase font-bold text-slate-500">단계 (가로 위치)</label>
+            <input 
+              type="number" 
+              min="1"
+              max="10"
+              value={currentTier}
+              onChange={e => setCurrentTier(Number(e.target.value))}
+              className="bg-slate-950 border border-slate-800 rounded px-3 py-2 text-sm text-white focus:border-cyan-500 focus:outline-none"
+            />
+            <span className="text-[9px] text-slate-600">1=초기, 2=다음, 3=그 다음...</span>
+          </div>
+
+          {/* Prerequisites Selection */}
+          <div className="flex flex-col gap-1">
+            <label className="text-[10px] uppercase font-bold text-slate-500">
+              선행 조건 (화살표 연결)
+              {availableNodes.length > 0 && (
+                <span className="ml-2 text-[8px] text-slate-600 normal-case">
+                  ({availableNodes.filter(n => n.id !== node?.id).length}개 노드 사용 가능)
+                </span>
+              )}
+            </label>
+            {availableNodes.length > 0 ? (
+              <>
+                <div className="bg-slate-950 border border-slate-800 rounded p-2 max-h-32 overflow-y-auto custom-scrollbar">
+                  {availableNodes
+                    .filter(n => n.id !== node?.id) // Don't show self
+                    .map(availNode => (
+                      <label key={availNode.id} className="flex items-center gap-2 py-1 px-2 hover:bg-slate-900 rounded cursor-pointer">
+                        <input 
+                          type="checkbox"
+                          checked={prerequisites.includes(availNode.id)}
+                          onChange={(e) => {
+                            if (e.target.checked) {
+                              setPrerequisites([...prerequisites, availNode.id])
+                            } else {
+                              setPrerequisites(prerequisites.filter(id => id !== availNode.id))
+                            }
+                          }}
+                          className="w-3 h-3"
+                        />
+                        <span className="text-xs text-slate-300">{availNode.label}</span>
+                        <span className="text-[9px] text-slate-600 ml-auto">Tier {availNode.tier || 1}</span>
+                      </label>
+                    ))}
+                  {availableNodes.filter(n => n.id !== node?.id).length === 0 && (
+                    <span className="text-[9px] text-slate-600 italic">이 Act에 다른 노드가 없습니다</span>
+                  )}
+                </div>
+                <span className="text-[9px] text-slate-600">
+                  선택한 노드에서 화살표가 연결됩니다
+                  {prerequisites.length > 0 && ` (${prerequisites.length}개 선택됨)`}
+                </span>
+              </>
+            ) : (
+              <div className="bg-slate-950 border border-slate-800 rounded p-3 text-center">
+                <span className="text-[9px] text-slate-600 italic">
+                  이 Act에 선택 가능한 노드가 없습니다
+                </span>
+              </div>
+            )}
           </div>
 
           {/* Status Selection */}

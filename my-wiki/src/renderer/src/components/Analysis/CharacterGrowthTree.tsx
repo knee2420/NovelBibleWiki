@@ -24,7 +24,8 @@ export const CharacterGrowthTree = ({ characterId, characterName }: CharacterGro
     isOpen: boolean,
     node?: GrowthNode,
     actNumber?: number,
-    category?: string
+    category?: string,
+    tier?: number
   }>({ isOpen: false })
 
   const [axisModal, setAxisModal] = useState<{
@@ -105,6 +106,7 @@ export const CharacterGrowthTree = ({ characterId, characterName }: CharacterGro
             description: nodeData.description || '',
             category: nodeData.category || activeCategory,
             act: nodeData.act || 1,
+            tier: nodeData.tier || 1,
             status: nodeData.status || 'locked',
             levelRequirement: nodeData.levelRequirement || 1
         }
@@ -253,50 +255,218 @@ export const CharacterGrowthTree = ({ characterId, characterName }: CharacterGro
 
              {acts.map((act) => {
                  const nodesInAct = categoryNodes.filter(n => n.act === act.actNumber);
+                 
+                 // 가로 레벨(tier)별로 그룹화 - 스킬 트리 형태
+                 const tierGroups = new Map<number, GrowthNode[]>()
+                 nodesInAct.forEach(node => {
+                     const tier = node.tier || 1
+                     if (!tierGroups.has(tier)) tierGroups.set(tier, [])
+                     tierGroups.get(tier)!.push(node)
+                 })
+                 
+                 const sortedTiers = Array.from(tierGroups.keys()).sort((a, b) => a - b)
+                 const maxTier = sortedTiers.length > 0 ? Math.max(...sortedTiers) : 0
 
                  return (
-                    <div key={act.id} className="flex-shrink-0 w-[300px] h-full border-l border-slate-800/30 relative flex flex-col group">
+                    <div key={act.id} className="flex-shrink-0 min-w-max h-full border-l border-slate-800/30 relative flex flex-col group px-6">
                         {/* Act Header */}
                         <div className="absolute -top-6 left-2 text-xs font-bold text-slate-700 uppercase tracking-[0.2em] group-hover:text-cyan-500/50 transition-colors whitespace-nowrap">
                             {act.title}
                         </div>
                         
-                        {/* Node Container */}
-                        <div className="flex flex-col gap-12 items-center pt-8">
-                            {nodesInAct.map(node => (
-                                <div key={node.id} className="relative group/node">
-                                    {/* Connection Line (Visual Mock) */}
-                                    <div className="absolute top-1/2 -left-[160px] w-[160px] h-[1px] bg-slate-800 -z-10 hidden md:block" />
-
-                                    {/* Node Circle */}
-                                    <div 
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            setNodeModal({ isOpen: true, node })
-                                        }}
-                                        className={`w-24 h-24 rounded-full border-2 flex flex-col items-center justify-center shadow-2xl transition-all cursor-pointer relative backdrop-blur-md z-20 group-hover/node:scale-105
-                                            ${node.status === 'active' 
-                                                ? 'border-cyan-500 bg-cyan-950/40 shadow-[0_0_20px_rgba(6,182,212,0.4)]' 
-                                                : node.status === 'unlocked'
-                                                    ? 'border-slate-500 bg-slate-800/40 hover:border-cyan-400/50'
-                                                    : 'border-slate-800 bg-black/60 opacity-60 grayscale'
-                                            }
-                                        `}
-                                    >
-                                        {node.status === 'locked' && <Lock size={16} className="mb-1 text-slate-500" />}
-                                        <span className={`text-[10px] font-bold text-center px-1 leading-tight ${node.status === 'active' ? 'text-cyan-100' : 'text-slate-400'}`}>
-                                            {node.label}
-                                        </span>
+                        {/* SVG Connection Layer - Positioned absolutely to draw arrows */}
+                        <svg 
+                            className="absolute top-0 left-0 w-full h-full pointer-events-none" 
+                            style={{ zIndex: 10 }}
+                        >
+                            {nodesInAct.map(node => {
+                                const prereqNodes = (node.prerequisites || [])
+                                    .map(id => nodesInAct.find(n => n.id === id))
+                                    .filter(Boolean) as GrowthNode[]
+                                
+                                const isActivePath = (node.status === 'active' || node.status === 'unlocked')
+                                
+                                return prereqNodes.map(prereqNode => {
+                                    const bothActive = isActivePath && 
+                                        (prereqNode.status === 'active' || prereqNode.status === 'unlocked')
+                                    
+                                    // Calculate positions based on tier
+                                    const prereqTier = prereqNode.tier || 1
+                                    const nodeTier = node.tier || 1
+                                    
+                                    // Get node positions within their tier groups
+                                    const prereqIndex = tierGroups.get(prereqTier)!.findIndex(n => n.id === prereqNode.id)
+                                    const nodeIndex = tierGroups.get(nodeTier)!.findIndex(n => n.id === node.id)
+                                    
+                                    // Layout constants matching CSS
+                                    const tierWidth = 120 // min-w-[120px]
+                                    const tierGap = 64 // gap-16
+                                    const nodeSize = 80 // w-20 h-20 = 5rem
+                                    const nodeGap = 32 // gap-8
+                                    const tierLabelHeight = 40 // tier label + mb-2
+                                    const topPadding = 32 // pt-8
+                                    const leftPadding = 24 // px-6
+                                    
+                                    // Calculate center positions
+                                    const prereqX = leftPadding + (prereqTier - 1) * (tierWidth + tierGap) + tierWidth / 2
+                                    const prereqY = topPadding + tierLabelHeight + prereqIndex * (nodeSize + nodeGap) + nodeSize / 2
+                                    
+                                    const nodeX = leftPadding + (nodeTier - 1) * (tierWidth + tierGap) + tierWidth / 2
+                                    const nodeY = topPadding + tierLabelHeight + nodeIndex * (nodeSize + nodeGap) + nodeSize / 2
+                                    
+                                    // Edge points (on circle perimeter)
+                                    const radius = nodeSize / 2
+                                    const angle = Math.atan2(nodeY - prereqY, nodeX - prereqX)
+                                    
+                                    const x1 = prereqX + Math.cos(angle) * radius
+                                    const y1 = prereqY + Math.sin(angle) * radius
+                                    const x2 = nodeX - Math.cos(angle) * radius
+                                    const y2 = nodeY - Math.sin(angle) * radius
+                                    
+                                    // Create bezier curve path
+                                    const dx = x2 - x1
+                                    const controlPoint1X = x1 + dx * 0.5
+                                    const controlPoint1Y = y1
+                                    const controlPoint2X = x1 + dx * 0.5
+                                    const controlPoint2Y = y2
+                                    
+                                    const pathD = `M ${x1} ${y1} C ${controlPoint1X} ${controlPoint1Y}, ${controlPoint2X} ${controlPoint2Y}, ${x2} ${y2}`
+                                    
+                                    return (
+                                        <g key={`${prereqNode.id}-${node.id}`}>
+                                            {/* Glow effect for active paths */}
+                                            {bothActive && (
+                                                <path
+                                                    d={pathD}
+                                                    stroke="#06b6d4"
+                                                    strokeWidth="6"
+                                                    fill="none"
+                                                    opacity="0.2"
+                                                    className="animate-pulse"
+                                                />
+                                            )}
+                                            {/* Main arrow path */}
+                                            <path
+                                                d={pathD}
+                                                stroke={bothActive ? '#06b6d4' : '#475569'}
+                                                strokeWidth={bothActive ? '2.5' : '1.5'}
+                                                fill="none"
+                                                markerEnd={`url(#arrowhead-${bothActive ? 'active' : 'inactive'})`}
+                                                className="transition-all duration-300"
+                                            />
+                                        </g>
+                                    )
+                                })
+                            })}
+                            
+                            {/* Arrow markers */}
+                            <defs>
+                                <marker
+                                    id="arrowhead-active"
+                                    markerWidth="10"
+                                    markerHeight="10"
+                                    refX="9"
+                                    refY="3"
+                                    orient="auto"
+                                >
+                                    <polygon points="0 0, 10 3, 0 6" fill="#06b6d4" />
+                                </marker>
+                                <marker
+                                    id="arrowhead-inactive"
+                                    markerWidth="10"
+                                    markerHeight="10"
+                                    refX="9"
+                                    refY="3"
+                                    orient="auto"
+                                >
+                                    <polygon points="0 0, 10 3, 0 6" fill="#475569" />
+                                </marker>
+                            </defs>
+                        </svg>
+                        
+                        {/* Skill Tree Container - 가로로 펼쳐지는 구조 */}
+                        <div className="flex gap-16 items-start pt-8 h-full relative" style={{ zIndex: 20 }}>
+                            {sortedTiers.map((tier) => (
+                                <div key={tier} className="flex flex-col gap-6 min-w-[120px] relative group/tier">
+                                    
+                                    {/* Tier Label */}
+                                    <div className="text-[9px] uppercase font-bold text-slate-700 tracking-wider text-center mb-2">
+                                        {tier === 1 ? '초기' : `${tier}단계`}
                                     </div>
                                     
-                                    {/* Description Popup (Hover) */}
-                                    <div className="absolute bottom-24 left-1/2 -translate-x-1/2 w-48 p-3 bg-black/90 border border-slate-700 rounded text-[10px] text-slate-400 opacity-0 group-hover/node:opacity-100 pointer-events-none transition-opacity z-50">
-                                        {node.description || 'No description'}
+                                     {/* Nodes in this tier - 세로로 배치 */}
+                                    <div className="flex flex-col gap-8 items-center relative">
+                                        {tierGroups.get(tier)!.map((node) => {
+                                            // Find prerequisite nodes
+                                            const prereqNodes = (node.prerequisites || [])
+                                                .map(id => nodesInAct.find(n => n.id === id))
+                                                .filter(Boolean) as GrowthNode[]
+                                            
+                                            return (
+                                            <div key={node.id} className="relative group/node"  data-node-id={node.id}>
+
+                                                {/* Node Circle */}
+                                                <div 
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        setNodeModal({ isOpen: true, node, tier: node.tier })
+                                                    }}
+                                                    className={`w-20 h-20 rounded-full border-2 flex flex-col items-center justify-center shadow-2xl transition-all cursor-pointer relative backdrop-blur-md z-20 group-hover/node:scale-110
+                                                        ${node.status === 'active' 
+                                                            ? 'border-cyan-500 bg-cyan-950/40 shadow-[0_0_20px_rgba(6,182,212,0.4)]' 
+                                                            : node.status === 'unlocked'
+                                                                ? 'border-yellow-500 bg-yellow-950/40 hover:border-yellow-400'
+                                                                : node.status === 'discarded'
+                                                                    ? 'border-red-800 bg-red-950/20 opacity-40'
+                                                                    : 'border-slate-800 bg-black/60 opacity-60'
+                                                        }
+                                                    `}
+                                                >
+                                                    {node.status === 'locked' && <Lock size={14} className="mb-1 text-slate-600" />}
+                                                    <span className={`text-[9px] font-bold text-center px-2 leading-tight ${
+                                                        node.status === 'active' ? 'text-cyan-100' : 
+                                                        node.status === 'unlocked' ? 'text-yellow-200' :
+                                                        'text-slate-500'
+                                                    }`}>
+                                                        {node.label}
+                                                    </span>
+                                                </div>
+                                                
+                                                {/* Description Tooltip */}
+                                                <div className="absolute -top-20 left-1/2 -translate-x-1/2 w-48 p-3 bg-black/95 border border-slate-700 rounded text-[9px] text-slate-300 opacity-0 group-hover/node:opacity-100 pointer-events-none transition-opacity z-50 shadow-2xl">
+                                                    <div className="font-bold text-cyan-400 mb-1">{node.label}</div>
+                                                    {node.description || 'No description'}
+                                                    {prereqNodes.length > 0 && (
+                                                        <div className="mt-2 pt-2 border-t border-slate-700 text-[8px] text-slate-500">
+                                                            필요: {prereqNodes.map(p => p.label).join(', ')}
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        )})}
+                                        
+                                        
+                                        {/* Add Node to This Tier */}
+                                        <button 
+                                            type="button"
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                setNodeModal({ 
+                                                    isOpen: true, 
+                                                    actNumber: act.actNumber,
+                                                    category: activeCategory,
+                                                    tier: tier
+                                                })
+                                            }}
+                                            className="w-8 h-8 rounded-full border border-dashed border-slate-700 flex items-center justify-center text-slate-600 hover:text-cyan-400 hover:border-cyan-500/50 transition-all opacity-0 group-hover/tier:opacity-100 cursor-pointer"
+                                        >
+                                            <Plus size={12} />
+                                        </button>
                                     </div>
                                 </div>
                             ))}
-
-                            {/* Add Node Button */}
+                            
+                            {/* Add New Tier (Next Level) */}
                             <button 
                                 type="button"
                                 onClick={(e) => {
@@ -304,12 +474,14 @@ export const CharacterGrowthTree = ({ characterId, characterName }: CharacterGro
                                     setNodeModal({ 
                                         isOpen: true, 
                                         actNumber: act.actNumber,
-                                        category: activeCategory 
+                                        category: activeCategory,
+                                        tier: maxTier + 1
                                     })
                                 }}
-                                className="w-10 h-10 rounded-full border border-dashed border-slate-700 flex items-center justify-center text-slate-600 hover:text-cyan-400 hover:border-cyan-500/50 transition-all opacity-0 group-hover:opacity-100 cursor-pointer"
+                                className="flex flex-col items-center justify-center min-w-[80px] h-32 border-2 border-dashed border-slate-800/50 rounded-lg text-slate-700 hover:text-cyan-500 hover:border-cyan-500/30 transition-all opacity-0 group-hover:opacity-100 cursor-pointer mt-12"
                             >
-                                <Plus size={16} />
+                                <Plus size={16} className="mb-1" />
+                                <span className="text-[9px] font-bold">다음<br/>단계</span>
                             </button>
                         </div>
                     </div>
@@ -331,6 +503,8 @@ export const CharacterGrowthTree = ({ characterId, characterName }: CharacterGro
         node={nodeModal.node}
         actNumber={nodeModal.actNumber}
         category={nodeModal.category}
+        tier={nodeModal.tier}
+        availableNodes={categoryNodes.filter(n => n.act === (nodeModal.node?.act || nodeModal.actNumber))}
         onClose={() => setNodeModal({ isOpen: false })}
         onSave={handleNodeSave}
         onDelete={handleNodeDelete}

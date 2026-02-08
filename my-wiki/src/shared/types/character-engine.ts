@@ -5,6 +5,8 @@ export interface GrowthNode {
   label: string; 
   category: GrowthCategory;
   act: number; // 등장 시점 (Act)
+  tier?: number; // 가로 레벨 (1=왼쪽 첫 단계, 2=다음 단계, 3=그 다음...), 기본값 1
+  prerequisites?: string[]; // 선행 조건 노드 ID들 (화살표로 연결)
   levelRequirement?: number; 
   status: 'locked' | 'unlocked' | 'active' | 'discarded';
   description?: string;
