@@ -24,19 +24,35 @@ export const webWikiService = {
     }
   },
 
-  // 2. Get Plot Data (from generated JSON)
+  // 2. Get Scene Data (Flat list for Timeline/Board)
   getTimelineFlat: async () => {
     try {
-      console.log('[Web API] Fetching Plot Data...');
-      const response = await fetch('/data/plot.json');
+      console.log('[Web API] Fetching Plot Data (Flat)...');
+      const response = await fetch(`/data/plot.json?t=${Date.now()}`);
       if (!response.ok) throw new Error(`Plot Data Fetch Failed: ${response.status}`);
       const data = await response.json();
-      console.log(`[Web API] Loaded ${data.length} scenes.`);
+      console.log(`[Web API] Loaded ${data.length} flat scenes.`);
       return data;
     } catch (e) {
       console.error('[Web API] Error loading plot data:', e);
       return [];
     }
+  },
+
+  // 2b. Get Plot Data (Hierarchical for Plot Dashboard)
+  getPlotData: async () => {
+     try {
+       console.log('[Web API] Fetching Acts Data (Hierarchical)...');
+       const response = await fetch(`/data/acts.json?t=${Date.now()}`);
+       if (!response.ok) throw new Error(`Acts Data Fetch Failed: ${response.status}`);
+       const data = await response.json();
+       console.log(`[Web API] Loaded ${data.length} acts.`);
+       return data;
+     } catch (e) {
+       console.error('[Web API] Error loading acts data:', e);
+       // Fallback to empty if fails, but user will see empty board
+       return [];
+     }
   },
 
   // 3. Get Scene Detail (Fetch actual MD file)
@@ -139,5 +155,5 @@ export const webWikiService = {
   importVault: async () => null,
   selectImage: async () => null,
   selectWorkspace: async () => null,
-  getPlotData: async () => [] // Legacy?
+  // getPlotData implemented above
 };

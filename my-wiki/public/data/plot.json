@@ -1,9 +1,9 @@
 [
   {
     "id": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/1화_이름없는영웅/1화.이름 없는 영웅 - SCENE1.md",
-    "fileName": "1화.이름 없는 영웅 - SCENE1.md",
-    "sceneNumber": 1,
+    "path": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/1화_이름없는영웅/1화.이름 없는 영웅 - SCENE1.md",
     "title": "가짜 영웅들의 몰락 (쇼의 종말)",
+    "sceneNumber": 1,
     "summary": "세계연합군과 랭커 레오하르트가 마왕 에레보스 토벌을 위해 화려한 마법 포격을 쏟아부으며 생중계 쇼를 벌인다. 하지만 에레보스가 모든 공격을 흡수하고 손가락을 튕기는 단순한 동작으로 전함의 결계를 파괴한다. 레오하르트의 오른팔이 절단되고 함대가 궤멸되며, 화려했던 쇼는 생중계 중단과 함께 절망으로 끝난다.",
     "characters": [
       "레오하르트",
@@ -11,506 +11,99 @@
       "종군 기자",
       "지휘관"
     ],
-    "delta": {
-      "appear": [
-        "레오하르트",
-        "에레보스",
-        "아크로폴리스",
-        "새벽의 방패 길드",
-        "세계연합군(W.A.F)",
-        "티탄의 분노"
-      ],
-      "update": [
-        {
-          "name": "레오하르트",
-          "changes": {
-            "status": "INJURED",
-            "role": "성기사",
-            "affiliation": "새벽의 방패 길드",
-            "mental": "공포",
-            "action": "오른팔 절단"
-          }
-        },
-        {
-          "name": "아크로폴리스",
-          "changes": {
-            "status": "INJURED",
-            "action": "결계 파괴, 마력 엔진 과부하"
-          }
-        }
-      ],
-      "relations": [
-        {
-          "source": "레오하르트",
-          "name": "에레보스",
-          "display": "압도적인 공포를 느끼며 도망친다.",
-          "mood": "HOSTILE",
-          "tense": "CURRENT"
-        },
-        {
-          "source": "레오하르트",
-          "name": "대중",
-          "display": "자신감을 잃고 추락하는 영웅.",
-          "mood": "NEUTRAL",
-          "tense": "CURRENT"
-        },
-        {
-          "source": "세계연합군(W.A.F)",
-          "name": "에레보스",
-          "display": "공격이 통하지 않는 적.",
-          "mood": "HOSTILE",
-          "tense": "CURRENT"
-        },
-        {
-          "source": "새벽의 방패 길드",
-          "name": "레오하르트",
-          "display": "소속 랭커.",
-          "mood": "FRIENDLY",
-          "tense": "CURRENT"
-        }
-      ],
-      "disappear": []
-    },
     "isScripted": true,
+    "chapterPath": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/1화_이름없는영웅",
+    "actTitle": "1막_퇴역병사의 귀환",
     "chapterTitle": "1화_이름없는영웅",
-    "chapterNumber": 1
-  },
-  {
-    "id": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/1화_이름없는영웅/SCHEMA_TEST_SCENE1.md",
-    "fileName": "SCHEMA_TEST_SCENE1.md",
-    "sceneNumber": 1,
-    "title": "가짜 영웅들의 몰락 (쇼의 종말)",
-    "summary": "세계연합군의 화려한 쇼가 에레보스의 압도적인 무력 앞에 무너지고, 레오하르트가 불구가 되며 생중계가 중단됨.",
-    "characters": [
-      "레오하르트",
-      "에레보스"
-    ],
-    "delta": {
-      "appear": [
-        "레오하르트",
-        "에레보스",
-        "아크로폴리스 (전함)",
-        "세계연합군 (Faction)"
-      ],
-      "update": [
-        {
-          "name": "레오하르트",
-          "changes": {
-            "role": "랭커 (추락함)",
-            "status": "치명상 (Right Arm Amputated)",
-            "mental": "공포 (Panic)"
-          }
-        },
-        {
-          "name": "에레보스",
-          "changes": {
-            "status": "마왕 (Awakened)",
-            "form": "인간형 (Humanoid)"
-          }
-        }
-      ],
-      "relations": [
-        {
-          "source": "레오하르트",
-          "name": "에레보스",
-          "display": "절대적 공포",
-          "mood": "HOSTILE",
-          "tense": "CURRENT"
-        },
-        {
-          "source": "세계연합군",
-          "name": "에레보스",
-          "display": "토벌 실패",
-          "mood": "HOSTILE",
-          "tense": "CURRENT"
-        },
-        {
-          "source": "세계연합군",
-          "name": "아크로폴리스",
-          "display": "보유 전함",
-          "mood": "NEUTRAL",
-          "tense": "CURRENT"
-        }
-      ]
-    },
-    "isScripted": true,
-    "chapterTitle": "1화_이름없는영웅",
-    "chapterNumber": 1
-  },
-  {
-    "id": "NovelBibleWiki/EX급 귀환자/10_Plot/3막_고동휘 바보/1화_테스트1/SCENE-1.md",
-    "fileName": "SCENE-1.md",
-    "sceneNumber": 1,
-    "title": "Log_002_귀환",
-    "summary": "진우가 인천공항에 귀환하여 그렘린 늑대의 게이트를 은밀히 제압한다. 과거의 동료들을 떠올리며 씁쓸함을 느끼고, 재개발로 인해 사라진 옛집을 방문한 후 갈 곳 없는 신세가 되어 뒷골목으로 향한다.",
-    "characters": [
-      "강진우",
-      "그렘린 늑대",
-      "초보 헌터 셋",
-      "남자아이",
-      "어머니"
-    ],
-    "delta": {
-      "appear": [
-        "강진우",
-        "그렘린 늑대",
-        "초보 헌터 셋",
-        "남자아이",
-        "어머니"
-      ],
-      "update": [
-        {
-          "name": "강진우",
-          "changes": {
-            "status": "ALIVE",
-            "role": "전직 군인",
-            "affiliation": "UNKNOWN",
-            "mental": "씁쓸함, 상실감, 문명에 대한 이질감",
-            "action": "그렘린 늑대 제압, 과거 회상, 옛집 방문"
-          }
-        },
-        {
-          "name": "그렘린 늑대",
-          "changes": {
-            "status": "DECEASED",
-            "role": "몬스터",
-            "affiliation": "UNKNOWN",
-            "mental": "UNKNOWN",
-            "action": "공항 난동, 강진우에게 제압당함"
-          }
-        }
-      ],
-      "relations": [
-        {
-          "source": "강진우",
-          "name": "그렘린 늑대",
-          "display": "늑대를 제압",
-          "mood": "NEUTRAL",
-          "tense": "CURRENT"
-        },
-        {
-          "source": "강진우",
-          "name": "초보 헌터 셋",
-          "display": "헌터들을 관찰",
-          "mood": "NEUTRAL",
-          "tense": "CURRENT"
-        },
-        {
-          "source": "강진우",
-          "name": "남자아이",
-          "display": "아이를 구출",
-          "mood": "FRIENDLY",
-          "tense": "CURRENT"
-        },
-        {
-          "source": "강진우",
-          "name": "어머니",
-          "display": "어머니를 회상",
-          "mood": "SAD",
-          "tense": "PAST"
-        },
-        {
-          "source": "초보 헌터 셋",
-          "name": "그렘린 늑대",
-          "display": "늑대를 공격하려 함",
-          "mood": "HOSTILE",
-          "tense": "CURRENT"
-        }
-      ],
-      "disappear": []
-    },
-    "isScripted": true,
-    "chapterTitle": "1화_테스트1",
     "chapterNumber": 1
   },
   {
     "id": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/1화_이름없는영웅/1화.이름 없는 영웅 - SCENE2.md",
-    "fileName": "1화.이름 없는 영웅 - SCENE2.md",
-    "sceneNumber": 2,
+    "path": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/1화_이름없는영웅/1화.이름 없는 영웅 - SCENE2.md",
     "title": "참호 속의 거래 (아지다하카의 등장)",
+    "sceneNumber": 2,
     "summary": "전장이 붕괴되는 가운데 카이저가 강진우에게 에레보스 처치를 의뢰하고, 진우는 전역을 조건으로 이를 수락함.",
     "characters": [
       "강진우",
       "카이저",
       "에레보스"
     ],
-    "delta": {
-      "appear": [
-        "강진우",
-        "카이저",
-        "MK-3 (장비)",
-        "무광 단검 (아이템)"
-      ],
-      "update": [
-        {
-          "name": "강진우",
-          "changes": {
-            "rank": "병장 (Sergeant)",
-            "code": "고스트 (Ghost)",
-            "alias": "아지다하카",
-            "status": "ALIVE",
-            "action": "참전 (Mission Accept)"
-          }
-        },
-        {
-          "name": "카이저",
-          "changes": {
-            "role": "총사령관 (Commander)",
-            "status": "ALIVE",
-            "mental": "분노 (Angry)"
-          }
-        }
-      ],
-      "relations": [
-        {
-          "source": "강진우",
-          "name": "카이저",
-          "display": "의뢰인 (전역 약속)",
-          "mood": "FRIENDLY",
-          "tense": "CURRENT"
-        },
-        {
-          "source": "강진우",
-          "name": "MK-3",
-          "display": "착용 중",
-          "mood": "NEUTRAL",
-          "tense": "CURRENT"
-        },
-        {
-          "source": "강진우",
-          "name": "에레보스",
-          "display": "사살 대상",
-          "mood": "HOSTILE",
-          "tense": "CURRENT"
-        }
-      ]
-    },
     "isScripted": true,
+    "chapterPath": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/1화_이름없는영웅",
+    "actTitle": "1막_퇴역병사의 귀환",
     "chapterTitle": "1화_이름없는영웅",
-    "chapterNumber": 1
-  },
-  {
-    "id": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/1화_이름없는영웅/SCHEMA_TEST_SCENE2.md",
-    "fileName": "SCHEMA_TEST_SCENE2.md",
-    "sceneNumber": 2,
-    "title": "참호 속의 거래 (아지다하카의 등장)",
-    "summary": "전장이 붕괴되는 가운데 카이저가 강진우에게 에레보스 처치를 의뢰하고, 진우는 전역을 조건으로 이를 수락함.",
-    "characters": [
-      "강진우",
-      "카이저",
-      "에레보스"
-    ],
-    "delta": {
-      "appear": [
-        "강진우",
-        "카이저",
-        "MK-3 (장비)",
-        "무광 단검 (아이템)"
-      ],
-      "update": [
-        {
-          "name": "강진우",
-          "changes": {
-            "rank": "병장 (Sergeant)",
-            "code": "고스트 (Ghost)",
-            "alias": "아지다하카",
-            "status": "참전 (Mission Accept)"
-          }
-        },
-        {
-          "name": "카이저",
-          "changes": {
-            "role": "총사령관 (Commander)",
-            "status": "분노 (Angry)"
-          }
-        }
-      ],
-      "relations": [
-        {
-          "source": "강진우",
-          "name": "카이저",
-          "display": "의뢰인 (전역 약속)",
-          "mood": "FRIENDLY",
-          "tense": "CURRENT"
-        },
-        {
-          "source": "강진우",
-          "name": "MK-3",
-          "type": "장비",
-          "display": "착용 중",
-          "tense": "CURRENT"
-        },
-        {
-          "source": "강진우",
-          "name": "무광 단검",
-          "type": "아이템",
-          "display": "주무기",
-          "tense": "CURRENT"
-        },
-        {
-          "source": "강진우",
-          "name": "에레보스",
-          "display": "사살 대상",
-          "mood": "HOSTILE",
-          "tense": "CURRENT"
-        }
-      ]
-    },
-    "isScripted": true,
-    "chapterTitle": "1화_이름없는영웅",
-    "chapterNumber": 1
-  },
-  {
-    "id": "NovelBibleWiki/EX급 귀환자/10_Plot/3막_고동휘 바보/1화_테스트1/SCENE-2.md",
-    "fileName": "SCENE-2.md",
-    "sceneNumber": 2,
-    "title": "청호 고시원",
-    "summary": "강진우가 새로운 거처로 청호 고시원을 선택하고 입실한다. 고시원 총무 한예린은 그를 장수 고시생으로 오해하며 안내한다. 진우는 불안정한 심리 상태로 인해 침대 대신 바닥에서 백색 소음을 들으며 잠을 청한다.",
-    "characters": [
-      "강진우",
-      "한예린"
-    ],
-    "delta": {
-      "appear": [
-        "강진우",
-        "한예린"
-      ],
-      "update": [
-        {
-          "name": "강진우",
-          "changes": {
-            "status": "ALIVE",
-            "role": "UNKNOWN",
-            "affiliation": "UNKNOWN",
-            "mental": "불안, 과거 트라우마 (전쟁)",
-            "action": "고시원 입실, 바닥에서 수면",
-            "image": ""
-          }
-        },
-        {
-          "name": "한예린",
-          "changes": {
-            "status": "ALIVE",
-            "role": "고시원 총무",
-            "affiliation": "청호 고시원",
-            "mental": "무심",
-            "action": "고시원 안내",
-            "image": ""
-          }
-        }
-      ],
-      "relations": [
-        {
-          "source": "강진우",
-          "name": "한예린",
-          "display": "진우는 한예린에게 장수 고시생으로 보임.",
-          "mood": "NEUTRAL",
-          "tense": "CURRENT"
-        },
-        {
-          "source": "한예린",
-          "name": "강진우",
-          "display": "한예린은 진우를 특이한 고시생이라고 생각함.",
-          "mood": "NEUTRAL",
-          "tense": "CURRENT"
-        }
-      ],
-      "disappear": []
-    },
-    "isScripted": true,
-    "chapterTitle": "1화_테스트1",
     "chapterNumber": 1
   },
   {
     "id": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/1화_이름없는영웅/1화.이름 없는 영웅 - SCENE3.md",
-    "fileName": "1화.이름 없는 영웅 - SCENE3.md",
-    "sceneNumber": 3,
+    "path": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/1화_이름없는영웅/1화.이름 없는 영웅 - SCENE3.md",
     "title": "압도적인 사냥과 퇴장",
+    "sceneNumber": 3,
     "summary": "지루함을 느낀 마왕 에레보스가 함대의 본진을 파괴하려던 찰나, 강진우가 공간을 가르고 나타나 맨손 찌르기 한 방으로 마왕의 심장을 꿰뚫었다. 에레보스는 당황하며 소멸했고, 인류는 승리했다. 강진우는 자신의 이명인 '아지다하카'로 불리었으나, 붉은 선이 새겨진 면갑을 쓴 채 조용히 전장을 떠났다.",
     "characters": [
       "에레보스",
       "강진우"
     ],
-    "delta": {
-      "appear": [
-        "아지다하카",
-        "면갑"
-      ],
-      "update": [
-        {
-          "name": "에레보스",
-          "changes": {
-            "status": "DECEASED",
-            "action": "심장이 갈리고 에너지가 붕괴하여 소멸함"
-          }
-        },
-        {
-          "name": "강진우",
-          "changes": {
-            "status": "ALIVE",
-            "action": "마왕을 처치한 후 전장을 떠나 귀환을 준비함",
-            "role": "해결사 (아지다하카)"
-          }
-        }
-      ]
-    },
     "isScripted": true,
+    "chapterPath": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/1화_이름없는영웅",
+    "actTitle": "1막_퇴역병사의 귀환",
+    "chapterTitle": "1화_이름없는영웅",
+    "chapterNumber": 1
+  },
+  {
+    "id": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/1화_이름없는영웅/SCHEMA_TEST_SCENE1.md",
+    "path": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/1화_이름없는영웅/SCHEMA_TEST_SCENE1.md",
+    "title": "가짜 영웅들의 몰락 (쇼의 종말)",
+    "sceneNumber": 1,
+    "summary": "세계연합군의 화려한 쇼가 에레보스의 압도적인 무력 앞에 무너지고, 레오하르트가 불구가 되며 생중계가 중단됨.",
+    "characters": [
+      "레오하르트",
+      "에레보스"
+    ],
+    "isScripted": true,
+    "chapterPath": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/1화_이름없는영웅",
+    "actTitle": "1막_퇴역병사의 귀환",
+    "chapterTitle": "1화_이름없는영웅",
+    "chapterNumber": 1
+  },
+  {
+    "id": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/1화_이름없는영웅/SCHEMA_TEST_SCENE2.md",
+    "path": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/1화_이름없는영웅/SCHEMA_TEST_SCENE2.md",
+    "title": "참호 속의 거래 (아지다하카의 등장)",
+    "sceneNumber": 2,
+    "summary": "전장이 붕괴되는 가운데 카이저가 강진우에게 에레보스 처치를 의뢰하고, 진우는 전역을 조건으로 이를 수락함.",
+    "characters": [
+      "강진우",
+      "카이저",
+      "에레보스"
+    ],
+    "isScripted": true,
+    "chapterPath": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/1화_이름없는영웅",
+    "actTitle": "1막_퇴역병사의 귀환",
     "chapterTitle": "1화_이름없는영웅",
     "chapterNumber": 1
   },
   {
     "id": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/1화_이름없는영웅/SCHEMA_TEST_SCENE3.md",
-    "fileName": "SCHEMA_TEST_SCENE3.md",
-    "sceneNumber": 3,
+    "path": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/1화_이름없는영웅/SCHEMA_TEST_SCENE3.md",
     "title": "압도적인 사냥과 퇴장",
+    "sceneNumber": 3,
     "summary": "강진우가 단검 평타 한 방으로 에레보스를 소멸시키고, 정체를 숨긴 채 전장에서 이탈함.",
     "characters": [
       "강진우",
       "에레보스"
     ],
-    "delta": {
-      "update": [
-        {
-          "name": "강진우",
-          "changes": {
-            "status": "귀환 준비 (Return)",
-            "action": "은신 (Stealth)"
-          }
-        },
-        {
-          "name": "에레보스",
-          "changes": {
-            "status": "사망 (Killed by Jinwoo)",
-            "role": "전리품 (Loot)"
-          }
-        }
-      ],
-      "relations": [
-        {
-          "source": "강진우",
-          "name": "에레보스",
-          "display": "사살 완료",
-          "mood": "NEUTRAL",
-          "tense": "PAST"
-        },
-        {
-          "source": "베테랑 병사들",
-          "name": "강진우",
-          "display": "아지다하카! (경외)",
-          "mood": "FRIENDLY",
-          "tense": "CURRENT"
-        }
-      ]
-    },
     "isScripted": true,
+    "chapterPath": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/1화_이름없는영웅",
+    "actTitle": "1막_퇴역병사의 귀환",
     "chapterTitle": "1화_이름없는영웅",
     "chapterNumber": 1
   },
   {
     "id": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/2화_전역,귀환/2화.전역,귀환 - SCENE1.md",
-    "fileName": "2화.전역,귀환 - SCENE1.md",
-    "sceneNumber": 1,
+    "path": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/2화_전역,귀환/2화.전역,귀환 - SCENE1.md",
     "title": "노병의 작별",
+    "sceneNumber": 1,
     "summary": "강진우가 카이저의 파격적인 제안을 거절하고 전역을 결정하며, 오랜 복수를 마친 후 휴식을 갈망한다. 카이저와의 작별 인사를 통해 두 사람의 깊은 전우애가 드러나며, 진우는 새로운 삶을 찾아 한국으로 향한다.",
     "characters": [
       "강진우",
@@ -521,322 +114,92 @@
       "하이에나들",
       "손녀"
     ],
-    "delta": {
-      "appear": [
-        "발푸르기스의 밤",
-        "프라이멀 라인(아카데미)",
-        "아프리카(검은 사막)",
-        "검은 사막",
-        "카이저의 위스키(손녀 빈티지)",
-        "하이에나들",
-        "손녀"
-      ],
-      "update": [
-        {
-          "name": "강진우",
-          "changes": {
-            "status": "ALIVE",
-            "role": "병장",
-            "affiliation": "UNKNOWN",
-            "mental": "번아웃",
-            "action": "전역"
-          }
-        },
-        {
-          "name": "카이저",
-          "changes": {
-            "status": "ALIVE",
-            "role": "총사령관",
-            "affiliation": "세계연합군",
-            "mental": "걱정",
-            "action": "작별 인사"
-          }
-        },
-        {
-          "name": "발푸르기스의 밤",
-          "changes": {
-            "status": "DECEASED",
-            "role": "테러 집단",
-            "affiliation": "UNKNOWN",
-            "mental": "괴멸",
-            "action": "진우에게 몰살"
-          }
-        }
-      ],
-      "relations": [
-        {
-          "source": "강진우",
-          "name": "카이저",
-          "display": "존경과 신뢰",
-          "mood": "FRIENDLY",
-          "tense": "CURRENT"
-        },
-        {
-          "source": "카이저",
-          "name": "강진우",
-          "display": "아끼고 염려",
-          "mood": "FRIENDLY",
-          "tense": "CURRENT"
-        },
-        {
-          "source": "강진우",
-          "name": "에레보스",
-          "display": "복수 완료",
-          "mood": "HOSTILE",
-          "tense": "PAST"
-        },
-        {
-          "source": "강진우",
-          "name": "어머니",
-          "display": "애도",
-          "mood": "NEUTRAL",
-          "tense": "PAST"
-        },
-        {
-          "source": "강진우",
-          "name": "발푸르기스의 밤",
-          "display": "증오",
-          "mood": "HOSTILE",
-          "tense": "PAST"
-        },
-        {
-          "source": "카이저",
-          "name": "하이에나들",
-          "display": "경계",
-          "mood": "NEUTRAL",
-          "tense": "CURRENT"
-        }
-      ],
-      "disappear": []
-    },
     "isScripted": true,
-    "chapterTitle": "2화_전역,귀환",
-    "chapterNumber": 2
-  },
-  {
-    "id": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/2화_전역,귀환/SCHEMA_TEST_SCENE1.md",
-    "fileName": "SCHEMA_TEST_SCENE1.md",
-    "sceneNumber": 1,
-    "title": "참호 속의 거래 (아지다하카의 등장)",
-    "summary": "에레보스 토벌 직후, 카이저 사령관은 강진우에게 최고의 대우를 제안하지만 진우는 이를 거절하고 전역을 선택한다. 두 사람은 마지막으로 위스키를 나누어 마시며 작별하고, 진우는 한국행 비행기에 오른다.",
-    "characters": [
-      "강진우",
-      "카이저"
-    ],
-    "delta": {
-      "appear": [
-        "카이저"
-      ],
-      "update": [
-        {
-          "name": "강진우",
-          "changes": {
-            "role": "민간인 (Retired)",
-            "rank": "예비역 (Reservist)",
-            "affiliation": "무소속 (None)",
-            "status": "귀국 중 (On Plane)",
-            "mental": "허무함 (Emptiness)"
-          }
-        },
-        {
-          "name": "카이저",
-          "changes": {
-            "role": "조력자 (Ally)",
-            "status": "현역 (Active)",
-            "mental": "아쉬움 (Regret)"
-          }
-        }
-      ],
-      "relations": [
-        {
-          "source": "카이저",
-          "name": "강진우",
-          "display": "자네는 내 친우일세",
-          "mood": "FRIENDLY",
-          "tense": "CURRENT"
-        },
-        {
-          "source": "강진우",
-          "name": "카이저",
-          "display": "고맙습니다, 사령관",
-          "mood": "FRIENDLY",
-          "tense": "CURRENT"
-        },
-        {
-          "source": "강진우",
-          "name": "발푸르기스의 밤",
-          "display": "괴멸시킴 (복수 완료)",
-          "mood": "NEUTRAL",
-          "tense": "PAST"
-        }
-      ]
-    },
-    "isScripted": false,
+    "chapterPath": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/2화_전역,귀환",
+    "actTitle": "1막_퇴역병사의 귀환",
     "chapterTitle": "2화_전역,귀환",
     "chapterNumber": 2
   },
   {
     "id": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/2화_전역,귀환/2화.전역,귀환 - SCENE2.md",
-    "fileName": "2화.전역,귀환 - SCENE2.md",
-    "sceneNumber": 2,
+    "path": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/2화_전역,귀환/2화.전역,귀환 - SCENE2.md",
     "title": "2화.전역,귀환 - SCENE2",
+    "sceneNumber": 2,
     "summary": "```\n인천국제공항 입국장.\n\n자동문이 열리자마자 훅 끼쳐오는 냄새에 진우는 일순 멈칫했다. \n\n인공 방향제 향기, 갓 볶은 원두의 고소함. 폐부 깊숙이 들어오는 그 ‘문명의 공기",
     "characters": [],
-    "delta": null,
     "isScripted": true,
+    "chapterPath": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/2화_전역,귀환",
+    "actTitle": "1막_퇴역병사의 귀환",
+    "chapterTitle": "2화_전역,귀환",
+    "chapterNumber": 2
+  },
+  {
+    "id": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/2화_전역,귀환/2화.전역,귀환 - SCENE3.md",
+    "path": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/2화_전역,귀환/2화.전역,귀환 - SCENE3.md",
+    "title": "2화.전역,귀환 - SCENE3",
+    "sceneNumber": 3,
+    "summary": "```\n[청호 고시원]\n\n진우는 본능적으로 건물의 구조를 훑었다.\n\n등 뒤가 막혀 기습을 차단할 수 있는 폐쇄성, 동시에 외부의 인기척을 읽을 수 있는 청각적 개방성. 그리고 무",
+    "characters": [],
+    "isScripted": true,
+    "chapterPath": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/2화_전역,귀환",
+    "actTitle": "1막_퇴역병사의 귀환",
+    "chapterTitle": "2화_전역,귀환",
+    "chapterNumber": 2
+  },
+  {
+    "id": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/2화_전역,귀환/SCHEMA_TEST_SCENE1.md",
+    "path": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/2화_전역,귀환/SCHEMA_TEST_SCENE1.md",
+    "title": "참호 속의 거래 (아지다하카의 등장)",
+    "sceneNumber": 1,
+    "summary": "에레보스 토벌 직후, 카이저 사령관은 강진우에게 최고의 대우를 제안하지만 진우는 이를 거절하고 전역을 선택한다. 두 사람은 마지막으로 위스키를 나누어 마시며 작별하고, 진우는 한국행 비행기에 오른다.",
+    "characters": [
+      "강진우",
+      "카이저"
+    ],
+    "isScripted": false,
+    "chapterPath": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/2화_전역,귀환",
+    "actTitle": "1막_퇴역병사의 귀환",
     "chapterTitle": "2화_전역,귀환",
     "chapterNumber": 2
   },
   {
     "id": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/2화_전역,귀환/SCHEMA_TEST_SCENE2.md",
-    "fileName": "SCHEMA_TEST_SCENE2.md",
-    "sceneNumber": 2,
+    "path": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/2화_전역,귀환/SCHEMA_TEST_SCENE2.md",
     "title": "이질적인 평화 (공항 습격과 사라진 집)",
+    "sceneNumber": 2,
     "summary": "귀국한 강진우는 평화로운 공항에서 이질감을 느낀다. 갑작스러운 게이트 균열로 그렘린 늑대가 나타나 아이를 덮치려 하자, 진우는 '압축과 발산'으로 은밀하게 마물을 처리한다. 공을 가로챈 헌터들을 뒤로하고 옛집을 찾아가지만, 재개발로 사라진 집터를 보며 갈 곳 없는 처지를 깨닫는다.",
     "characters": [
       "강진우",
       "그렘린 늑대",
       "초보 헌터들"
     ],
-    "delta": {
-      "appear": [
-        "그렘린 늑대",
-        "초보 헌터들",
-        "겁에 질린 아이"
-      ],
-      "update": [
-        {
-          "name": "강진우",
-          "changes": {
-            "role": "민간인 (Civilian)",
-            "status": "노숙자 (Homeless)",
-            "mental": "이질감 (Dissonance)",
-            "action": "은밀한 구원 (Secret Save)"
-          }
-        },
-        {
-          "name": "그렘린 늑대",
-          "changes": {
-            "status": "사망 (Instant Kill)",
-            "role": "배경 (Background)"
-          }
-        },
-        {
-          "name": "초보 헌터들",
-          "changes": {
-            "status": "의기양양 (Show off)",
-            "action": "성과 가로채기 (Stolen Credit)"
-          }
-        }
-      ],
-      "relations": [
-        {
-          "source": "강진우",
-          "name": "그렘린 늑대",
-          "display": "압축과 발산 (은밀한 사살)",
-          "mood": "HOSTILE",
-          "tense": "PAST"
-        },
-        {
-          "source": "강진우",
-          "name": "겁에 질린 아이",
-          "display": "구해줌 (아무도 모르게)",
-          "mood": "FRIENDLY",
-          "tense": "CURRENT"
-        },
-        {
-          "source": "초보 헌터들",
-          "name": "그렘린 늑대",
-          "display": "내가 잡았어! (거짓)",
-          "mood": "HOSTILE",
-          "tense": "CURRENT"
-        },
-        {
-          "source": "강진우",
-          "name": "초보 헌터들",
-          "display": "한심함 / 무관심",
-          "mood": "NEUTRAL",
-          "tense": "CURRENT"
-        }
-      ]
-    },
     "isScripted": false,
-    "chapterTitle": "2화_전역,귀환",
-    "chapterNumber": 2
-  },
-  {
-    "id": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/2화_전역,귀환/2화.전역,귀환 - SCENE3.md",
-    "fileName": "2화.전역,귀환 - SCENE3.md",
-    "sceneNumber": 3,
-    "title": "2화.전역,귀환 - SCENE3",
-    "summary": "```\n[청호 고시원]\n\n진우는 본능적으로 건물의 구조를 훑었다.\n\n등 뒤가 막혀 기습을 차단할 수 있는 폐쇄성, 동시에 외부의 인기척을 읽을 수 있는 청각적 개방성. 그리고 무",
-    "characters": [],
-    "delta": null,
-    "isScripted": true,
+    "chapterPath": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/2화_전역,귀환",
+    "actTitle": "1막_퇴역병사의 귀환",
     "chapterTitle": "2화_전역,귀환",
     "chapterNumber": 2
   },
   {
     "id": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/2화_전역,귀환/SCHEMA_TEST_SCENE3.md",
-    "fileName": "SCHEMA_TEST_SCENE3.md",
-    "sceneNumber": 3,
+    "path": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/2화_전역,귀환/SCHEMA_TEST_SCENE3.md",
     "title": "도시의 참호 (청호 고시원)",
+    "sceneNumber": 3,
     "summary": "갈 곳 없는 진우는 생존에 유리한 구조를 갖춘 '청호 고시원'에 입실한다. 고시원 총무 한예린은 그를 특이한 장수 고시생으로 오해한다. 진우는 침대의 편안함을 견디지 못하고 차가운 바닥에서 전장의 소음을 들으며 잠을 청한다.",
     "characters": [
       "강진우",
       "한예린"
     ],
-    "delta": {
-      "appear": [
-        "한예린"
-      ],
-      "update": [
-        {
-          "name": "강진우",
-          "changes": {
-            "role": "고시원 입실자 (Tenant)",
-            "status": "불면증 (PTSD)",
-            "location": "고시원 바닥 (Floor)",
-            "action": "휴식 시도 (Resting)",
-            "mental": "불안 (Anxiety)"
-          }
-        },
-        {
-          "name": "한예린",
-          "changes": {
-            "role": "고시원 총무 (Manager)",
-            "status": "나른함 (Bored)",
-            "action": "라면 취식 (Eating Ramen)",
-            "image": ""
-          }
-        }
-      ],
-      "relations": [
-        {
-          "source": "한예린",
-          "name": "강진우",
-          "display": "특이한 장수생?",
-          "mood": "NEUTRAL",
-          "tense": "CURRENT"
-        },
-        {
-          "source": "강진우",
-          "name": "한예린",
-          "display": "관리자 (총무)",
-          "mood": "NEUTRAL",
-          "tense": "CURRENT"
-        }
-      ]
-    },
     "isScripted": false,
+    "chapterPath": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/2화_전역,귀환",
+    "actTitle": "1막_퇴역병사의 귀환",
     "chapterTitle": "2화_전역,귀환",
     "chapterNumber": 2
   },
   {
     "id": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/3화_실수/3화.실수 - SCENE1.md",
-    "fileName": "3화.실수 - SCENE1.md",
-    "sceneNumber": 1,
+    "path": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/3화_실수/3화.실수 - SCENE1.md",
     "title": "악몽과 기일",
+    "sceneNumber": 1,
     "summary": "진우가 과거 그린 헬 작전 중 천무진과 나눴던 대화를 악몽으로 경험한다. 악몽 속에서 전우들의 처참한 죽음을 목격하며 PTSD 증상을 겪고, 현실로 돌아와 어머니의 기일임을 깨닫는다. 한국 생활에 적응하며 심리적 안정을 찾으려 노력하지만, 과거의 트라우마는 여전히 남아있다.",
     "characters": [
       "강진우",
@@ -844,88 +207,47 @@
       "블랙맘바 대원들",
       "천세희"
     ],
-    "delta": {
-      "appear": [
-        "그린 헬",
-        "고시원"
-      ],
-      "update": [],
-      "relations": [],
-      "disappear": []
-    },
     "isScripted": true,
+    "chapterPath": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/3화_실수",
+    "actTitle": "1막_퇴역병사의 귀환",
+    "chapterTitle": "3화_실수",
+    "chapterNumber": 3
+  },
+  {
+    "id": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/3화_실수/3화.실수 - SCENE2.md",
+    "path": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/3화_실수/3화.실수 - SCENE2.md",
+    "title": "3화.실수 - SCENE2",
+    "sceneNumber": 2,
+    "summary": "```\n지난 한 달은 적응의 시간이었다.\n\n전선에 배치된 신병이 지형지물을 파악하듯, 진우는 10년 만에 돌아온 대한민국이라는 거대한 시스템을 관찰했다.\n\n도서관에서 신문을 읽고,",
+    "characters": [],
+    "isScripted": true,
+    "chapterPath": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/3화_실수",
+    "actTitle": "1막_퇴역병사의 귀환",
     "chapterTitle": "3화_실수",
     "chapterNumber": 3
   },
   {
     "id": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/3화_실수/SCHEMA_TEST_SCENE1.md",
-    "fileName": "SCHEMA_TEST_SCENE1.md",
-    "sceneNumber": 1,
+    "path": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/3화_실수/SCHEMA_TEST_SCENE1.md",
     "title": "악몽, 그리고 기일",
+    "sceneNumber": 1,
     "summary": "진우는 꿈속에서 과거 '그린 헬' 시절의 동료들, 특히 '천무진'과 재회한다. 하지만 따뜻했던 기억은 이내 끔찍한 시체로 변하는 악몽으로 바뀐다. 식은땀을 흘리며 고시원 바닥에서 깨어난 진우는 오늘이 어머니의 기일임을 깨닫는다.",
     "characters": [
       "강진우",
       "천무진",
       "블랙맘바 대원들"
     ],
-    "delta": {
-      "appear": [
-        "천무진"
-      ],
-      "update": [
-        {
-          "name": "강진우",
-          "changes": {
-            "role": "고시원 입실자",
-            "status": "기상 (Waking Up)",
-            "location": "청호 고시원",
-            "mental": "추모 (Memorial)",
-            "action": "식은땀 닦기"
-          }
-        },
-        {
-          "name": "천무진",
-          "changes": {
-            "role": "과거의 망령 (Phantom)",
-            "status": "사망 (Deceased)",
-            "affiliation": "블랙맘바 (Past)"
-          }
-        }
-      ],
-      "relations": [
-        {
-          "source": "강진우",
-          "name": "천무진",
-          "display": "지키지 못한 형 (죄책감)",
-          "mood": "TRUST",
-          "tense": "PAST"
-        }
-      ],
-      "disappear": [
-        "블랙맘바 대원들"
-      ]
-    },
     "isScripted": false,
-    "chapterTitle": "3화_실수",
-    "chapterNumber": 3
-  },
-  {
-    "id": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/3화_실수/3화.실수 - SCENE2.md",
-    "fileName": "3화.실수 - SCENE2.md",
-    "sceneNumber": 2,
-    "title": "3화.실수 - SCENE2",
-    "summary": "```\n지난 한 달은 적응의 시간이었다.\n\n전선에 배치된 신병이 지형지물을 파악하듯, 진우는 10년 만에 돌아온 대한민국이라는 거대한 시스템을 관찰했다.\n\n도서관에서 신문을 읽고,",
-    "characters": [],
-    "delta": null,
-    "isScripted": true,
+    "chapterPath": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/3화_실수",
+    "actTitle": "1막_퇴역병사의 귀환",
     "chapterTitle": "3화_실수",
     "chapterNumber": 3
   },
   {
     "id": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/3화_실수/SCHEMA_TEST_SCENE2.md",
-    "fileName": "SCHEMA_TEST_SCENE2.md",
-    "sceneNumber": 2,
+    "path": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/3화_실수/SCHEMA_TEST_SCENE2.md",
     "title": "영웅의 묘역과 재회",
+    "sceneNumber": 2,
     "summary": "어머니의 기일을 맞아 현충원을 찾은 강진우. 어머니의 묘소에서 귀국 인사를 올린 뒤, 특별 영웅 묘역에 있는 천무진의 비석을 찾는다. 그곳에서 천무진의 여동생 '천세희'와 마주치게 되고, 그녀는 진우가 가져온 희귀 위스키를 보고 그가 오빠의 시신을 수습해준 은인임을 직감한다.",
     "characters": [
       "강진우",
@@ -933,354 +255,120 @@
       "천무진 (비석/고인)",
       "어머니 (고인)"
     ],
-    "delta": {
-      "appear": [
-        "천세희",
-        "천무진",
-        "어머니"
-      ],
-      "update": [
-        {
-          "name": "강진우",
-          "changes": {
-            "role": "참배객 (Visitor)",
-            "location": "특별 영웅 묘역",
-            "status": "죄책감 (Guilt)",
-            "action": "헌화 및 음복 (Tribute)",
-            "mental": "긴장 (Tension)"
-          }
-        },
-        {
-          "name": "천세희",
-          "changes": {
-            "role": "검무천가 차녀 (Heiress)",
-            "affiliation": "검무천가 / 아카데미?",
-            "status": "경계 -> 확신",
-            "mental": "날카로움 (Sharp)",
-            "action": "탐색 (Observing)"
-          }
-        },
-        {
-          "name": "천무진",
-          "changes": {
-            "role": "검무천가 장남 (Deceased)"
-          }
-        },
-        {
-          "name": "어머니",
-          "changes": {
-            "status": "일반 묘지 (Grave)",
-            "role": "그리움의 대상"
-          }
-        }
-      ],
-      "relations": [
-        {
-          "source": "강진우",
-          "name": "어머니",
-          "display": "다녀왔습니다 (귀국 신고)",
-          "mood": "FRIENDLY",
-          "tense": "PAST"
-        },
-        {
-          "source": "강진우",
-          "name": "천무진",
-          "display": "미안해, 형 (죄책감)",
-          "mood": "FRIENDLY",
-          "tense": "PAST"
-        },
-        {
-          "source": "천세희",
-          "name": "강진우",
-          "display": "누구십니까? (경계)",
-          "mood": "NEUTRAL",
-          "tense": "CURRENT"
-        },
-        {
-          "source": "천세희",
-          "name": "강진우",
-          "display": "로랑 샬루트? (은인 확신)",
-          "mood": "NEUTRAL",
-          "tense": "CURRENT"
-        }
-      ]
-    },
     "isScripted": false,
+    "chapterPath": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/3화_실수",
+    "actTitle": "1막_퇴역병사의 귀환",
     "chapterTitle": "3화_실수",
     "chapterNumber": 3
   },
   {
     "id": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/4화_치유,새로운 경험, 삶/4화.치유, 새로운 경험, 삶 - SCENE1.md",
-    "fileName": "4화.치유, 새로운 경험, 삶 - SCENE1.md",
-    "sceneNumber": 1,
+    "path": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/4화_치유,새로운 경험, 삶/4화.치유, 새로운 경험, 삶 - SCENE1.md",
     "title": "4화.치유, 새로운 경험, 삶 - SCENE1",
+    "sceneNumber": 1,
     "summary": "```\n“괜찮습니다.”\n\n진우는 짧게 대꾸하며 한 걸음 물러섰다. 명백한 거절의 의사였으나, 천세희는 물러설 기색이 없었다. \n\n그녀의 시선은 ‘로랑 샬루트 22년산’의 라벨에 박",
     "characters": [],
-    "delta": null,
     "isScripted": true,
-    "chapterTitle": "4화_치유,새로운 경험, 삶",
-    "chapterNumber": 4
-  },
-  {
-    "id": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/4화_치유,새로운 경험, 삶/SCHEMA_TEST_SCENE1.md",
-    "fileName": "SCHEMA_TEST_SCENE1.md",
-    "sceneNumber": 1,
-    "title": "유족과 생존자",
-    "summary": "천무진의 묘소에서 마주친 강진우와 천세희. 세희는 진우에게서 오빠의 그림자를 느끼고 재활 센터 명함을 건네며 호의를 보인다.",
-    "characters": [
-      "강진우",
-      "천세희"
-    ],
-    "delta": {
-      "appear": [
-        "강진우",
-        "천세희"
-      ],
-      "update": [
-        {
-          "name": "강진우",
-          "changes": {
-            "role": "생존자 (Survivor)",
-            "status": "ALIVE",
-            "mental": "회한, 복잡함",
-            "action": "천세희가 건넨 명함의 문구를 멍하니 바라봄",
-            "affiliation": "무소속 (전역)"
-          }
-        },
-        {
-          "name": "천세희",
-          "changes": {
-            "role": "검무천가 소가주",
-            "status": "ALIVE",
-            "mental": "동질감, 연민",
-            "action": "정중히 목례 후 퇴장"
-          }
-        }
-      ],
-      "relations": [
-        {
-          "source": "천세희",
-          "name": "강진우",
-          "display": "오라버니의 그림자 (연민)",
-          "mood": "FRIENDLY",
-          "tense": "CURRENT"
-        },
-        {
-          "source": "강진우",
-          "name": "천세희",
-          "display": "죄책감과 거리두기",
-          "mood": "NEUTRAL",
-          "tense": "CURRENT"
-        }
-      ]
-    },
-    "isScripted": false,
+    "chapterPath": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/4화_치유,새로운 경험, 삶",
+    "actTitle": "1막_퇴역병사의 귀환",
     "chapterTitle": "4화_치유,새로운 경험, 삶",
     "chapterNumber": 4
   },
   {
     "id": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/4화_치유,새로운 경험, 삶/4화.치유, 새로운 경험, 삶 - SCENE2.md",
-    "fileName": "4화.치유, 새로운 경험, 삶 - SCENE2.md",
-    "sceneNumber": 2,
+    "path": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/4화_치유,새로운 경험, 삶/4화.치유, 새로운 경험, 삶 - SCENE2.md",
     "title": "4화.치유, 새로운 경험, 삶 - SCENE2",
+    "sceneNumber": 2,
     "summary": "```\n현충원을 빠져나온 진우는 정처 없이 걸었다. 버스를 탈 기분도 아니었다.\n\n겨울바람이 뺨을 때렸지만, 아프리카의 모래바람에 비하면 산들바람이나 다름없었다. 거리에는 여전히",
     "characters": [],
-    "delta": null,
     "isScripted": true,
-    "chapterTitle": "4화_치유,새로운 경험, 삶",
-    "chapterNumber": 4
-  },
-  {
-    "id": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/4화_치유,새로운 경험, 삶/SCHEMA_TEST_SCENE2.md",
-    "fileName": "SCHEMA_TEST_SCENE2.md",
-    "sceneNumber": 2,
-    "title": "이물질",
-    "summary": "서울의 평화로운 풍경 속에서 이질감을 느끼던 진우는 헌터 뉴스를 보며 자신의 삶을 되돌아보고, 결국 천세희에게 전화를 걸어 도움을 요청한다.",
-    "characters": [
-      "강진우"
-    ],
-    "delta": {
-      "appear": [
-        "강진우"
-      ],
-      "disappear": [],
-      "update": [
-        {
-          "name": "강진우",
-          "changes": {
-            "role": "생존자 (Civilian)",
-            "status": "ALIVE",
-            "mental": "결심 (Resolution), 안도감",
-            "action": "천세희에게 전화를 걸어 예약 후 안도의 한숨을 내쉼",
-            "affiliation": "무소속"
-          }
-        }
-      ],
-      "relations": [
-        {
-          "source": "강진우",
-          "name": "천세희",
-          "display": "도움 수락 (변화의 시작)",
-          "mood": "FRIENDLY",
-          "tense": "CURRENT"
-        }
-      ]
-    },
-    "isScripted": false,
+    "chapterPath": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/4화_치유,새로운 경험, 삶",
+    "actTitle": "1막_퇴역병사의 귀환",
     "chapterTitle": "4화_치유,새로운 경험, 삶",
     "chapterNumber": 4
   },
   {
     "id": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/4화_치유,새로운 경험, 삶/4화.치유, 새로운 경험, 삶 - SCENE3.md",
-    "fileName": "4화.치유, 새로운 경험, 삶 - SCENE3.md",
-    "sceneNumber": 3,
+    "path": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/4화_치유,새로운 경험, 삶/4화.치유, 새로운 경험, 삶 - SCENE3.md",
     "title": "4화.치유, 새로운 경험, 삶 - SCENE3",
+    "sceneNumber": 3,
     "summary": "```\n화려한 네온사인이 켜지는 대로변을 지나, 재개발 지구의 낡은 골목으로 들어서자 공기부터 달라졌다.\n\n먼지 냄새와 습기 찬 곰팡이 냄새.\n\n진우가 머무는 ‘청호 고시원’으로",
     "characters": [],
-    "delta": null,
     "isScripted": true,
+    "chapterPath": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/4화_치유,새로운 경험, 삶",
+    "actTitle": "1막_퇴역병사의 귀환",
+    "chapterTitle": "4화_치유,새로운 경험, 삶",
+    "chapterNumber": 4
+  },
+  {
+    "id": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/4화_치유,새로운 경험, 삶/SCHEMA_TEST_SCENE1.md",
+    "path": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/4화_치유,새로운 경험, 삶/SCHEMA_TEST_SCENE1.md",
+    "title": "유족과 생존자",
+    "sceneNumber": 1,
+    "summary": "천무진의 묘소에서 마주친 강진우와 천세희. 세희는 진우에게서 오빠의 그림자를 느끼고 재활 센터 명함을 건네며 호의를 보인다.",
+    "characters": [
+      "강진우",
+      "천세희"
+    ],
+    "isScripted": false,
+    "chapterPath": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/4화_치유,새로운 경험, 삶",
+    "actTitle": "1막_퇴역병사의 귀환",
+    "chapterTitle": "4화_치유,새로운 경험, 삶",
+    "chapterNumber": 4
+  },
+  {
+    "id": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/4화_치유,새로운 경험, 삶/SCHEMA_TEST_SCENE2.md",
+    "path": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/4화_치유,새로운 경험, 삶/SCHEMA_TEST_SCENE2.md",
+    "title": "이물질",
+    "sceneNumber": 2,
+    "summary": "서울의 평화로운 풍경 속에서 이질감을 느끼던 진우는 헌터 뉴스를 보며 자신의 삶을 되돌아보고, 결국 천세희에게 전화를 걸어 도움을 요청한다.",
+    "characters": [
+      "강진우"
+    ],
+    "isScripted": false,
+    "chapterPath": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/4화_치유,새로운 경험, 삶",
+    "actTitle": "1막_퇴역병사의 귀환",
     "chapterTitle": "4화_치유,새로운 경험, 삶",
     "chapterNumber": 4
   },
   {
     "id": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/4화_치유,새로운 경험, 삶/SCHEMA_TEST_SCENE3.md",
-    "fileName": "SCHEMA_TEST_SCENE3.md",
-    "sceneNumber": 3,
+    "path": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/4화_치유,새로운 경험, 삶/SCHEMA_TEST_SCENE3.md",
     "title": "404호의 개입",
+    "sceneNumber": 3,
     "summary": "귀갓길 골목에서 폭력배들과 싸우던 한예린이 기습을 당하려는 찰나, 강진우가 개입하여 암살자를 제압하고 그녀를 구해낸다.",
     "characters": [
       "강진우",
       "한예린",
       "폭력배들"
     ],
-    "delta": {
-      "appear": [
-        "강진우",
-        "한예린",
-        "폭력배들"
-      ],
-      "disappear": [],
-      "update": [
-        {
-          "name": "강진우",
-          "changes": {
-            "role": "해결사 (Intervener)",
-            "status": "ALIVE",
-            "mental": "냉철함, 분석적",
-            "action": "암살자의 손목을 꺾어 기절시키고 무심하게 서 있음",
-            "affiliation": "청호 고시원 404호"
-          }
-        },
-        {
-          "name": "한예린",
-          "changes": {
-            "role": "고시원 총무 (Hidden Ability)",
-            "status": "ALIVE",
-            "mental": "경악, 안도, 혼란",
-            "action": "거친 숨을 몰아쉬며 진우를 멍하니 응시함"
-          }
-        },
-        {
-          "name": "폭력배들",
-          "changes": {
-            "role": "습격자",
-            "status": "STUNNED",
-            "mental": "고통, 기절",
-            "action": "관절이 꺾이거나 기절하여 전원 무력화됨"
-          }
-        }
-      ],
-      "relations": [
-        {
-          "source": "한예린",
-          "name": "강진우",
-          "display": "정체에 대한 충격",
-          "mood": "NEUTRAL",
-          "tense": "CURRENT"
-        },
-        {
-          "source": "강진우",
-          "name": "한예린",
-          "display": "실력 평가 (흥미)",
-          "mood": "NEUTRAL",
-          "tense": "CURRENT"
-        },
-        {
-          "source": "폭력배들",
-          "name": "한예린",
-          "display": "제거 대상 (실패)",
-          "mood": "HOSTILE",
-          "tense": "CURRENT"
-        }
-      ]
-    },
     "isScripted": false,
+    "chapterPath": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/4화_치유,새로운 경험, 삶",
+    "actTitle": "1막_퇴역병사의 귀환",
     "chapterTitle": "4화_치유,새로운 경험, 삶",
     "chapterNumber": 4
   },
   {
     "id": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/5화_긴장,이완/SCHEMA_TEST_SCENE1.md",
-    "fileName": "SCHEMA_TEST_SCENE1.md",
-    "sceneNumber": 1,
+    "path": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/5화_긴장,이완/SCHEMA_TEST_SCENE1.md",
     "title": "404호의 진단과 경고",
+    "sceneNumber": 1,
     "summary": "진우는 예린에게 엉터리 마력 운용의 위험성을 경고하며 조언을 남기고, 예린은 고시원을 노리는 '철기 길드'의 존재를 털어놓는다.",
     "characters": [
       "강진우",
       "한예린"
     ],
-    "delta": {
-      "appear": [
-        "강진우",
-        "한예린"
-      ],
-      "update": [
-        {
-          "name": "강진우",
-          "changes": {
-            "role": "조언자 (Hidden Expert)",
-            "status": "ALIVE",
-            "mental": "무심함, 연민",
-            "action": "마력 운용에 대한 핵심 조언을 남기고 고시원 안으로 퇴장",
-            "affiliation": "전직 군인 (철원)"
-          }
-        },
-        {
-          "name": "한예린",
-          "changes": {
-            "role": "건물주 (Inheritor)",
-            "status": "INJURED",
-            "mental": "호기심, 의구심",
-            "action": "명치를 문지르며 닫힌 문을 멍하니 바라봄",
-            "affiliation": "청호 고시원"
-          }
-        }
-      ],
-      "relations": [
-        {
-          "source": "한예린",
-          "name": "강진우",
-          "display": "생명의 은인 (정체 의심)",
-          "mood": "FRIENDLY",
-          "tense": "CURRENT"
-        },
-        {
-          "source": "강진우",
-          "name": "한예린",
-          "display": "환자 (잘못된 수련)",
-          "mood": "NEUTRAL",
-          "tense": "CURRENT"
-        }
-      ]
-    },
     "isScripted": true,
+    "chapterPath": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/5화_긴장,이완",
+    "actTitle": "1막_퇴역병사의 귀환",
     "chapterTitle": "5화_긴장,이완",
     "chapterNumber": 5
   },
   {
     "id": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/5화_긴장,이완/SCHEMA_TEST_SCENE2.md",
-    "fileName": "SCHEMA_TEST_SCENE2.md",
-    "sceneNumber": 2,
+    "path": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/5화_긴장,이완/SCHEMA_TEST_SCENE2.md",
     "title": "상담",
+    "sceneNumber": 2,
     "summary": "진우는 과거의 트라우마와 살인 충동으로 고통받고 윤서준 센터장을 찾아 상담을 받는다. 윤서준은 진우의 심상을 투영하는 이능을 가지고 있으며, 진우의 불안정한 정신 상태를 파악한다. 윤서준은 진우에게 보육원에서 아이들과 함께 시간을 보내며 긴장의 방향을 전환하는 독특한 치료법을 제시한다.",
     "characters": [
       "강진우",
@@ -1288,324 +376,68 @@
       "천세희",
       "보육원 아이들"
     ],
-    "delta": {
-      "appear": [
-        "강진우",
-        "윤서준",
-        "천세희",
-        "보육원 아이들",
-        "심상 풍경"
-      ],
-      "update": [
-        {
-          "name": "강진우",
-          "changes": {
-            "status": "ALIVE",
-            "role": "퇴역 군인",
-            "affiliation": "UNKNOWN",
-            "mental": "트라우마, 살인 충동",
-            "action": "상담을 받기 위해 센터 방문, 아이들과 상호작용"
-          }
-        },
-        {
-          "name": "윤서준",
-          "changes": {
-            "status": "ALIVE",
-            "role": "센터장",
-            "affiliation": "상담 센터",
-            "mental": "냉철, 위험한 분위기",
-            "action": "진우의 심상 투영, 독특한 치료법 제시"
-          }
-        }
-      ],
-      "relations": [
-        {
-          "source": "강진우",
-          "name": "윤서준",
-          "display": "윤서준 센터장",
-          "mood": "NEUTRAL",
-          "tense": "CURRENT"
-        },
-        {
-          "source": "강진우",
-          "name": "천세희",
-          "display": "천세희",
-          "mood": "NEUTRAL",
-          "tense": "PAST"
-        },
-        {
-          "source": "윤서준",
-          "name": "강진우",
-          "display": "강진우",
-          "mood": "NEUTRAL",
-          "tense": "CURRENT"
-        },
-        {
-          "source": "강진우",
-          "name": "보육원 아이들",
-          "display": "보육원 아이들",
-          "mood": "FEAR",
-          "tense": "CURRENT"
-        },
-        {
-          "source": "윤서준",
-          "name": "보육원 아이들",
-          "display": "보육원 아이들",
-          "mood": "NEUTRAL",
-          "tense": "CURRENT"
-        },
-        {
-          "source": "강진우",
-          "name": "과거의 기억",
-          "display": "전장의 기억",
-          "mood": "HOSTILE",
-          "tense": "PAST"
-        },
-        {
-          "source": "강진우",
-          "name": "살인 충동",
-          "display": "살인 충동",
-          "mood": "HOSTILE",
-          "tense": "CURRENT"
-        }
-      ],
-      "disappear": []
-    },
     "isScripted": true,
+    "chapterPath": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/5화_긴장,이완",
+    "actTitle": "1막_퇴역병사의 귀환",
     "chapterTitle": "5화_긴장,이완",
     "chapterNumber": 5
   },
   {
     "id": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/6화_오늘은 썩 기분이 좋았다/SCHEMA_TEST_SCENE1.md",
-    "fileName": "SCHEMA_TEST_SCENE1.md",
-    "sceneNumber": 1,
+    "path": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/6화_오늘은 썩 기분이 좋았다/SCHEMA_TEST_SCENE1.md",
     "title": "술래잡기와 은폐 엄폐",
+    "sceneNumber": 1,
     "summary": "아이들의 야유에 자존심이 상한 진우는 숨바꼭질이 시작되자, 놀이가 아닌 실전처럼 군용 은폐술을 시전하여 사라진다.",
     "characters": [
       "강진우",
       "윤서준",
       "아이들"
     ],
-    "delta": {
-      "appear": [
-        "강진우",
-        "윤서준",
-        "아이들"
-      ],
-      "update": [
-        {
-          "name": "강진우",
-          "changes": {
-            "role": "술래잡기 참여자 (Hider)",
-            "status": "ALIVE",
-            "mental": "승부욕, 진지함",
-            "action": "군용 은폐술(Stealth)을 시전하여 시야에서 사라짐",
-            "affiliation": "더 레스트 (방문객)"
-          }
-        },
-        {
-          "name": "아이들",
-          "changes": {
-            "role": "술래 (Tag)",
-            "status": "ALIVE",
-            "mental": "기대감, 흥미",
-            "action": "눈을 가리고 숫자를 셈"
-          }
-        },
-        {
-          "name": "윤서준",
-          "changes": {
-            "role": "관찰자",
-            "status": "ALIVE",
-            "mental": "즐거움, 흥미진진",
-            "action": "담벼락 아래에서 웃음을 참으며 관찰함"
-          }
-        }
-      ],
-      "relations": [
-        {
-          "source": "강진우",
-          "name": "아이들",
-          "display": "명예 회복의 대상",
-          "mood": "FRIENDLY",
-          "tense": "CURRENT"
-        },
-        {
-          "source": "아이들",
-          "name": "강진우",
-          "display": "못하는 아저씨 -> 숨은 아저씨",
-          "mood": "FRIENDLY",
-          "tense": "CURRENT"
-        },
-        {
-          "source": "강진우",
-          "name": "윤서준",
-          "display": "얄미움",
-          "mood": "NEUTRAL",
-          "tense": "CURRENT"
-        }
-      ]
-    },
     "isScripted": true,
+    "chapterPath": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/6화_오늘은 썩 기분이 좋았다",
+    "actTitle": "1막_퇴역병사의 귀환",
     "chapterTitle": "6화_오늘은 썩 기분이 좋았다",
     "chapterNumber": 6
   },
   {
     "id": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/6화_오늘은 썩 기분이 좋았다/SCHEMA_TEST_SCENE2.md",
-    "fileName": "SCHEMA_TEST_SCENE2.md",
-    "sceneNumber": 2,
+    "path": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/6화_오늘은 썩 기분이 좋았다/SCHEMA_TEST_SCENE2.md",
     "title": "설원 위의 강철 요새",
+    "sceneNumber": 2,
     "summary": "진우는 아이들과 놀아주며 '지키는 감각'을 배우고, 서준은 이능으로 진우의 내면(설원과 요새)을 훔쳐보다 들켜 경고를 받는다.",
     "characters": [
       "강진우",
       "윤서준",
       "아이들"
     ],
-    "delta": {
-      "appear": [
-        "강진우",
-        "윤서준",
-        "아이들"
-      ],
-      "update": [
-        {
-          "name": "강진우",
-          "changes": {
-            "role": "수호자 (Mental Fortress)",
-            "status": "ALIVE",
-            "mental": "경계 (Boundaries), 낯선 충만감",
-            "action": "흙 묻은 옷을 털며 서준에게 이능 사용 금지를 경고함",
-            "affiliation": "더 레스트 (방문객)"
-          }
-        },
-        {
-          "name": "윤서준",
-          "changes": {
-            "role": "관찰자 (Mental Intruder)",
-            "status": "ALIVE",
-            "mental": "경외감, 긴장 (식은땀)",
-            "action": "안경을 고쳐 쓰며 당황함을 숨기려 애씀",
-            "affiliation": "더 레스트"
-          }
-        },
-        {
-          "name": "아이들",
-          "changes": {
-            "role": "보호 대상",
-            "status": "ALIVE",
-            "mental": "안도, 즐거움",
-            "action": "진우에게 호감을 느낌"
-          }
-        }
-      ],
-      "relations": [
-        {
-          "source": "강진우",
-          "name": "윤서준",
-          "display": "선 넘지 마시오 (경고)",
-          "mood": "NEUTRAL",
-          "tense": "CURRENT"
-        },
-        {
-          "source": "윤서준",
-          "name": "강진우",
-          "display": "규격 외의 거물 (경외)",
-          "mood": "NEUTRAL",
-          "tense": "CURRENT"
-        },
-        {
-          "source": "강진우",
-          "name": "아이들",
-          "display": "지켜야 할 존재",
-          "mood": "FRIENDLY",
-          "tense": "CURRENT"
-        }
-      ]
-    },
     "isScripted": false,
+    "chapterPath": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/6화_오늘은 썩 기분이 좋았다",
+    "actTitle": "1막_퇴역병사의 귀환",
     "chapterTitle": "6화_오늘은 썩 기분이 좋았다",
     "chapterNumber": 6
   },
   {
     "id": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/6화_오늘은 썩 기분이 좋았다/SCHEMA_TEST_SCENE3.md",
-    "fileName": "SCHEMA_TEST_SCENE3.md",
-    "sceneNumber": 3,
+    "path": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/6화_오늘은 썩 기분이 좋았다/SCHEMA_TEST_SCENE3.md",
     "title": "기분 좋은 날의 훼방꾼",
+    "sceneNumber": 3,
     "summary": "보육원에서 돌아와 평온함을 느끼던 진우는 고시원 앞을 점거한 철기 길드 패거리와 마력 역류로 괴로워하는 예린을 목격하고, 삼겹살 봉지를 든 채 그들 사이로 걸어 들어간다.",
     "characters": [
       "강진우",
       "한예린",
       "깡패들"
     ],
-    "delta": {
-      "appear": [
-        "강진우",
-        "한예린",
-        "깡패들"
-      ],
-      "update": [
-        {
-          "name": "강진우",
-          "changes": {
-            "role": "귀가하는 입주민 (Intervener)",
-            "status": "ALIVE",
-            "mental": "평온함 속의 성가심",
-            "action": "머리에 꽃핀을 꽂고 삼겹살 봉지를 든 채 깡패들 사이를 당당하게 가로지름",
-            "affiliation": "청호 고시원 404호"
-          }
-        },
-        {
-          "name": "한예린",
-          "changes": {
-            "role": "건물주 (Critical Condition)",
-            "status": "INJURED",
-            "mental": "고통, 절박함",
-            "action": "식은땀을 흘리며 창백한 얼굴로 입구를 사수함"
-          }
-        },
-        {
-          "name": "깡패들",
-          "changes": {
-            "role": "철기 길드 하청 (Thugs)",
-            "status": "ALIVE",
-            "mental": "살기, 위협",
-            "action": "승합차로 입구를 막고 욕설을 퍼부으며 위협"
-          }
-        }
-      ],
-      "relations": [
-        {
-          "source": "강진우",
-          "name": "한예린",
-          "display": "과거의 투영 (동질감)",
-          "mood": "FRIENDLY",
-          "tense": "CURRENT"
-        },
-        {
-          "source": "깡패들",
-          "name": "한예린",
-          "display": "협박 (퇴거 요구)",
-          "mood": "HOSTILE",
-          "tense": "CURRENT"
-        },
-        {
-          "source": "강진우",
-          "name": "깡패들",
-          "display": "저녁 식사의 방해꾼",
-          "mood": "HOSTILE",
-          "tense": "CURRENT"
-        }
-      ]
-    },
     "isScripted": false,
+    "chapterPath": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/6화_오늘은 썩 기분이 좋았다",
+    "actTitle": "1막_퇴역병사의 귀환",
     "chapterTitle": "6화_오늘은 썩 기분이 좋았다",
     "chapterNumber": 6
   },
   {
     "id": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/7화_같이 먹겠습니까/SCHEMA_TEST_SCENE1.md",
-    "fileName": "SCHEMA_TEST_SCENE1.md",
-    "sceneNumber": 1,
+    "path": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/7화_같이 먹겠습니까/SCHEMA_TEST_SCENE1.md",
     "title": "절체절명과 대파 한 단",
+    "sceneNumber": 1,
     "summary": "철기 길드의 마석두가 한예린을 오함마로 내려치려는 순간, 강진우가 개입하여 그를 일격에 기절시키고 예린의 앞을 막아선다.",
     "characters": [
       "강진우",
@@ -1613,92 +445,17 @@
       "마석두",
       "남성일"
     ],
-    "delta": {
-      "appear": [
-        "강진우",
-        "한예린",
-        "마석두",
-        "남성일"
-      ],
-      "update": [
-        {
-          "name": "강진우",
-          "changes": {
-            "role": "난입자 (Savior)",
-            "status": "ALIVE",
-            "mental": "덤덤함",
-            "action": "한 손에 대파가 삐져나온 검은 봉지를 들고 마석두를 제압한 뒤 서 있음",
-            "affiliation": "청호 고시원 404호"
-          }
-        },
-        {
-          "name": "한예린",
-          "changes": {
-            "role": "피해자 (Defender)",
-            "status": "INJURED",
-            "mental": "경악, 안도",
-            "action": "피를 토한 채 진우의 등 뒤에서 멍하니 바라봄"
-          }
-        },
-        {
-          "name": "마석두",
-          "changes": {
-            "role": "철기 길드 행동대원",
-            "status": "STUNNED",
-            "mental": "기절 (Unconscious)",
-            "action": "바닥에 처박혀 거품을 물고 있음"
-          }
-        },
-        {
-          "name": "남성일",
-          "changes": {
-            "role": "철기 길드 3팀장 (C급 헌터)",
-            "status": "ALIVE",
-            "mental": "살기, 오만함",
-            "action": "뒤편에서 팔짱을 끼거나 삐딱하게 서서 상황을 주시함"
-          }
-        }
-      ],
-      "relations": [
-        {
-          "source": "한예린",
-          "name": "강진우",
-          "display": "구원자 (대파?)",
-          "mood": "FRIENDLY",
-          "tense": "CURRENT"
-        },
-        {
-          "source": "마석두",
-          "name": "한예린",
-          "display": "제거 대상",
-          "mood": "HOSTILE",
-          "tense": "CURRENT"
-        },
-        {
-          "source": "강진우",
-          "name": "마석두",
-          "display": "방해꾼 (제압 완료)",
-          "mood": "HOSTILE",
-          "tense": "CURRENT"
-        },
-        {
-          "source": "한예린",
-          "name": "남성일",
-          "display": "공포의 근원",
-          "mood": "HOSTILE",
-          "tense": "CURRENT"
-        }
-      ]
-    },
     "isScripted": false,
+    "chapterPath": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/7화_같이 먹겠습니까",
+    "actTitle": "1막_퇴역병사의 귀환",
     "chapterTitle": "7화_같이 먹겠습니까",
     "chapterNumber": 7
   },
   {
     "id": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/7화_같이 먹겠습니까/SCHEMA_TEST_SCENE2.md",
-    "fileName": "SCHEMA_TEST_SCENE2.md",
-    "sceneNumber": 2,
+    "path": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/7화_같이 먹겠습니까/SCHEMA_TEST_SCENE2.md",
     "title": "꽃핀과 삼겹살의 위엄",
+    "sceneNumber": 2,
     "summary": "진우는 C급 헌터 남성일과 철기 길드원들을 한 손에는 고기 봉지를 든 채 압도적으로 제압하고, 멍한 예린에게 저녁 식사를 제안한다.",
     "characters": [
       "강진우",
@@ -1706,292 +463,98 @@
       "남성일",
       "깡패들"
     ],
-    "delta": {
-      "appear": [
-        "강진우",
-        "한예린",
-        "남성일",
-        "깡패들"
-      ],
-      "update": [
-        {
-          "name": "강진우",
-          "changes": {
-            "role": "압도적 강자 (Overwhelming)",
-            "status": "ALIVE",
-            "mental": "무심함, 식욕",
-            "action": "꽃핀을 꽂고 삼겹살 봉지를 흔들며 예린에게 식사 제안",
-            "affiliation": "청호 고시원 404호"
-          }
-        },
-        {
-          "name": "한예린",
-          "changes": {
-            "role": "목격자 (Awe)",
-            "status": "INJURED",
-            "mental": "충격, 경외감",
-            "action": "귀신을 본 듯 멍한 표정으로 진우를 바라봄"
-          }
-        },
-        {
-          "name": "남성일",
-          "changes": {
-            "role": "패배자 (C급 헌터)",
-            "status": "STUNNED",
-            "mental": "기절 (Unconscious)",
-            "action": "명치를 가격당해 기절한 채 부하에게 실려감"
-          }
-        },
-        {
-          "name": "깡패들",
-          "changes": {
-            "role": "패잔병",
-            "status": "STUNNED",
-            "mental": "공포 (Panic)",
-            "action": "진각에 기절하거나, 남은 한 명이 동료들을 챙겨 도주함"
-          }
-        }
-      ],
-      "relations": [
-        {
-          "source": "강진우",
-          "name": "남성일",
-          "display": "축구공 (약함)",
-          "mood": "HOSTILE",
-          "tense": "CURRENT"
-        },
-        {
-          "source": "남성일",
-          "name": "강진우",
-          "display": "꽃핀 꽂은 괴물 (패배)",
-          "mood": "HOSTILE",
-          "tense": "CURRENT"
-        },
-        {
-          "source": "한예린",
-          "name": "강진우",
-          "display": "규격 외의 존재",
-          "mood": "FRIENDLY",
-          "tense": "CURRENT"
-        },
-        {
-          "source": "깡패들",
-          "name": "강진우",
-          "display": "공포의 대상",
-          "mood": "HOSTILE",
-          "tense": "CURRENT"
-        }
-      ]
-    },
     "isScripted": false,
+    "chapterPath": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/7화_같이 먹겠습니까",
+    "actTitle": "1막_퇴역병사의 귀환",
     "chapterTitle": "7화_같이 먹겠습니까",
     "chapterNumber": 7
   },
   {
     "id": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/7화_같이 먹겠습니까/SCHEMA_TEST_SCENE3.md",
-    "fileName": "SCHEMA_TEST_SCENE3.md",
-    "sceneNumber": 3,
+    "path": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/7화_같이 먹겠습니까/SCHEMA_TEST_SCENE3.md",
     "title": "옥상의 삼겹살과 오해",
+    "sceneNumber": 3,
     "summary": "옥상에서 삼겹살을 먹은 후, 진우가 예린의 꼬인 기맥을 풀어주겠다고 제안하자 예린은 엉뚱한 오해를 했다가 민망해하며 치료를 준비한다.",
     "characters": [
       "강진우",
       "한예린"
     ],
-    "delta": {
-      "appear": [
-        "강진우",
-        "한예린"
-      ],
-      "update": [
-        {
-          "name": "강진우",
-          "changes": {
-            "role": "치료사 (Healer)",
-            "status": "ALIVE",
-            "mental": "전문적 (Professional), 덤덤함",
-            "action": "정수리에 노란 꽃핀을 꽂은 채 예린의 등 뒤에서 치료 준비",
-            "affiliation": "청호 고시원 404호"
-          }
-        },
-        {
-          "name": "한예린",
-          "changes": {
-            "role": "환자 (Patient)",
-            "status": "INJURED",
-            "mental": "수치심, 민망함",
-            "action": "얼굴이 빨개진 채 등을 돌리고 앉아 상의를 걷어 올림"
-          }
-        }
-      ],
-      "relations": [
-        {
-          "source": "한예린",
-          "name": "강진우",
-          "display": "오해해서 미안함 (민망)",
-          "mood": "FRIENDLY",
-          "tense": "CURRENT"
-        },
-        {
-          "source": "강진우",
-          "name": "한예린",
-          "display": "치료가 시급한 환자",
-          "mood": "NEUTRAL",
-          "tense": "CURRENT"
-        }
-      ]
-    },
     "isScripted": false,
+    "chapterPath": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/7화_같이 먹겠습니까",
+    "actTitle": "1막_퇴역병사의 귀환",
     "chapterTitle": "7화_같이 먹겠습니까",
     "chapterNumber": 7
   },
   {
     "id": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/8화_도와주십시오/SCENE-1.md",
-    "fileName": "SCENE-1.md",
-    "sceneNumber": 1,
+    "path": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/8화_도와주십시오/SCENE-1.md",
     "title": "진우의 기맥 회복 시술",
+    "sceneNumber": 1,
     "summary": "진우는 한예린의 손상된 기맥을 회복시키기 위해 자신의 마력과 압축된 칼로리를 이용하여 그녀의 몸에 직접 주입한다. 이 과정에서 예린은 극심한 고통을 느끼지만, 진우는 그녀의 막힌 기맥을 강제로 뚫어낸다.",
     "characters": [
       "진우",
       "한예린"
     ],
-    "delta": {
-      "appear": [],
-      "update": [
-        {
-          "name": "한예린",
-          "changes": {
-            "status": "INJURED",
-            "action": "극심한 고통을 느끼며 몸을 비틈",
-            "mental": "고통스러워함"
-          }
-        },
-        {
-          "name": "진우",
-          "changes": {
-            "status": "ALIVE",
-            "action": "한예린의 기맥에 마력을 주입하며 시술을 진행함",
-            "role": "랭커 (S등급 최상위 1000위), 마스터 입문 경지의 마력 운용가"
-          }
-        }
-      ]
-    },
     "isScripted": true,
+    "chapterPath": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/8화_도와주십시오",
+    "actTitle": "1막_퇴역병사의 귀환",
     "chapterTitle": "8화_도와주십시오",
     "chapterNumber": 8
   },
   {
     "id": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/8화_도와주십시오/SCENE-2.md",
-    "fileName": "SCENE-2.md",
-    "sceneNumber": 2,
+    "path": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/8화_도와주십시오/SCENE-2.md",
     "title": "치료와 작별",
+    "sceneNumber": 2,
     "summary": "진우는 한예린의 내상을 치료해주고, 그녀는 진우에게 왜 자신을 돕는지 묻는다. 진우는 과거의 자신과 닮아서 도와줬다고 답하며, 이제 이곳을 떠날 것이라고 알린다. 번호를 교환하며 진우는 예린에게 건물 매각을 조언하고, 위험할 때 연락하라며 떠난다. 한예린은 아쉬움과 함께 진우에 대한 호기심과 떨림을 느낀다.",
     "characters": [
       "진우",
       "한예린"
     ],
-    "delta": {
-      "appear": [],
-      "disappear": [],
-      "relations": [
-        {
-          "source": "진우",
-          "name": "한예린",
-          "mood": "NEUTRAL",
-          "tense": "CURRENT",
-          "display": "자신과 닮았다고 생각하며 동정심을 느낌"
-        },
-        {
-          "source": "한예린",
-          "name": "진우",
-          "mood": "FRIENDLY",
-          "tense": "CURRENT",
-          "display": "은혜를 느끼며 호기심과 동경, 연심의 씨앗을 느낌"
-        }
-      ],
-      "update": [
-        {
-          "name": "한예린",
-          "changes": {
-            "status": "ALIVE",
-            "action": "내상 치료를 받고 회복함. 진우에게 감정적인 동요를 느낌."
-          }
-        },
-        {
-          "name": "진우",
-          "changes": {
-            "status": "ALIVE",
-            "action": "한예린의 내상을 치료하고, 그녀에게 조언을 한 뒤 떠날 준비를 함. 한예린에게서 과거의 자신을 떠올림."
-          }
-        }
-      ]
-    },
     "isScripted": true,
+    "chapterPath": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/8화_도와주십시오",
+    "actTitle": "1막_퇴역병사의 귀환",
     "chapterTitle": "8화_도와주십시오",
     "chapterNumber": 8
   },
   {
     "id": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/8화_도와주십시오/SCENE-3.md",
-    "fileName": "SCENE-3.md",
-    "sceneNumber": 3,
+    "path": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/8화_도와주십시오/SCENE-3.md",
     "title": "아이들의 정글짐이 된 거인",
+    "sceneNumber": 3,
     "summary": "한예린은 진우를 만나러 갔지만, 예상치 못한 장소인 '해와 달 보육원'에 도착한다. 그곳에서 그녀는 아이들에게 둘러싸여 꼼짝 못하는 진우의 모습을 보고 웃음을 참는다. 진우는 아이들에게 매달린 채 마치 정글짐처럼 이용당하고 있었다.",
     "characters": [
       "한예린",
       "진우",
       "아이들"
     ],
-    "delta": {
-      "appear": [
-        "해와 달 보육원"
-      ],
-      "update": [
-        {
-          "name": "진우",
-          "changes": {
-            "status": "ALIVE",
-            "action": "아이들에게 매달려 꼼짝 못하는 상태",
-            "mental": "당황함"
-          }
-        }
-      ]
-    },
     "isScripted": true,
+    "chapterPath": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/8화_도와주십시오",
+    "actTitle": "1막_퇴역병사의 귀환",
     "chapterTitle": "8화_도와주십시오",
     "chapterNumber": 8
   },
   {
     "id": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/9화_좋은일,나쁜일/SCENE-1.md",
-    "fileName": "SCENE-1.md",
-    "sceneNumber": 1,
+    "path": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/9화_좋은일,나쁜일/SCENE-1.md",
     "title": "박철기의 분노와 결단",
+    "sceneNumber": 1,
     "summary": "박철기 길드장은 B급 화염계 이능 각성자로, 자신의 부하 성일이 '꽃핀을 꽂은 놈'이라는 정체불명의 인물에게 당했다는 보고를 받고 격노한다. 재개발 사업의 중요성과 '청호 고시원' 문제로 인한 압박감을 느끼던 박철기는 결국 회색 지대의 룰을 깨고 사건을 은폐하기로 결심한다. 그는 대포폰을 꺼내 음지의 해결사를 부르려 한다.",
     "characters": [
       "박철기",
       "빡빡머리"
     ],
-    "delta": {
-      "appear": [
-        "성일"
-      ],
-      "update": [
-        {
-          "name": "박철기",
-          "changes": {
-            "status": "ALIVE",
-            "action": "격노하며 이능 폭주 직전 상태, 넥타이를 풀어헤치며 결심함."
-          }
-        }
-      ]
-    },
     "isScripted": true,
+    "chapterPath": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/9화_좋은일,나쁜일",
+    "actTitle": "1막_퇴역병사의 귀환",
     "chapterTitle": "9화_좋은일,나쁜일",
     "chapterNumber": 9
   },
   {
     "id": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/9화_좋은일,나쁜일/SCENE-2.md",
-    "fileName": "SCENE-2.md",
-    "sceneNumber": 2,
+    "path": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/9화_좋은일,나쁜일/SCENE-2.md",
     "title": "고아원에서의 하루와 예기치 못한 사건",
+    "sceneNumber": 2,
     "summary": "도로 게이트 문제로 식자재 수급이 어려워진 보육원에 진우가 고아원장과 한예린의 도움을 받아 아이들의 식사를 준비한다. 아이들을 능숙하게 다루는 한예린과 뛰어난 요리 실력을 보여주는 진우. 식사를 마친 후 아이들을 재우고 한예린과 함께 보육원을 나선 진우는 고시원이 불타고 있는 광경을 목격한다. 불타는 건물 앞에서 강화복을 입은 각성자 무리와 그 선두에 선 문신을 한 거구의 남자를 마주친다.",
     "characters": [
       "진우",
@@ -2001,51 +564,17 @@
       "아이들",
       "문신한 거구의 남자"
     ],
-    "delta": {
-      "appear": [
-        "문신한 거구의 남자",
-        "강화복"
-      ],
-      "update": [
-        {
-          "name": "진우",
-          "changes": {
-            "status": "ALIVE",
-            "mental": "아이들과의 교류를 통해 낯설지만 좋은 울림을 느낌. 고시원이 불타는 것을 보고 경계심을 갖게 됨."
-          }
-        },
-        {
-          "name": "한예린",
-          "changes": {
-            "status": "ALIVE",
-            "mental": "진우의 도움 요청을 흔쾌히 받아들이고 즐겁게 요리하며 아이들과 시간을 보냄. 고시원 화재를 보고 충격에 빠짐."
-          }
-        },
-        {
-          "name": "아이들",
-          "changes": {
-            "status": "ALIVE",
-            "action": "배고픔에 떼를 쓰다가 맛있는 음식 약속에 얌전해지고, 식사 후 잠이 듦."
-          }
-        },
-        {
-          "name": "청호 고시원",
-          "changes": {
-            "status": "UNKNOWN",
-            "action": "화염에 휩싸여 불타고 있음."
-          }
-        }
-      ]
-    },
     "isScripted": true,
+    "chapterPath": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/9화_좋은일,나쁜일",
+    "actTitle": "1막_퇴역병사의 귀환",
     "chapterTitle": "9화_좋은일,나쁜일",
     "chapterNumber": 9
   },
   {
     "id": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/10화_(book)10화/SCENE-1.md",
-    "fileName": "SCENE-1.md",
-    "sceneNumber": 1,
+    "path": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/10화_(book)10화/SCENE-1.md",
     "title": "화염과 광신도",
+    "sceneNumber": 1,
     "summary": "고시원에 불이 나고, 한예린은 절망에 빠진다. 진우는 철기 길드의 강화복을 입은 각성자들과 광신도 구상웅을 마주한다. 구상웅은 진우에게 박철기의 연락을 받지만, 진우는 통신기를 파괴한다. 진우는 구상웅의 문신을 보고 그의 정체를 간파하고, 한예린에게 윤서준에게 보호받으라고 지시한다. 구상웅은 한예린을 쫓지만, 진우는 강화복을 입은 넷을 단숨에 제압한다.",
     "characters": [
       "한예린",
@@ -2054,272 +583,97 @@
       "박철기",
       "윤서준"
     ],
-    "delta": {
-      "appear": [
-        "철기 길드원"
-      ],
-      "relations": [
-        {
-          "source": "진우",
-          "name": "구상웅",
-          "mood": "HOSTILE",
-          "tense": "CURRENT",
-          "display": "진우는 구상웅을 광신도로 간주하고 적대한다."
-        },
-        {
-          "source": "진우",
-          "name": "박철기",
-          "mood": "HOSTILE",
-          "tense": "CURRENT",
-          "display": "진우는 박철기를 마물 숭배자로 간주하고 적대한다."
-        },
-        {
-          "source": "구상웅",
-          "name": "박철기",
-          "mood": "FRIENDLY",
-          "tense": "CURRENT",
-          "display": "구상웅은 박철기의 명령을 받고 진우를 방해한다."
-        },
-        {
-          "source": "진우",
-          "name": "한예린",
-          "mood": "FRIENDLY",
-          "tense": "CURRENT",
-          "display": "진우는 한예린을 보호하려 한다."
-        },
-        {
-          "source": "한예린",
-          "name": "진우",
-          "mood": "NEUTRAL",
-          "tense": "CURRENT",
-          "display": "한예린은 진우의 도움을 받는다."
-        },
-        {
-          "source": "진우",
-          "name": "윤서준",
-          "mood": "FRIENDLY",
-          "tense": "CURRENT",
-          "display": "진우는 윤서준에게 한예린의 보호를 요청한다."
-        }
-      ],
-      "update": [
-        {
-          "name": "진우",
-          "changes": {
-            "status": "ALIVE",
-            "action": "강화복을 입은 사내 넷을 단숨에 제압함."
-          }
-        },
-        {
-          "name": "구상웅",
-          "changes": {
-            "status": "ALIVE",
-            "action": "진우에게 정체를 간파당하고 위협을 느낌."
-          }
-        },
-        {
-          "name": "한예린",
-          "changes": {
-            "status": "ALIVE",
-            "action": "진우의 도움으로 도망치기 시작함."
-          }
-        },
-        {
-          "name": "철기 길드원",
-          "changes": {
-            "status": "DECEASED",
-            "action": "진우에게 제압당함."
-          }
-        }
-      ]
-    },
     "isScripted": true,
+    "chapterPath": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/10화_(book)10화",
+    "actTitle": "1막_퇴역병사의 귀환",
     "chapterTitle": "10화_(book)10화",
     "chapterNumber": 10
   },
   {
     "id": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/10화_(book)10화/SCENE-2.md",
-    "fileName": "SCENE-2.md",
-    "sceneNumber": 2,
+    "path": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/10화_(book)10화/SCENE-2.md",
     "title": "한예린의 도주와 강진우에 대한 믿음",
+    "sceneNumber": 2,
     "summary": "한예린은 끔찍한 추격 끝에 빌딩에서 탈출하여 번화가에 도착한다. 쫓아오던 이들이 사라진 것에 의문을 품고, 강진우가 자신을 위해 희생했을지도 모른다는 걱정과 함께, 그에 대한 강한 믿음을 느낀다.",
     "characters": [
       "한예린",
       "강진우"
     ],
-    "delta": {
-      "appear": [
-        "마물 숭배자"
-      ],
-      "update": [
-        {
-          "name": "한예린",
-          "changes": {
-            "status": "ALIVE",
-            "action": "끔찍한 추격 끝에 탈출함. 폐가 찢어질 듯한 고통과 피 맛을 느낌."
-          }
-        },
-        {
-          "name": "강진우",
-          "changes": {
-            "status": "UNKNOWN",
-            "action": "한예린을 위해 마물 숭배자를 포함한 다수의 각성자들을 막아선 것으로 추정됨."
-          }
-        }
-      ]
-    },
     "isScripted": true,
+    "chapterPath": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/10화_(book)10화",
+    "actTitle": "1막_퇴역병사의 귀환",
     "chapterTitle": "10화_(book)10화",
     "chapterNumber": 10
   },
   {
     "id": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/10화_(book)10화/SCENE-3.md",
-    "fileName": "SCENE-3.md",
-    "sceneNumber": 3,
+    "path": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/10화_(book)10화/SCENE-3.md",
     "title": "서초동에서의 심문",
+    "sceneNumber": 3,
     "summary": "진우는 구상웅을 심문하여 서초동 지하 공방 거리에 본거지가 있고 총원 38명이라는 정보를 얻어낸다. 심문 과정에서 구상웅은 극심한 고통을 겪으며 진실을 실토한다. 진우는 삼매진화를 사용하여 현장의 증거를 인멸하고 사라진다.",
     "characters": [
       "진우",
       "구상웅"
     ],
-    "delta": {
-      "appear": [
-        "가호: 청혈의 갑주"
-      ],
-      "update": [
-        {
-          "name": "구상웅",
-          "changes": {
-            "status": "DECEASED",
-            "action": "심문 과정에서 사망함. 그의 영혼은 우상의 위장 속으로 끌려갔다고 묘사됨."
-          }
-        },
-        {
-          "name": "진우",
-          "changes": {
-            "status": "ALIVE",
-            "action": "삼매진화를 사용하여 현장의 증거를 인멸하고 사라짐."
-          }
-        }
-      ]
-    },
     "isScripted": true,
+    "chapterPath": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/10화_(book)10화",
+    "actTitle": "1막_퇴역병사의 귀환",
     "chapterTitle": "10화_(book)10화",
     "chapterNumber": 10
   },
   {
     "id": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/11화_(book)11화/SCENE-1.md",
-    "fileName": "SCENE-1.md",
-    "sceneNumber": 1,
+    "path": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/11화_(book)11화/SCENE-1.md",
     "title": "서울 지하 공방 구역",
+    "sceneNumber": 1,
     "summary": "서초동 지하 공방 구역은 최고의 번화가이자 헌터의 요람으로, 마력 증폭 장신구, 아티펙트, 병장기, 강화복 등 다양한 물품이 거래되는 국내 최대 규모의 지하 공방 구역이다. 이곳에 마물 숭배자들, 즉 '해충'들이 숨어있으며, 주인공 '진우'는 그들을 즉시 소탕하기보다는 국가의 개입을 기다리기로 한다. '발푸르기스의 밤' 사건으로 어머니를 잃은 과거가 언급되며, 복수심보다는 현실적인 판단을 우선시하는 현재의 '진우'의 모습을 보여준다.",
     "characters": [
       "진우"
     ],
-    "delta": {
-      "appear": [
-        "진우",
-        "발푸르기스의 밤"
-      ],
-      "update": [
-        {
-          "name": "진우",
-          "changes": {
-            "status": "ALIVE",
-            "action": "마물 숭배자들을 즉시 소탕하는 대신 국가의 개입을 기다리기로 결정함. 과거의 복수심보다는 현실적인 판단을 우선시함."
-          }
-        }
-      ]
-    },
     "isScripted": true,
+    "chapterPath": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/11화_(book)11화",
+    "actTitle": "1막_퇴역병사의 귀환",
     "chapterTitle": "11화_(book)11화",
     "chapterNumber": 11
   },
   {
     "id": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/11화_(book)11화/SCENE-2.md",
-    "fileName": "SCENE-2.md",
-    "sceneNumber": 2,
+    "path": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/11화_(book)11화/SCENE-2.md",
     "title": "늦은 밤의 만남과 진실",
+    "sceneNumber": 2,
     "summary": "진우는 늦은 밤 센터의 VIP 라운지에서 윤서준 센터장을 만난다. 윤서준은 진우의 안부를 묻고 차를 대접하며, 한예린은 진우에게 달려와 걱정을 표한다. 진우는 상황이 마무리되었음을 알리고, 한예린은 자신의 무력함과 강해지고 싶은 의지를 다진다. 윤서준은 박철기 처리에 대한 협회의 계획을 설명하며 천세희의 호의를 전달한다. 이후 한예린이 잠시 자리를 비운 사이, 진우와 윤서준은 서울 중심부의 마물 숭배자 소탕 작전에 대해 이야기하며, 이 작전이 국가 주도임을 확인한다. 진우는 자신이 개입할 일이 없음을 밝히고 떠나려 하지만, 윤서준은 진우가 찜질방에서 지낸다는 사실에 놀라움을 금치 못한다.",
     "characters": [
       "진우",
       "윤서준",
       "한예린"
     ],
-    "delta": {
-      "appear": [
-        "박철기",
-        "협회",
-        "천세희",
-        "천무진",
-        "검무천가"
-      ],
-      "update": [
-        {
-          "name": "진우",
-          "changes": {
-            "status": "ALIVE",
-            "action": "사건 마무리 후 윤서준과 대화, 국가 주도 작전의 존재를 파악하고 개입하지 않기로 결정함."
-          }
-        },
-        {
-          "name": "한예린",
-          "changes": {
-            "status": "ALIVE",
-            "mental": "자신의 무력함에 좌절감을 느끼지만, 강해지기로 결심함."
-          }
-        },
-        {
-          "name": "윤서준",
-          "changes": {
-            "status": "ALIVE",
-            "role": "센터장, 국가 주도 작전에 개입함."
-          }
-        }
-      ]
-    },
     "isScripted": true,
+    "chapterPath": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/11화_(book)11화",
+    "actTitle": "1막_퇴역병사의 귀환",
     "chapterTitle": "11화_(book)11화",
     "chapterNumber": 11
   },
   {
     "id": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/11화_(book)11화/SCENE-3.md",
-    "fileName": "SCENE-3.md",
-    "sceneNumber": 3,
+    "path": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/11화_(book)11화/SCENE-3.md",
     "title": "24시 황금 스파 & 사우나",
+    "sceneNumber": 3,
     "summary": "한예린은 진우가 '집'이라고 주장하는 찜질방을 보고 놀란다. 진우는 찜질방의 보안, 소음 차폐, 생존 용이성 등을 이유로 완벽한 집이라고 예찬한다. 결국 예린은 진우를 따라 찜질방 안으로 들어간다.",
     "characters": [
       "한예린",
       "진우"
     ],
-    "delta": {
-      "appear": [],
-      "update": [
-        {
-          "name": "한예린",
-          "changes": {
-            "status": "ALIVE",
-            "action": "찜질방 간판을 올려다보며 멍해 있다. 진우의 말을 듣고 말을 잇지 못하다가 찜질방으로 들어간다."
-          }
-        },
-        {
-          "name": "진우",
-          "changes": {
-            "status": "ALIVE",
-            "action": "찜질방을 '집'이라고 칭하며 만족해하고, 찜질방의 장점을 예찬한다. 찜질방 안으로 들어선다."
-          }
-        }
-      ]
-    },
     "isScripted": true,
+    "chapterPath": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/11화_(book)11화",
+    "actTitle": "1막_퇴역병사의 귀환",
     "chapterTitle": "11화_(book)11화",
     "chapterNumber": 11
   },
   {
     "id": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/12화_(book)12화/SCENE-1.md",
-    "fileName": "SCENE-1.md",
-    "sceneNumber": 1,
+    "path": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/12화_(book)12화/SCENE-1.md",
     "title": "찜질방에서의 재회와 위로",
+    "sceneNumber": 1,
     "summary": "진우와 예린은 찜질방에서 만나 잠시 대화를 나눈다. 예린은 화재 사고로 집을 잃은 슬픔과 절망감에 빠져 있었지만, 진우의 존재와 찜질방의 평범한 일상 속에서 살아있다는 안도감을 느끼고 위로받는다. 진우는 예솔이가 준 꽃핀을 소중히 간직하며, 예린은 진우의 도움에 감사함을 표한다. 이후 두 사람은 찜질방 식당에서 식사를 하며 장면이 마무리된다.",
     "characters": [
       "진우",
@@ -2327,462 +681,115 @@
       "예솔",
       "박철기"
     ],
-    "delta": {
-      "appear": [
-        "꽃핀"
-      ],
-      "update": [
-        {
-          "name": "예린",
-          "changes": {
-            "status": "ALIVE",
-            "mental": "화재 사고로 집을 잃은 슬픔과 죄책감을 느끼지만, 진우의 도움으로 살아있음에 안도하며 위로받고 있다."
-          }
-        },
-        {
-          "name": "진우",
-          "changes": {
-            "status": "ALIVE",
-            "action": "예솔이가 준 꽃핀을 머리에 달고 있으며, 이를 소중히 여기고 있다.",
-            "mental": "예린을 안심시키고 위로하며, 예솔이와의 약속을 지키려 노력한다."
-          }
-        }
-      ]
-    },
     "isScripted": true,
+    "chapterPath": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/12화_(book)12화",
+    "actTitle": "1막_퇴역병사의 귀환",
     "chapterTitle": "12화_(book)12화",
     "chapterNumber": 12
   },
   {
     "id": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/12화_(book)12화/SCENE-2.md",
-    "fileName": "SCENE-2.md",
-    "sceneNumber": 2,
+    "path": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/12화_(book)12화/SCENE-2.md",
     "title": "식혜와 양머리, 그리고 예상치 못한 제안",
+    "sceneNumber": 2,
     "summary": "예린과 진우는 돈까스와 식혜를 먹으며 편안한 시간을 보낸다. 예린은 진우에게 양머리 수건을 씌워주며 장난친다. 로비에서 '얼티밋 쇼' 경기를 보던 중, 예린은 자신의 건물 매입 자금이 마련되었다는 사실을 알게 된다. 진우는 이것이 천세희의 의도임을 짐작하고, 예린은 부모님의 목숨값이라며 받은 돈을 헛되이 쓰고 싶지 않다고 말하며 진우에게 제자로 받아달라고 제안한다.",
     "characters": [
       "한예린",
       "진우"
     ],
-    "delta": {
-      "appear": [
-        "얼티밋 쇼",
-        "S급 헌터",
-        "검무천가",
-        "천세희"
-      ],
-      "relations": [
-        {
-          "source": "진우",
-          "name": "한예린",
-          "mood": "FRIENDLY",
-          "tense": "CURRENT",
-          "display": "예린에게 돈까스를 챙겨주고 식혜를 건네며 챙겨준다."
-        },
-        {
-          "source": "한예린",
-          "name": "진우",
-          "mood": "FRIENDLY",
-          "tense": "CURRENT",
-          "display": "진우에게 돈까스를 먹여주고, 양머리 수건을 씌워주며 귀엽다고 말한다."
-        },
-        {
-          "source": "윤서준",
-          "name": "한예린",
-          "mood": "NEUTRAL",
-          "tense": "CURRENT",
-          "display": "건물 매입 자금을 마련해주었다."
-        },
-        {
-          "source": "천세희",
-          "name": "윤서준",
-          "mood": "NEUTRAL",
-          "tense": "CURRENT",
-          "display": "진우를 통해 간접적으로 도움을 주고 있다."
-        },
-        {
-          "source": "천세희",
-          "name": "진우",
-          "mood": "NEUTRAL",
-          "tense": "CURRENT",
-          "display": "자신과의 연결점을 만들기 위해 예린에게 호의를 베푼 것으로 추측된다."
-        }
-      ],
-      "update": [
-        {
-          "name": "한예린",
-          "changes": {
-            "status": "ALIVE",
-            "action": "건물 매입 자금을 얻었으며, 진우에게 제자가 되기를 제안한다."
-          }
-        },
-        {
-          "name": "진우",
-          "changes": {
-            "status": "ALIVE",
-            "action": "예린의 제안에 대해 긍정적으로 반응하며, 천세희의 의도를 파악하려 한다."
-          }
-        }
-      ]
-    },
     "isScripted": true,
+    "chapterPath": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/12화_(book)12화",
+    "actTitle": "1막_퇴역병사의 귀환",
     "chapterTitle": "12화_(book)12화",
     "chapterNumber": 12
   },
   {
     "id": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/13화_(book)13화/SCENE-1.md",
-    "fileName": "SCENE-1.md",
-    "sceneNumber": 1,
+    "path": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/13화_(book)13화/SCENE-1.md",
     "title": "러닝 메이트",
+    "sceneNumber": 1,
     "summary": "한예린은 진우에게 제자가 되어달라고 간청하지만 진우는 자신의 힘은 계승할 수 없으며 스승의 무게를 짊어지고 싶지 않다며 거절한다. 한예린은 자신의 부모님이 트릭형 게이트 사고로 사망하고 매스컴의 비난으로 아카데미에서 쫓겨난 비극적인 과거를 털어놓으며, 복수를 위해 강해지고 유명한 헌터가 되고 싶다고 밝힌다. 진우는 그녀의 확고한 의지에 감명받아 제자는 아니지만 자신의 루틴에 동참하는 '러닝 메이트'가 될 것을 제안하고, 한예린은 엄격한 조건을 기꺼이 수락한다.",
     "characters": [
       "한예린",
       "진우"
     ],
-    "delta": {
-      "appear": [
-        "한예린",
-        "진우",
-        "한예린의 부모님",
-        "매스컴"
-      ],
-      "disappear": [],
-      "relations": [
-        {
-          "source": "진우",
-          "name": "한예린",
-          "mood": "NEUTRAL",
-          "tense": "CURRENT",
-          "display": "스승 제안 거절 후 러닝 메이트 제안"
-        },
-        {
-          "source": "한예린",
-          "name": "진우",
-          "mood": "FRIENDLY",
-          "tense": "CURRENT",
-          "display": "제자 요청 및 러닝 메이트 제안 수락"
-        },
-        {
-          "source": "한예린",
-          "name": "한예린의 부모님",
-          "mood": "NEUTRAL",
-          "tense": "PAST",
-          "display": "억울한 누명을 벗겨 명예를 되찾아주려 함"
-        },
-        {
-          "source": "매스컴",
-          "name": "한예린의 부모님",
-          "mood": "HOSTILE",
-          "tense": "PAST",
-          "display": "식당 관리 미숙으로 인한 인재 비난"
-        }
-      ],
-      "update": [
-        {
-          "name": "한예린",
-          "changes": {
-            "status": "ALIVE",
-            "action": "진우에게 가르침을 청하고 러닝 메이트 제안을 수락함",
-            "mental": "과거의 아픔을 딛고 강해지려는 확고한 의지를 가짐",
-            "role": "각성자 지망생"
-          }
-        },
-        {
-          "name": "진우",
-          "changes": {
-            "status": "ALIVE",
-            "action": "스승 제안을 거절하고 러닝 메이트를 제안함",
-            "mental": "한예린의 의지에 감명받음, 단호함",
-            "role": "한예린의 러닝 메이트이자 잠재적 멘토"
-          }
-        }
-      ]
-    },
     "isScripted": true,
+    "chapterPath": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/13화_(book)13화",
+    "actTitle": "1막_퇴역병사의 귀환",
     "chapterTitle": "13화_(book)13화",
     "chapterNumber": 13
   },
   {
     "id": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/13화_(book)13화/SCENE-2.md",
-    "fileName": "SCENE-2.md",
-    "sceneNumber": 2,
+    "path": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/13화_(book)13화/SCENE-2.md",
     "title": "남산 새벽 훈련",
+    "sceneNumber": 2,
     "summary": "한예린은 새벽 찜질방에서 진우를 만나 남산까지 왕복하는 고강도 새벽 훈련을 시작한다. 지옥 같은 달리기 속에서 한예린은 진우의 호흡법을 본능적으로 터득하며 한계에 도전한다. 남산 정상에서 기록을 확인받고 잠시 안도하지만, 진우는 이제부터 '제대로' 훈련을 시작할 것이라 말한다.",
     "characters": [
       "진우",
       "한예린"
     ],
-    "delta": {
-      "appear": [
-        "진우",
-        "한예린"
-      ],
-      "disappear": [],
-      "relations": [
-        {
-          "source": "진우",
-          "name": "한예린",
-          "mood": "NEUTRAL",
-          "tense": "CURRENT",
-          "display": "훈련을 시키다"
-        },
-        {
-          "source": "한예린",
-          "name": "진우",
-          "mood": "NEUTRAL",
-          "tense": "CURRENT",
-          "display": "훈련을 받다"
-        }
-      ],
-      "update": [
-        {
-          "name": "한예린",
-          "changes": {
-            "status": "ALIVE",
-            "action": "진우에게 새벽 훈련을 받으며 남산까지 왕복 달리기를 성공했으나 극도로 지쳐 쓰러짐.",
-            "mental": "긴장하고, 힘들어하며, 한계에 도전하고, 합격 여부에 희망을 가졌으나, 더 힘든 훈련이 예고되자 절망함."
-          }
-        },
-        {
-          "name": "진우",
-          "changes": {
-            "status": "ALIVE",
-            "action": "한예린에게 남산 새벽 훈련을 시키고 그녀의 잠재력과 의지를 시험함.",
-            "mental": "한예린의 성장을 관찰하며 그녀의 의지를 시험하는 엄격한 태도를 유지함."
-          }
-        }
-      ]
-    },
     "isScripted": true,
+    "chapterPath": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/13화_(book)13화",
+    "actTitle": "1막_퇴역병사의 귀환",
     "chapterTitle": "13화_(book)13화",
     "chapterNumber": 13
   },
   {
     "id": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/14화_(book)14화/SCENE-1.md",
-    "fileName": "SCENE-1.md",
-    "sceneNumber": 1,
+    "path": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/14화_(book)14화/SCENE-1.md",
     "title": "새벽 스파의 특별한 손님들",
+    "sceneNumber": 1,
     "summary": "24시 황금 스파 사장 김민규는 새벽 시간의 적막과 장기 투숙객들의 무기력함에 지쳐 있었다. 그러나 2주 전부터 스파에 머무는 특별한 남녀 손님들 덕분에 일상에 변화가 생긴다. 조각상 같은 남자와 미인인 여자는 매일 새벽 4시에 외출하고 해 질 녘에 돌아오는데, 여자는 처음과 달리 눈에 띄게 활기차고 건강해지는 모습이다. 김민규는 이들을 보며 묘한 활력을 얻고, 그들이 스파를 나서는 뒷모습을 흐뭇하게 지켜본다.",
     "characters": [
       "김민규",
       "남자",
       "여자"
     ],
-    "delta": {
-      "appear": [
-        "김민규",
-        "남자",
-        "여자"
-      ],
-      "disappear": [
-        "남자",
-        "여자"
-      ],
-      "relations": [
-        {
-          "source": "김민규",
-          "name": "남자",
-          "mood": "NEUTRAL",
-          "tense": "CURRENT",
-          "display": "손님"
-        },
-        {
-          "source": "김민규",
-          "name": "여자",
-          "mood": "NEUTRAL",
-          "tense": "CURRENT",
-          "display": "손님"
-        },
-        {
-          "source": "남자",
-          "name": "여자",
-          "mood": "NEUTRAL",
-          "tense": "CURRENT",
-          "display": "교관-훈련병 관계"
-        },
-        {
-          "source": "여자",
-          "name": "남자",
-          "mood": "NEUTRAL",
-          "tense": "CURRENT",
-          "display": "훈련병-교관 관계"
-        }
-      ],
-      "update": [
-        {
-          "name": "김민규",
-          "changes": {
-            "status": "ALIVE",
-            "mental": "무기력했지만 젊은 손님들을 보며 활력을 얻음"
-          }
-        },
-        {
-          "name": "여자",
-          "changes": {
-            "status": "ALIVE",
-            "action": "매일 훈련",
-            "mental": "피곤한 상태에서 활기차고 생기 넘치는 상태로 변화"
-          }
-        },
-        {
-          "name": "남자",
-          "changes": {
-            "status": "ALIVE",
-            "action": "매일 훈련",
-            "role": "교관처럼 보임"
-          }
-        }
-      ]
-    },
     "isScripted": true,
+    "chapterPath": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/14화_(book)14화",
+    "actTitle": "1막_퇴역병사의 귀환",
     "chapterTitle": "14화_(book)14화",
     "chapterNumber": 14
   },
   {
     "id": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/14화_(book)14화/SCENE-2.md",
-    "fileName": "SCENE-2.md",
-    "sceneNumber": 2,
+    "path": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/14화_(book)14화/SCENE-2.md",
     "title": "강훈련과 새로운 제안",
+    "sceneNumber": 2,
     "summary": "어스름한 새벽, 진우는 한적한 공터에서 한예린을 맹렬히 훈련시킨다. 한예린은 진우의 압도적인 실력에 공포와 좌절감을 느끼지만, 그 과정에서 깨달음을 얻고 성장 가능성을 보인다. 훈련 후, 한예린은 진우에게 찜질방 생활의 불편함을 토로하며 함께 집을 보러 가자고 제안한다. 이는 은둔하듯 살아가는 진우가 참호에서 벗어날 계기가 되기를 바라는 마음에서 나온 것이며, 진우는 즉답을 피하고 고민해보겠다고 답한다.",
     "characters": [
       "진우",
       "한예린"
     ],
-    "delta": {
-      "appear": [
-        "진우",
-        "한예린"
-      ],
-      "disappear": [],
-      "relations": [
-        {
-          "source": "진우",
-          "name": "한예린",
-          "mood": "NEUTRAL",
-          "tense": "CURRENT",
-          "display": "훈련시킴"
-        },
-        {
-          "source": "한예린",
-          "name": "진우",
-          "mood": "FRIENDLY",
-          "tense": "CURRENT",
-          "display": "훈련받음"
-        },
-        {
-          "source": "한예린",
-          "name": "진우",
-          "mood": "FRIENDLY",
-          "tense": "CURRENT",
-          "display": "은인으로 여김"
-        },
-        {
-          "source": "한예린",
-          "name": "진우",
-          "mood": "FRIENDLY",
-          "tense": "CURRENT",
-          "display": "변화를 원함"
-        }
-      ],
-      "update": [
-        {
-          "name": "한예린",
-          "changes": {
-            "status": "ALIVE",
-            "action": "진우와 대련하며 훈련받고 기술을 익힘, 집을 구하려 함",
-            "mental": "진우의 훈련에 공포와 좌절을 느끼지만 성장하려는 의지가 강함, 진우에게 도움을 청하고 그의 변화를 기대함"
-          }
-        },
-        {
-          "name": "진우",
-          "changes": {
-            "status": "ALIVE",
-            "action": "한예린을 훈련시키며 조언을 줌, 한예린의 제안을 고려함",
-            "mental": "한예린의 재능과 악바리 근성을 인정하고 그녀의 성장에 뿌듯함을 느낌, 한예린의 제안에 고민하며 변화의 가능성을 열어둠"
-          }
-        }
-      ]
-    },
     "isScripted": true,
+    "chapterPath": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/14화_(book)14화",
+    "actTitle": "1막_퇴역병사의 귀환",
     "chapterTitle": "14화_(book)14화",
     "chapterNumber": 14
   },
   {
     "id": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/14화_(book)14화/SCENE-3.md",
-    "fileName": "SCENE-3.md",
-    "sceneNumber": 3,
+    "path": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/14화_(book)14화/SCENE-3.md",
     "title": "드루이드 직업 체험",
+    "sceneNumber": 3,
     "summary": "진우는 ‘더 레스트’ 센터에서 윤서준으로부터 새로운 치료 단계를 제안받는다. 윤서준은 진우가 보육원 아이들과의 상호작용에 내성이 생겨 치료 효과가 떨어지고 있음을 설명하며, 더 예민하고 까다로운 대상으로 ‘서초 영물 관리 센터’에서 드루이드 직업 체험을 해볼 것을 권유한다.",
     "characters": [
       "진우",
       "윤서준",
       "보육원 아이들"
     ],
-    "delta": {
-      "appear": [
-        "진우",
-        "윤서준",
-        "보육원 아이들",
-        "서초 영물 관리 센터",
-        "영물"
-      ],
-      "disappear": [],
-      "relations": [
-        {
-          "source": "진우",
-          "name": "윤서준",
-          "mood": "NEUTRAL",
-          "tense": "CURRENT",
-          "display": "치료받는 관계"
-        },
-        {
-          "source": "윤서준",
-          "name": "진우",
-          "mood": "NEUTRAL",
-          "tense": "CURRENT",
-          "display": "치료하는 관계"
-        },
-        {
-          "source": "진우",
-          "name": "보육원 아이들",
-          "mood": "FRIENDLY",
-          "tense": "PAST",
-          "display": "치료 활동"
-        },
-        {
-          "source": "윤서준",
-          "name": "보육원 아이들",
-          "mood": "NEUTRAL",
-          "tense": "CURRENT",
-          "display": "치료 도구로 활용"
-        }
-      ],
-      "update": [
-        {
-          "name": "진우",
-          "changes": {
-            "status": "ALIVE",
-            "mental": "보육원 아이들과의 상호작용에 익숙해져 자극에 대한 내성이 생김",
-            "role": "환자"
-          }
-        },
-        {
-          "name": "윤서준",
-          "changes": {
-            "status": "ALIVE",
-            "role": "치료사"
-          }
-        }
-      ]
-    },
     "isScripted": true,
+    "chapterPath": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/14화_(book)14화",
+    "actTitle": "1막_퇴역병사의 귀환",
     "chapterTitle": "14화_(book)14화",
     "chapterNumber": 14
   },
   {
     "id": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/15화_(book)15화/SCENE-1.md",
-    "fileName": "SCENE-1.md",
-    "sceneNumber": 1,
+    "path": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/15화_(book)15화/SCENE-1.md",
     "title": "영물 관리원과의 만남",
+    "sceneNumber": 1,
     "summary": "강진우는 녹명가의 영물 관리원 김중헌을 만나 영물 관리 시설을 둘러본다. 김중헌은 진우의 과거와 능력에 대해 궁금해하며, 그의 영물 교감 능력에 큰 기대를 품게 된다. 진우는 다양한 영물들과 만나 예상외의 교감을 나누며 김중헌을 놀라게 한다.",
     "characters": [
       "강진우",
@@ -2794,170 +801,17 @@
       "공작",
       "은빛 멧돼지"
     ],
-    "delta": {
-      "appear": [
-        "강진우",
-        "김중헌",
-        "윤서준",
-        "카이저",
-        "강철 뿔 엘크",
-        "삼미호",
-        "공작",
-        "은빛 멧돼지",
-        "녹명가"
-      ],
-      "update": [
-        {
-          "name": "강진우",
-          "changes": {
-            "status": "ALIVE",
-            "role": "퇴역 군인",
-            "affiliation": "UNKNOWN",
-            "mental": "침착함",
-            "action": "영물과의 교감"
-          }
-        },
-        {
-          "name": "김중헌",
-          "changes": {
-            "status": "ALIVE",
-            "role": "선임 드루이드",
-            "affiliation": "녹명가",
-            "mental": "기대감",
-            "action": "진우 안내"
-          }
-        },
-        {
-          "name": "강철 뿔 엘크",
-          "changes": {
-            "status": "ALIVE",
-            "role": "영물",
-            "affiliation": "녹명가 시설",
-            "mental": "복종",
-            "action": "먹이 먹기"
-          }
-        },
-        {
-          "name": "삼미호",
-          "changes": {
-            "status": "ALIVE",
-            "role": "영물",
-            "affiliation": "녹명가 시설",
-            "mental": "애교",
-            "action": "배 까뒤집기"
-          }
-        },
-        {
-          "name": "공작",
-          "changes": {
-            "status": "ALIVE",
-            "role": "영물",
-            "affiliation": "녹명가 시설",
-            "mental": "두려움",
-            "action": "숨기"
-          }
-        },
-        {
-          "name": "은빛 멧돼지",
-          "changes": {
-            "status": "ALIVE",
-            "role": "영물",
-            "affiliation": "녹명가 시설",
-            "mental": "순종",
-            "action": "머리 내밀기"
-          }
-        }
-      ],
-      "relations": [
-        {
-          "source": "김중헌",
-          "name": "강진우",
-          "display": "존중",
-          "mood": "FRIENDLY",
-          "tense": "CURRENT"
-        },
-        {
-          "source": "김중헌",
-          "name": "윤서준",
-          "display": "의뢰",
-          "mood": "NEUTRAL",
-          "tense": "PAST"
-        },
-        {
-          "source": "강진우",
-          "name": "김중헌",
-          "display": "관찰",
-          "mood": "NEUTRAL",
-          "tense": "CURRENT"
-        },
-        {
-          "source": "강진우",
-          "name": "강철 뿔 엘크",
-          "display": "교감",
-          "mood": "FRIENDLY",
-          "tense": "CURRENT"
-        },
-        {
-          "source": "강철 뿔 엘크",
-          "name": "강진우",
-          "display": "복종",
-          "mood": "FRIENDLY",
-          "tense": "CURRENT"
-        },
-        {
-          "source": "김중헌",
-          "name": "강철 뿔 엘크",
-          "display": "관리",
-          "mood": "NEUTRAL",
-          "tense": "CURRENT"
-        },
-        {
-          "source": "강진우",
-          "name": "삼미호",
-          "display": "교감",
-          "mood": "FRIENDLY",
-          "tense": "CURRENT"
-        },
-        {
-          "source": "삼미호",
-          "name": "강진우",
-          "display": "애교",
-          "mood": "FRIENDLY",
-          "tense": "CURRENT"
-        },
-        {
-          "source": "강진우",
-          "name": "공작",
-          "display": "두려움 유발",
-          "mood": "HOSTILE",
-          "tense": "CURRENT"
-        },
-        {
-          "source": "강진우",
-          "name": "은빛 멧돼지",
-          "display": "쓰다듬기",
-          "mood": "FRIENDLY",
-          "tense": "CURRENT"
-        },
-        {
-          "source": "김중헌",
-          "name": "녹명가",
-          "display": "소속",
-          "mood": "NEUTRAL",
-          "tense": "CURRENT"
-        }
-      ],
-      "disappear": []
-    },
     "isScripted": true,
+    "chapterPath": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/15화_(book)15화",
+    "actTitle": "1막_퇴역병사의 귀환",
     "chapterTitle": "15화_(book)15화",
     "chapterNumber": 15
   },
   {
     "id": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/15화_(book)15화/SCENE-2.md",
-    "fileName": "SCENE-2.md",
-    "sceneNumber": 2,
+    "path": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/15화_(book)15화/SCENE-2.md",
     "title": "7번 특수 격리실",
+    "sceneNumber": 2,
     "summary": "녹시우와 녹시연 남매가 뇌전 벌꿀 오소리를 길들이기 위한 내기에 참여한다. 녹시연의 공명 마법이 오소리에게 효과가 없자, 오소리가 격리실을 파괴하고 녹시연을 공격하려 한다. 강진우가 나타나 오소리를 제압한다.",
     "characters": [
       "녹시우",
@@ -2966,126 +820,17 @@
       "강진우",
       "경호원들"
     ],
-    "delta": {
-      "appear": [
-        "녹시우",
-        "녹시연",
-        "뇌전 벌꿀 오소리",
-        "강진우",
-        "경호원들",
-        "녹명가"
-      ],
-      "update": [
-        {
-          "name": "녹시우",
-          "changes": {
-            "status": "ALIVE",
-            "role": "A급 헌터",
-            "affiliation": "녹명가",
-            "mental": "동생을 걱정",
-            "action": "동생을 구하려 함"
-          }
-        },
-        {
-          "name": "녹시연",
-          "changes": {
-            "status": "ALIVE",
-            "role": "A급 헌터",
-            "affiliation": "녹명가",
-            "mental": "자신감, 당황",
-            "action": "오소리를 길들이려 시도"
-          }
-        },
-        {
-          "name": "뇌전 벌꿀 오소리",
-          "changes": {
-            "status": "CAPTURED",
-            "role": "영물",
-            "affiliation": "격리실 (강진우)",
-            "mental": "광기, 적대감",
-            "action": "격리실 파괴, 공격 시도"
-          }
-        },
-        {
-          "name": "강진우",
-          "changes": {
-            "status": "ALIVE",
-            "role": "경호원",
-            "affiliation": "미상",
-            "mental": "무뚝뚝함",
-            "action": "오소리를 제압"
-          }
-        }
-      ],
-      "relations": [
-        {
-          "source": "녹시우",
-          "name": "녹시연",
-          "display": "동생",
-          "mood": "FRIENDLY",
-          "tense": "CURRENT"
-        },
-        {
-          "source": "녹시연",
-          "name": "녹시우",
-          "display": "오빠",
-          "mood": "NEUTRAL",
-          "tense": "CURRENT"
-        },
-        {
-          "source": "녹시연",
-          "name": "뇌전 벌꿀 오소리",
-          "display": "오소리",
-          "mood": "HOSTILE",
-          "tense": "CURRENT"
-        },
-        {
-          "source": "뇌전 벌꿀 오소리",
-          "name": "녹시연",
-          "display": "녹시연",
-          "mood": "HOSTILE",
-          "tense": "CURRENT"
-        },
-        {
-          "source": "녹시우",
-          "name": "녹시연",
-          "display": "아가씨",
-          "mood": "FRIENDLY",
-          "tense": "CURRENT"
-        },
-        {
-          "source": "강진우",
-          "name": "뇌전 벌꿀 오소리",
-          "display": "오소리",
-          "mood": "HOSTILE",
-          "tense": "CURRENT"
-        },
-        {
-          "source": "녹명가",
-          "name": "녹시우",
-          "display": "직계 쌍둥이",
-          "mood": "FRIENDLY",
-          "tense": "CURRENT"
-        },
-        {
-          "source": "녹명가",
-          "name": "녹시연",
-          "display": "직계 쌍둥이",
-          "mood": "FRIENDLY",
-          "tense": "CURRENT"
-        }
-      ],
-      "disappear": []
-    },
     "isScripted": true,
+    "chapterPath": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/15화_(book)15화",
+    "actTitle": "1막_퇴역병사의 귀환",
     "chapterTitle": "15화_(book)15화",
     "chapterNumber": 15
   },
   {
     "id": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/16화_(book)16화/SCENE-1.md",
-    "fileName": "SCENE-1.md",
-    "sceneNumber": 1,
+    "path": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/16화_(book)16화/SCENE-1.md",
     "title": "위협과 만남",
+    "sceneNumber": 1,
     "summary": "진우가 영물원 내에서 녹시연과 녹시우를 위협으로부터 구출한다. 뇌전 오소리는 진우의 압도적인 기에 굴복하고, 김중헌과 경호원들은 진우에게 감사를 표하며 그를 따르기 시작한다. 오소리는 수치심과 분노에 휩싸여 진우를 쫓아간다.",
     "characters": [
       "진우",
@@ -3097,152 +842,17 @@
       "경호원들",
       "센터 직원들"
     ],
-    "delta": {
-      "appear": [
-        "진우",
-        "녹시연",
-        "녹시우",
-        "뇌전 오소리",
-        "김중헌",
-        "경호 실장",
-        "경호원들",
-        "센터 직원들"
-      ],
-      "update": [
-        {
-          "name": "뇌전 오소리",
-          "changes": {
-            "status": "STUNNED",
-            "role": "영물",
-            "affiliation": "영물원",
-            "mental": "공포, 수치심, 분노",
-            "action": "전류 방출 시도 실패, 진우에게 던져짐, 진우를 쫓아감"
-          }
-        },
-        {
-          "name": "녹시연",
-          "changes": {
-            "status": "ALIVE",
-            "role": "아가씨",
-            "affiliation": "녹명가",
-            "mental": "충격, 불안",
-            "action": "위협받음, 진우에게 감사"
-          }
-        },
-        {
-          "name": "녹시우",
-          "changes": {
-            "status": "ALIVE",
-            "role": "도련님",
-            "affiliation": "녹명가",
-            "mental": "걱정, 감사",
-            "action": "누나와 함께 위협받음, 진우에게 감사"
-          }
-        },
-        {
-          "name": "김중헌",
-          "changes": {
-            "status": "ALIVE",
-            "role": "관리인",
-            "affiliation": "녹명가",
-            "mental": "걱정, 감사",
-            "action": "자녀들을 걱정, 진우에게 감사"
-          }
-        },
-        {
-          "name": "경호 실장",
-          "changes": {
-            "status": "ALIVE",
-            "role": "경호 실장",
-            "affiliation": "녹명가",
-            "mental": "당황, 경계심",
-            "action": "상황 파악, 진우에 대한 경계"
-          }
-        }
-      ],
-      "relations": [
-        {
-          "source": "진우",
-          "name": "녹시연",
-          "display": "구출",
-          "mood": "NEUTRAL",
-          "tense": "CURRENT"
-        },
-        {
-          "source": "진우",
-          "name": "녹시우",
-          "display": "구출",
-          "mood": "NEUTRAL",
-          "tense": "CURRENT"
-        },
-        {
-          "source": "뇌전 오소리",
-          "name": "진우",
-          "display": "두려움",
-          "mood": "HOSTILE",
-          "tense": "CURRENT"
-        },
-        {
-          "source": "김중헌",
-          "name": "녹시연",
-          "display": "걱정",
-          "mood": "FRIENDLY",
-          "tense": "CURRENT"
-        },
-        {
-          "source": "김중헌",
-          "name": "녹시우",
-          "display": "걱정",
-          "mood": "FRIENDLY",
-          "tense": "CURRENT"
-        },
-        {
-          "source": "녹시연",
-          "name": "진우",
-          "display": "감사",
-          "mood": "FRIENDLY",
-          "tense": "CURRENT"
-        },
-        {
-          "source": "녹시우",
-          "name": "진우",
-          "display": "감사",
-          "mood": "FRIENDLY",
-          "tense": "CURRENT"
-        },
-        {
-          "source": "김중헌",
-          "name": "진우",
-          "display": "감사",
-          "mood": "FRIENDLY",
-          "tense": "CURRENT"
-        },
-        {
-          "source": "경호 실장",
-          "name": "진우",
-          "display": "경계",
-          "mood": "HOSTILE",
-          "tense": "CURRENT"
-        },
-        {
-          "source": "뇌전 오소리",
-          "name": "경호원들",
-          "display": "위협",
-          "mood": "HOSTILE",
-          "tense": "CURRENT"
-        }
-      ],
-      "disappear": []
-    },
     "isScripted": true,
+    "chapterPath": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/16화_(book)16화",
+    "actTitle": "1막_퇴역병사의 귀환",
     "chapterTitle": "16화_(book)16화",
     "chapterNumber": 16
   },
   {
     "id": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/16화_(book)16화/SCENE-2.md",
-    "fileName": "SCENE-2.md",
-    "sceneNumber": 2,
+    "path": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/16화_(book)16화/SCENE-2.md",
     "title": "마력 공명 제어기 설명 및 녹명가 남매의 접근",
+    "sceneNumber": 2,
     "summary": "김중헌이 마력 공명 제어기와 바이탈 스캐너에 대해 설명하는 동안, 녹명가 쌍둥이 남매 녹시우와 녹시연이 강진우에게 끊임없이 질문을 던지고 관심을 보인다. 탈주한 뇌전 벌꿀 오소리가 진우를 따라다니는 특이한 행동을 보이며, 녹명가는 진우와 오소리의 관계에 주목한다.",
     "characters": [
       "김중헌",
@@ -3252,144 +862,17 @@
       "뇌전 벌꿀 오소리",
       "녹명가 가주"
     ],
-    "delta": {
-      "appear": [
-        "김중헌",
-        "강진우",
-        "녹시우",
-        "녹시연",
-        "뇌전 벌꿀 오소리",
-        "녹명가",
-        "녹명가 가주"
-      ],
-      "update": [
-        {
-          "name": "김중헌",
-          "changes": {
-            "status": "ALIVE",
-            "role": "교육 담당",
-            "affiliation": "녹명가",
-            "action": "마력 공명 제어기와 바이탈 스캐너에 대한 설명을 시도한다.",
-            "mental": "교육 완수에 대한 필사적인 의지를 보인다."
-          }
-        },
-        {
-          "name": "강진우",
-          "changes": {
-            "status": "ALIVE",
-            "role": "헌터",
-            "affiliation": "UNKNOWN",
-            "action": "녹명가 남매의 질문을 무시하고, 뇌전 오소리의 행동에 의문을 품는다.",
-            "mental": "아이들의 관심에 대한 의구심을 품고, 냉정하고 객관적으로 자신을 분석한다."
-          }
-        },
-        {
-          "name": "녹시우",
-          "changes": {
-            "status": "ALIVE",
-            "role": "녹명가 자제",
-            "affiliation": "녹명가",
-            "action": "강진우에게 끊임없이 질문을 던지고, 영물 계약을 제안한다.",
-            "mental": "강진우에게 호감을 느끼고, 가문의 이익을 위해 노력한다."
-          }
-        },
-        {
-          "name": "녹시연",
-          "changes": {
-            "status": "ALIVE",
-            "role": "녹명가 자제",
-            "affiliation": "녹명가",
-            "action": "강진우에게 끊임없이 질문을 던지고, 가문의 복지를 자랑한다.",
-            "mental": "강진우에게 호감을 느끼고, 가문의 이익을 위해 노력한다."
-          }
-        },
-        {
-          "name": "뇌전 벌꿀 오소리",
-          "changes": {
-            "status": "ALIVE",
-            "role": "탈주범",
-            "affiliation": "녹명가",
-            "action": "강진우를 따라다니며 관심을 표현한다.",
-            "mental": "강진우에게 강한 '관심'과 '인정'을 보인다."
-          }
-        }
-      ],
-      "relations": [
-        {
-          "source": "김중헌",
-          "name": "강진우",
-          "display": "설명",
-          "mood": "NEUTRAL",
-          "tense": "CURRENT"
-        },
-        {
-          "source": "녹시우",
-          "name": "강진우",
-          "display": "질문",
-          "mood": "NEUTRAL",
-          "tense": "CURRENT"
-        },
-        {
-          "source": "녹시연",
-          "name": "강진우",
-          "display": "질문",
-          "mood": "NEUTRAL",
-          "tense": "CURRENT"
-        },
-        {
-          "source": "녹시우",
-          "name": "녹시연",
-          "display": "남매",
-          "mood": "FRIENDLY",
-          "tense": "CURRENT"
-        },
-        {
-          "source": "강진우",
-          "name": "녹시우",
-          "display": "무시",
-          "mood": "NEUTRAL",
-          "tense": "CURRENT"
-        },
-        {
-          "source": "강진우",
-          "name": "녹시연",
-          "display": "무시",
-          "mood": "NEUTRAL",
-          "tense": "CURRENT"
-        },
-        {
-          "source": "뇌전 벌꿀 오소리",
-          "name": "강진우",
-          "display": "따라다님",
-          "mood": "FRIENDLY",
-          "tense": "CURRENT"
-        },
-        {
-          "source": "녹시우",
-          "name": "녹명가 가주",
-          "display": "아버지",
-          "mood": "NEUTRAL",
-          "tense": "CURRENT"
-        },
-        {
-          "source": "녹시연",
-          "name": "녹명가 가주",
-          "display": "아버지",
-          "mood": "NEUTRAL",
-          "tense": "CURRENT"
-        }
-      ],
-      "disappear": []
-    },
     "isScripted": true,
+    "chapterPath": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/16화_(book)16화",
+    "actTitle": "1막_퇴역병사의 귀환",
     "chapterTitle": "16화_(book)16화",
     "chapterNumber": 16
   },
   {
     "id": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/17화_(book)17화/SCENE-1.md",
-    "fileName": "SCENE-1.md",
-    "sceneNumber": 1,
+    "path": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/17화_(book)17화/SCENE-1.md",
     "title": "영물 계약 제안",
+    "sceneNumber": 1,
     "summary": "진우에게 영물 계약을 제안하는 녹시우와 녹시연. 진우는 영물을 키울 집이 없고 헌터 라이센스도 없다는 이유로 제안을 거절한다. 주변 사람들은 진우의 정체에 혼란스러워한다.",
     "characters": [
       "진우",
@@ -3400,146 +883,17 @@
       "경호원",
       "연구원"
     ],
-    "delta": {
-      "appear": [
-        "진우",
-        "녹시우",
-        "녹시연",
-        "뇌전 오소리",
-        "김중헌",
-        "경호원",
-        "연구원",
-        "염화 도마뱀",
-        "바람 정령의 깃털"
-      ],
-      "update": [
-        {
-          "name": "진우",
-          "changes": {
-            "status": "ALIVE",
-            "role": "백수",
-            "affiliation": "UNKNOWN",
-            "mental": "냉정",
-            "action": "영물 계약 제안 거절"
-          }
-        },
-        {
-          "name": "녹시우",
-          "changes": {
-            "status": "ALIVE",
-            "role": "영물 계약자",
-            "affiliation": "녹명가",
-            "mental": "자신감 넘침",
-            "action": "영물 계약 설득"
-          }
-        },
-        {
-          "name": "녹시연",
-          "changes": {
-            "status": "ALIVE",
-            "role": "영물 계약자",
-            "affiliation": "녹명가",
-            "mental": "자신감 넘침",
-            "action": "영물 계약 설득"
-          }
-        },
-        {
-          "name": "뇌전 오소리",
-          "changes": {
-            "status": "ALIVE",
-            "role": "영물",
-            "affiliation": "녹시우",
-            "mental": "불만",
-            "action": "진우 노려보기"
-          }
-        },
-        {
-          "name": "김중헌",
-          "changes": {
-            "status": "ALIVE",
-            "role": "경호 실장",
-            "affiliation": "녹명가",
-            "mental": "당황",
-            "action": "진우의 거절에 놀람"
-          }
-        }
-      ],
-      "relations": [
-        {
-          "source": "진우",
-          "name": "녹시우",
-          "display": "제안 거절",
-          "mood": "NEUTRAL",
-          "tense": "CURRENT"
-        },
-        {
-          "source": "진우",
-          "name": "녹시연",
-          "display": "제안 거절",
-          "mood": "NEUTRAL",
-          "tense": "CURRENT"
-        },
-        {
-          "source": "진우",
-          "name": "뇌전 오소리",
-          "display": "관찰",
-          "mood": "NEUTRAL",
-          "tense": "CURRENT"
-        },
-        {
-          "source": "녹시우",
-          "name": "진우",
-          "display": "계약 설득",
-          "mood": "FRIENDLY",
-          "tense": "CURRENT"
-        },
-        {
-          "source": "녹시연",
-          "name": "진우",
-          "display": "계약 설득",
-          "mood": "FRIENDLY",
-          "tense": "CURRENT"
-        },
-        {
-          "source": "뇌전 오소리",
-          "name": "진우",
-          "display": "노려보기",
-          "mood": "HOSTILE",
-          "tense": "CURRENT"
-        },
-        {
-          "source": "김중헌",
-          "name": "진우",
-          "display": "놀람",
-          "mood": "NEUTRAL",
-          "tense": "CURRENT"
-        },
-        {
-          "source": "녹시우",
-          "name": "염화 도마뱀",
-          "display": "파트너",
-          "mood": "FRIENDLY",
-          "tense": "CURRENT"
-        },
-        {
-          "source": "녹시연",
-          "name": "바람 정령의 깃털",
-          "display": "파트너",
-          "mood": "FRIENDLY",
-          "tense": "CURRENT"
-        }
-      ],
-      "disappear": []
-    },
     "isScripted": true,
+    "chapterPath": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/17화_(book)17화",
+    "actTitle": "1막_퇴역병사의 귀환",
     "chapterTitle": "17화_(book)17화",
     "chapterNumber": 17
   },
   {
     "id": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/17화_(book)17화/SCENE-2.md",
-    "fileName": "SCENE-2.md",
-    "sceneNumber": 2,
+    "path": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/17화_(book)17화/SCENE-2.md",
     "title": "제네시스 아카데미 입학",
+    "sceneNumber": 2,
     "summary": "진우는 쌍둥이 남매의 번호 교환 요구에 응하고, 그들이 ‘제네시스 아카데미’에 입학하게 된 사실을 알게 된다. 이후 뇌전 오소리의 반항적인 모습과 김중헌과의 대화를 통해 ‘집’의 의미에 대해 고민한다. 마지막으로 한예린에게 집을 보러 가자는 제안에 응하기 위해 전화를 걸기로 결심한다.",
     "characters": [
       "진우",
@@ -3549,222 +903,34 @@
       "뇌전 오소리",
       "한예린"
     ],
-    "delta": {
-      "appear": [
-        "진우",
-        "쌍둥이",
-        "녹시연",
-        "김중헌",
-        "뇌전 오소리",
-        "한예린",
-        "제네시스 아카데미"
-      ],
-      "update": [
-        {
-          "name": "진우",
-          "changes": {
-            "status": "ALIVE",
-            "role": "헌터",
-            "affiliation": "UNKNOWN",
-            "mental": "고민",
-            "action": "번호 교환, 대화"
-          }
-        },
-        {
-          "name": "쌍둥이",
-          "changes": {
-            "status": "ALIVE",
-            "role": "학생",
-            "affiliation": "녹명가",
-            "mental": "만족",
-            "action": "번호 획득, 아카데미 입학"
-          }
-        },
-        {
-          "name": "김중헌",
-          "changes": {
-            "status": "ALIVE",
-            "role": "직원",
-            "affiliation": "UNKNOWN",
-            "mental": "안도",
-            "action": "진우 도움, 대화"
-          }
-        },
-        {
-          "name": "뇌전 오소리",
-          "changes": {
-            "status": "ALIVE",
-            "role": "영물",
-            "affiliation": "UNKNOWN",
-            "mental": "분노, 불만",
-            "action": "발 구르기, 곁눈질"
-          }
-        }
-      ],
-      "relations": [
-        {
-          "source": "진우",
-          "name": "쌍둥이",
-          "display": "번호 교환",
-          "mood": "NEUTRAL",
-          "tense": "CURRENT"
-        },
-        {
-          "source": "진우",
-          "name": "김중헌",
-          "display": "대화",
-          "mood": "NEUTRAL",
-          "tense": "CURRENT"
-        },
-        {
-          "source": "진우",
-          "name": "뇌전 오소리",
-          "display": "관찰",
-          "mood": "NEUTRAL",
-          "tense": "CURRENT"
-        },
-        {
-          "source": "쌍둥이",
-          "name": "진우",
-          "display": "번호 요구",
-          "mood": "NEUTRAL",
-          "tense": "CURRENT"
-        },
-        {
-          "source": "쌍둥이",
-          "name": "녹명가",
-          "display": "소속",
-          "mood": "FRIENDLY",
-          "tense": "CURRENT"
-        },
-        {
-          "source": "김중헌",
-          "name": "쌍둥이",
-          "display": "관리",
-          "mood": "NEUTRAL",
-          "tense": "CURRENT"
-        },
-        {
-          "source": "진우",
-          "name": "한예린",
-          "display": "생각",
-          "mood": "NEUTRAL",
-          "tense": "PAST"
-        }
-      ],
-      "disappear": [
-        "쌍둥이",
-        "경호원 무리"
-      ]
-    },
     "isScripted": true,
+    "chapterPath": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/17화_(book)17화",
+    "actTitle": "1막_퇴역병사의 귀환",
     "chapterTitle": "17화_(book)17화",
     "chapterNumber": 17
   },
   {
     "id": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/17화_(book)17화/SCENE-3.md",
-    "fileName": "SCENE-3.md",
-    "sceneNumber": 3,
+    "path": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/17화_(book)17화/SCENE-3.md",
     "title": "부동산 투어",
+    "sceneNumber": 3,
     "summary": "한예린은 집을 구하기 위해 부동산 투어를 진행하며, 까다로운 기준으로 집들을 평가한다. 진우는 그녀를 따라다니며 피로감을 느끼고, 박 실장은 한예린의 기준에 좌절하지만 복비에 대한 제안에 다시 의욕을 얻는다.",
     "characters": [
       "한예린",
       "진우",
       "박 실장"
     ],
-    "delta": {
-      "appear": [
-        "한예린",
-        "진우",
-        "박 실장"
-      ],
-      "update": [
-        {
-          "name": "한예린",
-          "changes": {
-            "status": "ALIVE",
-            "role": "고객",
-            "affiliation": "UNKNOWN",
-            "mental": "까다로운",
-            "action": "집을 꼼꼼히 검사"
-          }
-        },
-        {
-          "name": "진우",
-          "changes": {
-            "status": "ALIVE",
-            "role": "보호자",
-            "affiliation": "UNKNOWN",
-            "mental": "피로",
-            "action": "한예린을 따라다님"
-          }
-        },
-        {
-          "name": "박 실장",
-          "changes": {
-            "status": "ALIVE",
-            "role": "부동산 중개업자",
-            "affiliation": "부동산",
-            "mental": "좌절, 의욕",
-            "action": "집을 안내"
-          }
-        }
-      ],
-      "relations": [
-        {
-          "source": "한예린",
-          "name": "박 실장",
-          "display": "박 실장에게 불만을 표현",
-          "mood": "HOSTILE",
-          "tense": "CURRENT"
-        },
-        {
-          "source": "한예린",
-          "name": "진우",
-          "display": "진우와 동행",
-          "mood": "NEUTRAL",
-          "tense": "CURRENT"
-        },
-        {
-          "source": "진우",
-          "name": "한예린",
-          "display": "한예린의 까다로움에 피로",
-          "mood": "NEUTRAL",
-          "tense": "CURRENT"
-        },
-        {
-          "source": "진우",
-          "name": "박 실장",
-          "display": "박 실장의 고생에 동정",
-          "mood": "NEUTRAL",
-          "tense": "CURRENT"
-        },
-        {
-          "source": "박 실장",
-          "name": "한예린",
-          "display": "한예린의 기준에 좌절",
-          "mood": "HOSTILE",
-          "tense": "CURRENT"
-        },
-        {
-          "source": "박 실장",
-          "name": "진우",
-          "display": "진우에게 복비 제안",
-          "mood": "FRIENDLY",
-          "tense": "CURRENT"
-        }
-      ],
-      "disappear": []
-    },
     "isScripted": true,
+    "chapterPath": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/17화_(book)17화",
+    "actTitle": "1막_퇴역병사의 귀환",
     "chapterTitle": "17화_(book)17화",
     "chapterNumber": 17
   },
   {
     "id": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/18화_(book)18화/SCENE-1.md",
-    "fileName": "SCENE-1.md",
-    "sceneNumber": 1,
+    "path": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/18화_(book)18화/SCENE-1.md",
     "title": "열한 번째 집",
+    "sceneNumber": 1,
     "summary": "한예린과 진우, 박 실장이 열한 번째 집을 둘러보는 장면. 한예린은 집의 상태에 만족하지만, 진우는 보안상의 문제점을 발견하여 계약을 망친다. 박 실장은 진우에게 원망을 표하며 다음 집을 찾으러 간다.",
     "characters": [
       "한예린",
@@ -3772,208 +938,34 @@
       "박 실장",
       "철기 길드"
     ],
-    "delta": {
-      "appear": [
-        "한예린",
-        "진우",
-        "박 실장",
-        "철기 길드"
-      ],
-      "update": [
-        {
-          "name": "한예린",
-          "changes": {
-            "status": "ALIVE",
-            "role": "고객",
-            "affiliation": "UNKNOWN",
-            "mental": "철기 길드에 대한 트라우마가 남아있음",
-            "action": "집을 둘러보고 만족감을 표현함"
-          }
-        },
-        {
-          "name": "진우",
-          "changes": {
-            "status": "ALIVE",
-            "role": "경호원",
-            "affiliation": "한예린",
-            "mental": "집에 대한 보안 문제로 갈등",
-            "action": "보안 취약점을 발견하고 경고함"
-          }
-        },
-        {
-          "name": "박 실장",
-          "changes": {
-            "status": "ALIVE",
-            "role": "부동산 중개인",
-            "affiliation": "부동산",
-            "mental": "진우에게 원망을 품음",
-            "action": "집을 소개하고 계약을 유도함"
-          }
-        }
-      ],
-      "relations": [
-        {
-          "source": "한예린",
-          "name": "진우",
-          "display": "안전을 묻다",
-          "mood": "NEUTRAL",
-          "tense": "CURRENT"
-        },
-        {
-          "source": "진우",
-          "name": "한예린",
-          "display": "집에 대한 의견을 묻다",
-          "mood": "NEUTRAL",
-          "tense": "CURRENT"
-        },
-        {
-          "source": "진우",
-          "name": "집",
-          "display": "보안 취약점 발견",
-          "mood": "HOSTILE",
-          "tense": "CURRENT"
-        },
-        {
-          "source": "박 실장",
-          "name": "진우",
-          "display": "원망",
-          "mood": "HOSTILE",
-          "tense": "CURRENT"
-        },
-        {
-          "source": "한예린",
-          "name": "철기 길드",
-          "display": "트라우마",
-          "mood": "FEAR",
-          "tense": "PAST"
-        }
-      ],
-      "disappear": []
-    },
     "isScripted": true,
+    "chapterPath": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/18화_(book)18화",
+    "actTitle": "1막_퇴역병사의 귀환",
     "chapterTitle": "18화_(book)18화",
     "chapterNumber": 18
   },
   {
     "id": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/18화_(book)18화/SCENE-2.md",
-    "fileName": "SCENE-2.md",
-    "sceneNumber": 2,
+    "path": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/18화_(book)18화/SCENE-2.md",
     "title": "새로운 보금자리",
+    "sceneNumber": 2,
     "summary": "진우와 한예린은 26번째 집을 보고 계약을 마친다. 낡았지만 정겨운 붉은 벽돌집은 진우에게는 방어 거점, 한예린에게는 따뜻한 보금자리로 다가온다. 한예린은 진우에게 동거를 제안하지만, 진우는 그녀의 앞길을 위해 거절한다.",
     "characters": [
       "한예린",
       "진우",
       "박 실장"
     ],
-    "delta": {
-      "appear": [
-        "한예린",
-        "진우",
-        "박 실장",
-        "붉은 벽돌집",
-        "지하실"
-      ],
-      "update": [
-        {
-          "name": "한예린",
-          "changes": {
-            "status": "ALIVE",
-            "role": "일반인",
-            "affiliation": "UNKNOWN",
-            "mental": "기대감, 설렘",
-            "action": "새 집 계약, 동거 제안"
-          }
-        },
-        {
-          "name": "진우",
-          "changes": {
-            "status": "ALIVE",
-            "role": "각성자",
-            "affiliation": "UNKNOWN",
-            "mental": "피로, 경계심",
-            "action": "집 검토, 방어 거점 판단, 동거 거절"
-          }
-        },
-        {
-          "name": "박 실장",
-          "changes": {
-            "status": "ALIVE",
-            "role": "부동산 중개업자",
-            "affiliation": "UNKNOWN",
-            "mental": "안도감, 감사함",
-            "action": "집 소개, 계약 진행"
-          }
-        }
-      ],
-      "relations": [
-        {
-          "source": "한예린",
-          "name": "진우",
-          "display": "관심",
-          "mood": "FRIENDLY",
-          "tense": "CURRENT"
-        },
-        {
-          "source": "한예린",
-          "name": "진우",
-          "display": "동거 제안",
-          "mood": "FRIENDLY",
-          "tense": "CURRENT"
-        },
-        {
-          "source": "진우",
-          "name": "한예린",
-          "display": "배려",
-          "mood": "NEUTRAL",
-          "tense": "CURRENT"
-        },
-        {
-          "source": "진우",
-          "name": "한예린",
-          "display": "동거 거절",
-          "mood": "NEUTRAL",
-          "tense": "CURRENT"
-        },
-        {
-          "source": "박 실장",
-          "name": "한예린",
-          "display": "계약",
-          "mood": "NEUTRAL",
-          "tense": "CURRENT"
-        },
-        {
-          "source": "박 실장",
-          "name": "진우",
-          "display": "계약",
-          "mood": "NEUTRAL",
-          "tense": "CURRENT"
-        },
-        {
-          "source": "진우",
-          "name": "붉은 벽돌집",
-          "display": "방어 거점 평가",
-          "mood": "NEUTRAL",
-          "tense": "CURRENT"
-        },
-        {
-          "source": "한예린",
-          "name": "붉은 벽돌집",
-          "display": "긍정적 평가",
-          "mood": "FRIENDLY",
-          "tense": "CURRENT"
-        }
-      ],
-      "disappear": []
-    },
     "isScripted": true,
+    "chapterPath": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/18화_(book)18화",
+    "actTitle": "1막_퇴역병사의 귀환",
     "chapterTitle": "18화_(book)18화",
     "chapterNumber": 18
   },
   {
     "id": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/18화_(book)18화/SCENE-3.md",
-    "fileName": "SCENE-3.md",
-    "sceneNumber": 3,
+    "path": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/18화_(book)18화/SCENE-3.md",
     "title": "귀가길",
+    "sceneNumber": 3,
     "summary": "진우는 한예린을 집에 데려다주고 혼자 귀가하며 과거를 회상한다. 담배를 끊은 이유, 마경에서의 삶, 그리고 전우 천무진에 대한 기억과 그리움이 주를 이룬다. 현재의 안락함 속에서 '집'의 의미를 되새기며, 천무진의 유품을 그의 가족에게 전달해야겠다는 결심을 한다.",
     "characters": [
       "강진우",
@@ -3981,115 +973,17 @@
       "천무진",
       "천세희"
     ],
-    "delta": {
-      "appear": [
-        "강진우",
-        "한예린",
-        "천무진",
-        "천세희",
-        "마물"
-      ],
-      "update": [
-        {
-          "name": "강진우",
-          "changes": {
-            "status": "ALIVE",
-            "role": "전사",
-            "affiliation": "UNKNOWN",
-            "mental": "과거 회상, 그리움, 결심",
-            "action": "귀가, 회상, 결심"
-          }
-        },
-        {
-          "name": "한예린",
-          "changes": {
-            "status": "ALIVE",
-            "role": "일반인",
-            "affiliation": "UNKNOWN",
-            "mental": "새로운 보금자리",
-            "action": "새 집으로 이사"
-          }
-        },
-        {
-          "name": "천무진",
-          "changes": {
-            "status": "DECEASED",
-            "role": "전우",
-            "affiliation": "UNKNOWN",
-            "mental": "그리움, 기억",
-            "action": "회상"
-          }
-        }
-      ],
-      "relations": [
-        {
-          "source": "강진우",
-          "name": "한예린",
-          "display": "집에 데려다줌",
-          "mood": "FRIENDLY",
-          "tense": "PAST"
-        },
-        {
-          "source": "강진우",
-          "name": "담배",
-          "display": "끊음",
-          "mood": "NEUTRAL",
-          "tense": "PAST"
-        },
-        {
-          "source": "강진우",
-          "name": "보육원",
-          "display": "아이들과 부대낌",
-          "mood": "NEUTRAL",
-          "tense": "PAST"
-        },
-        {
-          "source": "강진우",
-          "name": "마경",
-          "display": "과거의 안식처",
-          "mood": "NEUTRAL",
-          "tense": "PAST"
-        },
-        {
-          "source": "강진우",
-          "name": "천무진",
-          "display": "그리움",
-          "mood": "FRIENDLY",
-          "tense": "CURRENT"
-        },
-        {
-          "source": "강진우",
-          "name": "천무진",
-          "display": "기억",
-          "mood": "NEUTRAL",
-          "tense": "PAST"
-        },
-        {
-          "source": "강진우",
-          "name": "천세희",
-          "display": "생각",
-          "mood": "NEUTRAL",
-          "tense": "CURRENT"
-        },
-        {
-          "source": "강진우",
-          "name": "천무진의 유품",
-          "display": "전달해야 할 짐",
-          "mood": "NEUTRAL",
-          "tense": "CURRENT"
-        }
-      ],
-      "disappear": []
-    },
     "isScripted": true,
+    "chapterPath": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/18화_(book)18화",
+    "actTitle": "1막_퇴역병사의 귀환",
     "chapterTitle": "18화_(book)18화",
     "chapterNumber": 18
   },
   {
     "id": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/19화_(book)19화/SCENE-1.md",
-    "fileName": "SCENE-1.md",
-    "sceneNumber": 1,
+    "path": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/19화_(book)19화/SCENE-1.md",
     "title": "반복",
+    "sceneNumber": 1,
     "summary": "강진우는 일상적인 반복 속에서 안전과 평화를 느끼며 변화된 삶에 적응해간다. 사우나, 러닝, 영물원, 보육원, 한예린과의 만남 등 다양한 활동을 통해 과거의 전사에서 평범한 일상인으로 변화하는 모습을 보여준다. 주변 사람들과의 관계가 점차 깊어지고, 반복되는 일상 속에서 삶의 의미를 찾아가는 과정을 그린다.",
     "characters": [
       "강진우",
@@ -4100,103 +994,17 @@
       "철진이",
       "민수"
     ],
-    "delta": {
-      "appear": [
-        "강진우",
-        "한예린",
-        "김민규",
-        "김중헌",
-        "뇌전 오소리",
-        "철진이",
-        "민수"
-      ],
-      "update": [
-        {
-          "name": "강진우",
-          "changes": {
-            "status": "ALIVE",
-            "role": "전사",
-            "affiliation": "UNKNOWN",
-            "mental": "평온함",
-            "action": "일상 생활 적응"
-          }
-        },
-        {
-          "name": "한예린",
-          "changes": {
-            "status": "ALIVE",
-            "role": "트레이너",
-            "affiliation": "UNKNOWN",
-            "mental": "긍정적",
-            "action": "진우와 함께 훈련"
-          }
-        },
-        {
-          "name": "뇌전 오소리",
-          "changes": {
-            "status": "ALIVE",
-            "role": "영물",
-            "affiliation": "영물원",
-            "mental": "애정",
-            "action": "진우에게 애착"
-          }
-        }
-      ],
-      "relations": [
-        {
-          "source": "강진우",
-          "name": "한예린",
-          "display": "함께 훈련하며 관계 발전",
-          "mood": "FRIENDLY",
-          "tense": "CURRENT"
-        },
-        {
-          "source": "강진우",
-          "name": "김민규",
-          "display": "친근한 관계 형성",
-          "mood": "FRIENDLY",
-          "tense": "CURRENT"
-        },
-        {
-          "source": "강진우",
-          "name": "김중헌",
-          "display": "사육사로서 협력 관계",
-          "mood": "NEUTRAL",
-          "tense": "CURRENT"
-        },
-        {
-          "source": "강진우",
-          "name": "뇌전 오소리",
-          "display": "애착 관계 형성",
-          "mood": "FRIENDLY",
-          "tense": "CURRENT"
-        },
-        {
-          "source": "강진우",
-          "name": "철진이",
-          "display": "친밀한 관계",
-          "mood": "FRIENDLY",
-          "tense": "CURRENT"
-        },
-        {
-          "source": "강진우",
-          "name": "민수",
-          "display": "보육원 아이들과 교류",
-          "mood": "FRIENDLY",
-          "tense": "CURRENT"
-        }
-      ],
-      "disappear": []
-    },
     "isScripted": true,
+    "chapterPath": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/19화_(book)19화",
+    "actTitle": "1막_퇴역병사의 귀환",
     "chapterTitle": "19화_(book)19화",
     "chapterNumber": 19
   },
   {
     "id": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/19화_(book)19화/SCENE-2.md",
-    "fileName": "SCENE-2.md",
-    "sceneNumber": 2,
+    "path": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/19화_(book)19화/SCENE-2.md",
     "title": "하수구 속의 몰락",
+    "sceneNumber": 2,
     "summary": "철기 길드의 몰락한 마스터 박철기가 하수구에서 마물 숭배자에게 발견되어 구원을 갈망하지만, 오히려 이용당하는 상황에 놓인다. 강진우에 대한 복수심에 사로잡혀 영혼을 팔더라도 복수를 다짐하지만, 결국 공포에 휩싸여 마물 숭배자에게 붙잡힌다.",
     "characters": [
       "박철기",
@@ -4205,110 +1013,58 @@
       "구상웅",
       "뱀주교"
     ],
-    "delta": {
-      "appear": [
-        "박철기",
-        "강진우",
-        "한예린",
-        "구상웅",
-        "마물 숭배자",
-        "뱀주교",
-        "협회",
-        "경찰"
-      ],
-      "update": [
-        {
-          "name": "박철기",
-          "changes": {
-            "status": "CAPTURED",
-            "role": "전 길드장",
-            "affiliation": "마물 숭배자",
-            "mental": "광기, 복수심, 절망",
-            "action": "몰락, 추적, 협상 시도, 붙잡힘"
-          }
-        }
-      ],
-      "relations": [
-        {
-          "source": "박철기",
-          "name": "강진우",
-          "display": "강진우에 대한 증오",
-          "mood": "HOSTILE",
-          "tense": "CURRENT"
-        },
-        {
-          "source": "박철기",
-          "name": "한예린",
-          "display": "한예린에 대한 증오",
-          "mood": "HOSTILE",
-          "tense": "CURRENT"
-        },
-        {
-          "source": "박철기",
-          "name": "구상웅",
-          "display": "구상웅을 이용한 관계",
-          "mood": "NEUTRAL",
-          "tense": "PAST"
-        },
-        {
-          "source": "박철기",
-          "name": "마물 숭배자",
-          "display": "구원 갈망",
-          "mood": "NEUTRAL",
-          "tense": "CURRENT"
-        },
-        {
-          "source": "마물 숭배자",
-          "name": "박철기",
-          "display": "이용 가치 평가",
-          "mood": "NEUTRAL",
-          "tense": "CURRENT"
-        },
-        {
-          "source": "마물 숭배자",
-          "name": "구상웅",
-          "display": "구상웅 죽음에 대한 불만",
-          "mood": "HOSTILE",
-          "tense": "PAST"
-        },
-        {
-          "source": "마물 숭배자",
-          "name": "뱀주교",
-          "display": "뱀주교에 대한 충성",
-          "mood": "FRIENDLY",
-          "tense": "CURRENT"
-        },
-        {
-          "source": "박철기",
-          "name": "협회",
-          "display": "추적 대상",
-          "mood": "HOSTILE",
-          "tense": "CURRENT"
-        },
-        {
-          "source": "박철기",
-          "name": "경찰",
-          "display": "추적 대상",
-          "mood": "HOSTILE",
-          "tense": "CURRENT"
-        }
-      ],
-      "disappear": []
-    },
     "isScripted": true,
+    "chapterPath": "NovelBibleWiki/EX급 귀환자/10_Plot/1막_퇴역병사의 귀환/19화_(book)19화",
+    "actTitle": "1막_퇴역병사의 귀환",
     "chapterTitle": "19화_(book)19화",
     "chapterNumber": 19
   },
   {
     "id": "NovelBibleWiki/EX급 귀환자/10_Plot/2막_퇴역병사의 사회 적응/26화_집 구매/26화.집 구매 - SCENE1.md",
-    "fileName": "26화.집 구매 - SCENE1.md",
-    "sceneNumber": 1,
+    "path": "NovelBibleWiki/EX급 귀환자/10_Plot/2막_퇴역병사의 사회 적응/26화_집 구매/26화.집 구매 - SCENE1.md",
     "title": "26화.집 구매 - SCENE1",
+    "sceneNumber": 1,
     "summary": "",
     "characters": [],
-    "delta": null,
     "isScripted": false,
+    "chapterPath": "NovelBibleWiki/EX급 귀환자/10_Plot/2막_퇴역병사의 사회 적응/26화_집 구매",
+    "actTitle": "2막_퇴역병사의 사회 적응",
     "chapterTitle": "26화_집 구매",
     "chapterNumber": 26
+  },
+  {
+    "id": "NovelBibleWiki/EX급 귀환자/10_Plot/3막_고동휘 바보/1화_테스트1/SCENE-1.md",
+    "path": "NovelBibleWiki/EX급 귀환자/10_Plot/3막_고동휘 바보/1화_테스트1/SCENE-1.md",
+    "title": "Log_002_귀환",
+    "sceneNumber": 1,
+    "summary": "진우가 인천공항에 귀환하여 그렘린 늑대의 게이트를 은밀히 제압한다. 과거의 동료들을 떠올리며 씁쓸함을 느끼고, 재개발로 인해 사라진 옛집을 방문한 후 갈 곳 없는 신세가 되어 뒷골목으로 향한다.",
+    "characters": [
+      "강진우",
+      "그렘린 늑대",
+      "초보 헌터 셋",
+      "남자아이",
+      "어머니"
+    ],
+    "isScripted": true,
+    "chapterPath": "NovelBibleWiki/EX급 귀환자/10_Plot/3막_고동휘 바보/1화_테스트1",
+    "actTitle": "3막_고동휘 바보",
+    "chapterTitle": "1화_테스트1",
+    "chapterNumber": 1
+  },
+  {
+    "id": "NovelBibleWiki/EX급 귀환자/10_Plot/3막_고동휘 바보/1화_테스트1/SCENE-2.md",
+    "path": "NovelBibleWiki/EX급 귀환자/10_Plot/3막_고동휘 바보/1화_테스트1/SCENE-2.md",
+    "title": "청호 고시원",
+    "sceneNumber": 2,
+    "summary": "강진우가 새로운 거처로 청호 고시원을 선택하고 입실한다. 고시원 총무 한예린은 그를 장수 고시생으로 오해하며 안내한다. 진우는 불안정한 심리 상태로 인해 침대 대신 바닥에서 백색 소음을 들으며 잠을 청한다.",
+    "characters": [
+      "강진우",
+      "한예린"
+    ],
+    "isScripted": true,
+    "chapterPath": "NovelBibleWiki/EX급 귀환자/10_Plot/3막_고동휘 바보/1화_테스트1",
+    "actTitle": "3막_고동휘 바보",
+    "chapterTitle": "1화_테스트1",
+    "chapterNumber": 1
   }
 ]

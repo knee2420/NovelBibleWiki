@@ -21,14 +21,29 @@ function App(): ReactElement {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        console.log('[App] Starting fetch...');
         // @ts-ignore
-        const data = await window.api.getWikiData()
-        setWikiData(data)
+        if (!window.api) {
+           console.error('[App] window.api is missing!');
+           return;
+        }
+        
         // @ts-ignore
-        const scenes = await window.api.getTimelineFlat()
-        setSceneData(scenes)
+        const data = await window.api.getWikiData();
+        console.log('[App] Wiki Data received:', data);
+        
+        if (Array.isArray(data)) {
+           setWikiData(data);
+        } else {
+           console.error('[App] Wiki Data is not an array:', data);
+        }
+
+        // @ts-ignore
+        const scenes = await window.api.getTimelineFlat();
+        console.log('[App] Scenes received:', scenes);
+        setSceneData(scenes || []);
       } catch (error) {
-        console.error(error)
+        console.error('[App] Fetch error:', error);
       }
     }
     fetchData()
@@ -122,8 +137,25 @@ function App(): ReactElement {
     }
   }
 
+  // [DEBUG] Web Mode Indicator
+  // @ts-ignore
+  const isWebMode = !window.electron;
+
   return (
     <WikiLayout currentPage={currentPage} onNavigate={setCurrentPage}>
+       {isWebMode && wikiData.length === 0 && (
+         <div className="fixed top-20 left-1/2 -translate-x-1/2 bg-red-500/90 text-white px-6 py-3 rounded-lg shadow-xl z-50 text-center animate-pulse">
+            <h3 className="font-bold text-lg mb-1">⚠️ Web Mode: No Data Found</h3>
+            <p className="text-sm">Run <code>npm run generate-data</code> and ensure public/data exists.</p>
+            <button 
+               onClick={() => window.location.reload()}
+               className="mt-2 bg-white text-red-600 px-3 py-1 rounded text-xs font-bold hover:bg-gray-100"
+            >
+               Reload Page
+            </button>
+         </div>
+       )}
+
       {renderContent()}
       {selectedEntry && (
         <WikiDetailModal

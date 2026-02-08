@@ -63,11 +63,22 @@ function generateWikiData() {
           // Let's use the file path relative to 'public'.
           const relativePath = path.relative(PUBLIC_ROOT, fullPath).replace(/\\/g, '/');
 
-          const entry = {
+            // Fix Image Path for Web
+            // Transform "./99_Assets/..." to "/NovelBibleWiki/EX급 귀환자/99_Assets/..."
+            let imagePath = data.image;
+            if (imagePath && typeof imagePath === 'string') {
+                 if (imagePath.startsWith('./99_Assets')) {
+                     imagePath = imagePath.replace('./99_Assets', '/NovelBibleWiki/EX급 귀환자/99_Assets');
+                 } else if (imagePath.startsWith('99_Assets')) {
+                     imagePath = '/NovelBibleWiki/EX급 귀환자/' + imagePath;
+                 }
+            }
+
+            const entry = {
             id: relativePath, // Used as ID on web
             name: data.name || item.name.replace('.md', ''),
             type: data.type || type || 'other',
-            image: data.image || null, // Ensure this is relative path
+            image: imagePath || null, // Ensure this is relative path
             tags: data.tags || [],
             content: body,
             // Wiki specific fields (Character, etc.)
@@ -114,118 +125,163 @@ function generateWikiData() {
 // ==========================================
 // 2. GENERATE PLOT DATA (plot.json)
 // ==========================================
+// ==========================================
+// 2. GENERATE PLOT DATA (plot.json & scenes.json)
+// ==========================================
 function generatePlotData() {
-  console.log('Generating Plot Data...');
+  console.log('Generating Plot Data (Hierarchical & Flat)...');
   const plotDir = path.join(PROJECT_ROOT, '10_Plot');
   
   if (!fs.existsSync(plotDir)) {
       console.warn(`Plot directory not found: ${plotDir}`);
-      return [];
+      return;
   }
 
-  let allChapters = [];
+  // Helper to parse a Scene file
+  function parseScene(filePath) {
+      const content = fs.readFileSync(filePath, 'utf-8');
+      const { data, content: body } = matter(content);
+      const nameMatch = path.basename(filePath).match(/SCENE\s*[-_]?\s*(\d+)/i);
+      
+      const relativePath = path.relative(PUBLIC_ROOT, filePath).replace(/\\/g, '/');
 
-  // Recursive Scan Function (matches plotHandler.ts logic)
-  function recursiveScan(dirPath, depth = 0) {
-    if (depth > 7) return [];
-    
-    const dirName = path.basename(dirPath);
-    if (dirName.startsWith('.') || dirName === 'node_modules') return [];
-    
-    let chapters = [];
-    
-    try {
-      const items = fs.readdirSync(dirPath, { withFileTypes: true });
-      const mdFiles = items.filter(f => !f.isDirectory() && f.name.endsWith('.md'));
-      
-      // Check if current folder is a Chapter
-      const isChapterFolder = dirName.match(/^(\d+)화_/) || dirName.toLowerCase().includes('chapter');
-      // Or matches pattern: contains scene files
-      
-      const scenes = [];
-      
-      // Parse Scenes if md files exist
-      if (mdFiles.length > 0) {
-          for (const file of mdFiles) {
-              const filePath = path.join(dirPath, file.name);
-              const content = fs.readFileSync(filePath, 'utf-8');
-              const { data, content: body } = matter(content);
-              
-              const nameMatch = file.name.match(/SCENE\s*[-_]?\s*(\d+)/i);
-              const isSceneType = data.type === 'scene';
-              
-              if (nameMatch || isSceneType) {
-                  const sceneNum = nameMatch ? parseInt(nameMatch[1]) : (data.scene || 999);
-                  const relativePath = path.relative(PUBLIC_ROOT, filePath).replace(/\\/g, '/');
+      return {
+          id: relativePath, // logical ID
+          path: relativePath, // file path for opening
+          title: data.title || path.basename(filePath).replace('.md', ''),
+          sceneNumber: nameMatch ? parseInt(nameMatch[1]) : (data.scene || 999),
+          summary: data.summary || body.slice(0, 100).trim(),
+          characters: data.characters || [],
+          // Web-specific: include raw stats/tags if needed
+          isScripted: body.trim().length > 50,
+          chapterPath: path.dirname(relativePath)
+      };
+  }
 
-                  scenes.push({
-                      id: relativePath,
-                      fileName: file.name,
-                      sceneNumber: sceneNum,
-                      // We will fill chapterTitle/Number later in flatMap
-                      title: data.title || file.name.replace('.md', ''),
-                      summary: data.summary || body.slice(0, 100).trim(),
-                      characters: data.characters || [],
-                      delta: data['wiki-data'] || null,
-                      isScripted: body.trim().length > 50,
-                  });
+  // 1. Scan for Acts (Top-level directories)
+  const rootItems = fs.readdirSync(plotDir, { withFileTypes: true });
+  const acts = [];
+  const uncategorizedChapters = [];
+
+  // Sort items to ensure order
+  rootItems.sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true }));
+
+  for (const item of rootItems) {
+      if (item.isDirectory()) {
+          // Check if it's an Act (e.g., "1막_...")
+          const actMatch = item.name.match(/^(\d+)막_/);
+          if (actMatch) {
+              const actPath = path.join(plotDir, item.name);
+              const actNumber = parseInt(actMatch[1]);
+              
+              // Scan Chapters within Act
+              const chapterItems = fs.readdirSync(actPath, { withFileTypes: true });
+              const chapters = [];
+              
+              chapterItems.sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true }));
+
+              for (const cItem of chapterItems) {
+                  if (cItem.isDirectory()) {
+                      const chapterPath = path.join(actPath, cItem.name);
+                      // Check if it's a Chapter (e.g., "1화_...")
+                      const chapMatch = cItem.name.match(/^(\d+)화_/);
+                      
+                      // Scan Scenes within Chapter
+                      const sceneItems = fs.readdirSync(chapterPath, { withFileTypes: true })
+                          .filter(f => f.name.endsWith('.md'));
+                      
+                      sceneItems.sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true }));
+                      
+                      const scenes = sceneItems.map(s => parseScene(path.join(chapterPath, s.name)));
+
+                      chapters.push({
+                          id: path.relative(PUBLIC_ROOT, chapterPath).replace(/\\/g, '/'),
+                          title: cItem.name,
+                          chapterNumber: chapMatch ? parseInt(chapMatch[1]) : 999,
+                          path: path.relative(PUBLIC_ROOT, chapterPath).replace(/\\/g, '/'),
+                          scenes: scenes
+                      });
+                  }
+              }
+
+              acts.push({
+                  id: path.relative(PUBLIC_ROOT, actPath).replace(/\\/g, '/'),
+                  actNumber: actNumber,
+                  title: item.name,
+                  path: path.relative(PUBLIC_ROOT, actPath).replace(/\\/g, '/'),
+                  chapters: chapters
+              });
+
+          } else {
+              // It's a directory but likely a Chapter at root level (Uncategorized)
+              // Logic similar to Chapter scanning above...
+              // user might organize flatly. 
+              // For now, let's treat root folders as loose columns if they have scenes.
+              const chapterPath = path.join(plotDir, item.name);
+               const sceneItems = fs.readdirSync(chapterPath, { withFileTypes: true })
+                  .filter(f => f.name.endsWith('.md'));
+              
+              if (sceneItems.length > 0) {
+                   const scenes = sceneItems.map(s => parseScene(path.join(chapterPath, s.name)));
+                   uncategorizedChapters.push({
+                      id: path.relative(PUBLIC_ROOT, chapterPath).replace(/\\/g, '/'),
+                      title: item.name,
+                      chapterNumber: 999,
+                      path: path.relative(PUBLIC_ROOT, chapterPath).replace(/\\/g, '/'),
+                      scenes: scenes
+                   });
               }
           }
       }
-      
-      if (scenes.length > 0 || isChapterFolder) {
-          const numMatch = dirName.match(/(\d+)/);
-          chapters.push({
-              path: dirPath,
-              chapterNumber: numMatch ? parseInt(numMatch[0]) : 999,
-              title: dirName,
-              scenes: scenes.sort((a, b) => a.sceneNumber - b.sceneNumber)
-          });
-      }
-      
-      // Recurse
-      const subDirs = items.filter(d => d.isDirectory());
-      for (const sub of subDirs) {
-          chapters = chapters.concat(recursiveScan(path.join(dirPath, sub.name), depth + 1));
-      }
-      
-    } catch (e) {
-        console.error(`Error scanning ${dirPath}:`, e.message);
-    }
-    
-    return chapters;
   }
 
-  // 1. Scan
-  allChapters = recursiveScan(plotDir);
+  // If there are uncategorized chapters, create a dummy Act
+  if (uncategorizedChapters.length > 0) {
+      acts.push({
+          id: 'uncategorized',
+          actNumber: 999,
+          title: '미분류',
+          path: '',
+          chapters: uncategorizedChapters
+      });
+  }
   
-  // 2. Flatten (simulating getTimelineFlat)
-  const allScenes = allChapters.flatMap(chapter => {
-      return chapter.scenes.map(scene => ({
-          ...scene,
-          chapterTitle: chapter.title,
-          chapterNumber: scene.chapterNumber ?? chapter.chapterNumber ?? 1
-      }));
-  });
-  
-  // 3. Filter valid scenes (with delta/wiki-data? The original code filtered delta!==null, 
-  // but for browsing access we might want all scenes. 
-  // The PlotDashboard needs all scenes. The original 'getTimelineFlat' filtered?
-  // Let's re-read plotHandler.ts:
-  // "const timelineScenes = allScenes.filter((scene) => scene.delta !== null)" 
-  // Wait, if it strictly filters for delta !== null, scenes without analysis won't show.
-  // But maybe that's intended for the "Timeline" view. 
-  // However, PlotDashboard usually shows cards. 
-  // Let's assume we want ALL scenes for the web "Reader" view.
-  // I will INCLUDE all scenes for now.
-  
-  const finalScenes = allScenes.sort((a, b) => {
-      if (a.chapterNumber !== b.chapterNumber) return a.chapterNumber - b.chapterNumber;
-      return a.sceneNumber - b.sceneNumber;
+  // Sort Acts
+  acts.sort((a, b) => a.actNumber - b.actNumber);
+
+  // 2. Generate Flat Scenes List (for Timeline/Board) from the hierarchical data
+  const flatScenes = [];
+  acts.forEach(act => {
+      act.chapters.forEach(chapter => {
+          chapter.scenes.forEach(scene => {
+              flatScenes.push({
+                  ...scene,
+                  actTitle: act.title,
+                  chapterTitle: chapter.title,
+                  chapterNumber: chapter.chapterNumber
+              });
+          });
+      });
   });
 
-  console.log(`Scenes Found: ${finalScenes.length}`);
-  fs.writeFileSync(path.join(DIST_DIR, 'plot.json'), JSON.stringify(finalScenes, null, 2));
+  console.log(`Acts Found: ${acts.length}`);
+  console.log(`Total Scenes: ${flatScenes.length}`);
+
+  // Write plot.json (Hierarchical for PlotDashboard)
+  fs.writeFileSync(path.join(DIST_DIR, 'plot.json'), JSON.stringify(acts, null, 2));
+  
+  // Write scenes.json (Flat for Timeline - optional, but useful if we split logic)
+  // note: webWikiService.getTimelineFlat currently fetches plot.json! 
+  // We need to either:
+  // A) Change webWikiService to fetch separate files
+  // B) Keep plot.json as flat and use acts.json for PlotDashboard?
+  //
+  // Recommendation:
+  // Use `acts.json` for PlotDashboard (hierarchical)
+  // Use `plot.json` for general flattened usage (backward compat with current getTimelineFlat)
+  
+  fs.writeFileSync(path.join(DIST_DIR, 'acts.json'), JSON.stringify(acts, null, 2));
+  fs.writeFileSync(path.join(DIST_DIR, 'plot.json'), JSON.stringify(flatScenes, null, 2)); // Restore flat structure to plot.json
 }
 
 // RUN

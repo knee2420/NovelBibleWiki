@@ -11,6 +11,8 @@ export default defineConfig({
         '@renderer': resolve('src/renderer/src')
       }
     },
+    // Explicitly set public directory for web assets
+    publicDir: resolve('public'), 
     plugins: [react()]
   }
 })
