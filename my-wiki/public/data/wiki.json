@@ -1,0 +1,1180 @@
+[
+  {
+    "id": "NovelBibleWiki/EX급 귀환자/20_Wiki/00_Draft/고동휘.md",
+    "name": "고동휘",
+    "type": "character",
+    "image": "./99_Assets/images/Hazen.jpg",
+    "tags": [
+      "작가",
+      "멍청이",
+      "씹새"
+    ],
+    "content": "# 고동휘\r\n\r\n이 작품의 작가\r\n\r\n평소에도 항상 멍청한 표정을 짓고 있다\r\n멍청한 것이 특기이다\r\n\r\n### 습성\r\n1. 항상 누워있음\r\n2. 배를 까서 보여주는 것이 취미\r\n3. 멍청하다\r\n4. 배를 벅벅 긁으면서 다른 사람 성질을 긁기\r\n5. 끼엑x3 거림\r\n6. 마사지 볼, 폼롤러 등 마사지 애착인형 소지\r\n\r\n### 어록\r\n1. 뭐??? 스트레스 많이 받을거야? 씨발\r\n2. 좋은 스트레스렌다 시발. 필요하단다 시발\r\n3. (정면으로 삿대질을 하며 눈을 부릅뜨고) 그런 스트레스도 필요해 시발\r\n4. 본인이 졸라 긁어놓고 정작 선을 넘은 적이 없다고 함. 개띠꺼운 면상으로\r\n```\r\n5. \"그래그래\r\n[오후 2:07]불쌍하니까\r\n[오후 2:07]재밌었다 우와아아\" - 라고 함 미친넘이\r\n```\r\n6. 못 된게 니 놈이 괴로웠으면 좋겠다고 함\r\n7. 먹으면 먹지\r\n",
+    "info": {
+      "alias": "씹새, 쌍놈새끼, 죽어라",
+      "title": "고동휘",
+      "type": "character",
+      "tags": [
+        "작가",
+        "멍청이",
+        "씹새"
+      ],
+      "created": "2026-02-01T00:00:00.000Z",
+      "age": "34",
+      "gender": "male",
+      "face": "ugly",
+      "image": "./99_Assets/images/Hazen.jpg",
+      "trait": "멍청함"
+    }
+  },
+  {
+    "id": "NovelBibleWiki/EX급 귀환자/20_Wiki/00_Draft/노란 꽃핀.md",
+    "name": "노란 꽃핀",
+    "type": "item",
+    "image": "./99_Assets/images/화면 캡처 2026-02-01 194912.png",
+    "tags": [
+      "draft"
+    ],
+    "content": "# 노란 꽃핀\r\n\r\n새로운 문서입니다.\r\n",
+    "info": {
+      "title": "노란 꽃핀",
+      "type": "item",
+      "tags": [
+        "draft"
+      ],
+      "created": "2026-01-30T00:00:00.000Z",
+      "image": "./99_Assets/images/화면 캡처 2026-02-01 194912.png"
+    }
+  },
+  {
+    "id": "NovelBibleWiki/EX급 귀환자/20_Wiki/00_Draft/녹명가.md",
+    "name": "녹명가",
+    "type": "faction",
+    "image": "./99_Assets/images/화면 캡처 2026-02-01 201919.png",
+    "tags": [],
+    "content": "# 녹명가\r\n\r\n새로운 문서입니다.\r\n",
+    "info": {
+      "title": "녹명가",
+      "type": "faction",
+      "tags": [],
+      "created": "2026-02-01T00:00:00.000Z",
+      "image": "./99_Assets/images/화면 캡처 2026-02-01 201919.png"
+    }
+  },
+  {
+    "id": "NovelBibleWiki/EX급 귀환자/20_Wiki/00_Draft/녹시우&녹시연.md",
+    "name": "녹시우&녹시연",
+    "type": "character",
+    "image": "./99_Assets/images/Hazen.jpeg",
+    "tags": [
+      "강형욱",
+      "동물애호가"
+    ],
+    "content": "\n# 녹시우&녹시연\n\n새로운 문서입니다.\n\n졸라 쾌적하네\n",
+    "info": {
+      "role": "학생",
+      "grade": "MINOR",
+      "status": "ALIVE",
+      "alias": "녹시우, 녹시연, 쌍둥이",
+      "relations": [
+        {
+          "name": "강진우",
+          "display": "쩔어주는 아저씨",
+          "mood": "FRIENDLY",
+          "tense": "CURRENT"
+        }
+      ],
+      "name": "녹시우&녹시연",
+      "affiliation": "녹명가",
+      "type": "character",
+      "tags": [
+        "강형욱",
+        "동물애호가"
+      ],
+      "created": "2026-01-30T00:00:00.000Z",
+      "image": "./99_Assets/images/Hazen.jpeg",
+      "age": "14"
+    }
+  },
+  {
+    "id": "NovelBibleWiki/EX급 귀환자/20_Wiki/1.Characters/강진우.md",
+    "name": "강진우",
+    "type": "character",
+    "image": "./99_Assets/images/Gemini_Generated_Image_hgzguwhgzguwhgzg.png",
+    "tags": [
+      "먼치킨",
+      "PTSD",
+      "무능력자",
+      "고스트"
+    ],
+    "content": "[이미지 원본]\n./99_Assets/images/Gemini_Generated_Image_wftt3wftt3wftt3w.png\n\n\n### 강진우 (Protagonist)\n\n### Source: [[1화.이름 없는 영웅 - SCENE2]]\n\n- **신분:** 병장 (Sergeant). 코드네임 '고스트'.\n- **이명:** **[[아지다하카]]** (Azhi Dahaka). [[카이저]]가 \"천하의 아지다하카\"라고 칭함.\n- **성격/태도:**\n    - 세상을 냉소적으로 바라봄(Cynical).\n    - 돈, 명예, 권력에 관심 없음. 오직 **'전역'**만을 갈망함.\n    - 담배를 즐기며(싸구려), 긴장감 없는 태도로 전장을 관망함.\n- **전투 스타일:** 화려한 마법 대신 투박한 단검과 신체 능력을 사용.\n- **장비:** 도색 벗겨진 구형 강화복(MK-3), 무광 처리된 단검.\n- **칭호/코드:** [[아지다하카]] (이명), [[고스트]] (코드네임)\n- **인물 관계 및 역학 (Relations & Dynamics):**\n    - **[New] 강진우 $\\leftrightarrow$ 카이저:** 계급은 [병장 < 총사령관]이나, 실질적 지위(Status)는 [해결사(갑) > 의뢰인(을)]으로 역전되어 있음.\n    - **[Contrast] 강진우 vs 랭커:**\n        - 랭커: 화려한 이능, 온실 속 화초, 도금 강화복.\n        - 진우: 무능력자(No Mana), 야생의 생존자, 고철 강화복.\n\n### Source: [[1화.이름 없는 영웅 - SCENE3]]\n\n- **전투 능력 (Combat):**\n    - **[은신/기습]:** 등장 시 전장의 소음을 지우고(Sound Erasure), 공간을 접어서(Space Fold) 접근함.\n    - **[심플 이즈 베스트]:** 화려한 이능이나 마력의 빛깔 없이, 수억 번 반복해 깎아낸 **'투박한 찌르기'** 한 방으로 마왕의 외피와 심장을 관통함.\n- **장비 업데이트:**\n    - **[[면갑]]:** 검은 바탕에 붉은 선들이 새겨진 마스크. 정체를 숨기는 용도이자 '아지다하카'의 상징.\n- **성격/태도:**\n    - 마왕 사냥 후 환호나 승리감 없이, 뻐근하다는 듯 어깨를 툭툭 털고 사라짐 (단순 업무 처리 태도).\n- **목표:** [[에레보스]] 처치 완료 후 **'귀환'** 준비.\n\n\n### Source: [[2화.전역,귀환 - SCENE1]]\n\n• 신분 변화 (Status Update):\n    ◦ [전역]: 병장(Sergeant) $\\rightarrow$ 민간인 (Civilian).\n    ◦ 카이저의 파격 제안(최연소 장성 진급, 10대 길드 마스터, [[프라이멀 라인]] 교수직)을 전부 거절하고 '자유'를 택함.\n• 과거 및 동기 (Backstory & Motivation):\n    ◦ [아프리카 10년]: 인류 금지 구역인 **[[검은 사막]]**에서 10년간 마왕급 개체들과 싸우며 생존.\n    ◦ [복수 완료]: 아프리카에 온 유일한 이유였던 마물 숭배 테러 집단 [[발푸르기스의 밤]] (어머니의 원수)을 단신으로 괴멸시킴.\n• 심리 상태 (Psychology):\n    ◦ [Burnout (번아웃)]: 복수라는 목표가 사라진 후 극심한 공허함을 느낌.\n    ◦ [Trauma (트라우마)]: 매일 밤 악몽과 피 냄새에 시달리는 수면 장애 상태. \"평안한 휴식\"이 유일한 갈망임.\n• 인물 관계 및 역학 (Dynamics):\n    ◦ [Deep] 강진우 $\\leftrightarrow$ 카이저:\n        ▪ 단순한 상관과 부하가 아닌, 생사를 나눈 '친우(전우)' 관계.\n        ▪ 카이저가 아끼는 손녀 빈티지 위스키를 함께 마시며 대등한 위치에서 작별함.\n        ▪ [Flag]: \"감당할 수 없는 순간이 오면 연락하라\"는 약속을 남김 (최강의 조력자 확보).\n• 장비/소지품:\n    ◦ [Change]: 낡은 강화복 $\\rightarrow$ 사복 (민간인 복장).\n    ◦ [Item]: 퍼스트 클래스 민항기 티켓 (지옥에서 일상으로의 귀환을 상징).\n    \n[업데이트 요약]\n이제 강진우는 **'전쟁 기계(Soldier)'**에서 **'상처 입은 은퇴자(Retired Veteran)'**로 상태가 변경되었습니다. 2화부터는 한국 사회에 적응하려는 그의 **'민간인 모드'**와, 그를 가만두지 않는 '주변의 위협' 간의 괴리가 핵심 포인트가 될 것입니다.\n\n### Source: [[2화.전역,귀환 - SCENE2]]\n\n- **능력/스펙:**\n    - **[감각]** 과민 상태. 인공 방향제, 커피 냄새, 전자기파 소음 등을 고통스럽게 느낌.\n    - **[습관]** 인파 속에 들어가기 전 주머니, 손, 골반(무기 소지 가능성)을 스캔하여 위협 요소를 파악함.\n    - **[전투 철학]** 형(形)을 버리고 본질만 남김. 화려함보다는 **효율과 살상** 위주.\n- **기술 (Skill):**\n    - **[[압축과 발산]]**: 대기와 마력을 종이 접듯 수천 번 접어 튕겨내는 기술. 비가시(Invisible)의 파동으로 뇌를 파괴함. 동작이 작아 남들 눈에 띄지 않음.\n- **심리 상태:**\n    - **[이질감]** 평화로운 한국 사회(경계심 없는 사람들)를 보며 괴리감을 느낌.\n    - **[상실감]** 어머니와의 추억이 담긴 집이 사라지자 \"돌아갈 곳이 없다\"고 체념함.\n\n\n### Source: [[2화.전역,귀환 - SCENE3]]\n\n- **심리 및 특성 (Traits Timeline)**\n    - **[Scene 03] 생존 본능(Survival Instinct):**\n        - 공간 분석 제1원칙: 퇴로 확보, 사각지대 제거(등 뒤가 막힘), 인기척 감지(방음 안 됨).\n        - 집의 정의: 휴식처가 아닌 **'참호(Trench)'**.\n    - **[Scene 03] PTSD (수면 장애):**\n        - 증상: 푹신한 침대를 '늪'처럼 느끼며 공포감을 느낌. 적막을 견디지 못함.\n        - 해결책: 딱딱한 바닥 + 태아 자세 + 전장 소음(폭격 소리)을 들어야 안심함.\n    - **장비/소지품:** 낡은 군용 더플백, 스마트폰.\n\n### Source: [[3화.실수 - SCENE1]]\n\n- **심리 및 특성 (Traits Timeline)**\n    - **[Ep.03] PTSD 구체화:**\n        - 증상: 행복한 기억이 순식간에 고어(Gore)한 죽음의 이미지로 오버랩됨.\n        - 트라우마 버튼: 동료들의 웃음소리 → 비명소리로 변환.\n    - **[Ep.03] 적응:**\n        - 상태: 한국 생활 1달 차. [[백색 소음]] 어플 삭제(혹은 미사용). 고시원 바닥이 아닌 침대 사용 여부는 불명확하나, 환경에 익숙해짐.\n    - **[Ep.03] 동기 부여:** [[어머니의 기일]] 챙기기.\n\n### Source: [[3화.실수 - SCENE2]]\n\n- **판단력 (Tactics):**\n    - **사회 분석:** 한국의 '군 복무 가산점'과 '영웅 마케팅'을 효율적인 시스템으로 평가.\n    - **실수:** 감정에 치우쳐 희귀 아이템([[로랑 샬루트 22년산]])을 노출하는 실책을 범함.\n\n\n### Source: [[4화.치유, 새로운 경험, 삶 - SCENE1]]\n\n- **화법 (Social Skill):**\n    - **방어 기제:** 거짓말을 할 때 '담백한 사실'에 '약간의 살'만 붙임. 감정을 숨기지 않고 드러내어 상대의 의심을 무력화함.\n- **관계:** 천무진을 '유쾌하고 헛소리 잘하는 사람'으로 기억함 (천세희의 상상과 대비됨).\n\n\n### Source: [[4화.치유, 새로운 경험, 삶 - SCENE2]]\n\n- **심리 상태 (Mental State):**\n    - **이물질감:** 평화로운 사회에 적응하지 못하는 자신을 '이물질'로 정의함.\n    - **전환점:** 고통 속에서 시간을 허비하는 것을 '아깝다'고 판단. 치유를 위한 첫걸음(전화)을 뗌.\n- **취향:**\n    - **음식:** 김치찌개의 맵고 짠 자극에서 '살아있음'과 '온기'를 느낌. (전투식량 트라우마의 반작용).\n\n### Source: [[4화.치유, 새로운 경험, 삶 - SCENE3]]\n\n- 관계 발전:\n\t- 한예린 : 뒷골목에서 부랑배들에게 당하려는 것을 한 번 구해줌\n\n### Source: [[15화.Scene_2 - SCENE2]]\n\n- **역할(Role)**: 구원자\n- **상태(Status)**: ALIVE\n\n### Source: [[15화.Scene_1 - SCENE1]]\n\n- **상태(Status)**: ALIVE\n\n### Source: [[15화.Scene_1 - SCENE1]]\n\n- **역할(Role)**: 직업 체험 방문객 (전직 군인/카이저 부하 시절 경험 보유 AI 보조 장비 착용 중임에도 압도적 능력 보여줌 강철 뿔 엘크를 복종시킴 은빛 멧돼지와 삼미호 등도 순식간에 진정시킴 아프리카 영물들과의 경험으로 영물 다루는 법을 터득함 영물들을 '착하다'고 평가함 녹명가의 선임 드루이드 김중헌으로부터 천재라는 평가를 받음 아프리카 마경 검은 사막에서의 경험이 드러남 녹명가 본가에서도 탐낼 만한 존재감을 지님 C구역으로 이동하여 다음 시험을 앞두고 있음 강진우 본인은 이 모든 것을 담담하게 받아들임 녹명가의 기대를 모으는 중임 강진우는 영물들을 지배하는 존재감을 보여줌 김중헌이 그를 인재로 낙점함 체험 명목이지만 사실상 실력 증명의 장이 됨 강화복을 착용하고도 유연하게 활동함 녹명가 가문의 위상을 바꿀 수 있는 인물로 비춰짐 윤서준 센터장의 특별 부탁을 받은 귀빈 대우를 받음 평소 겸손하나 능력은 감추기 어려울 정도임 영물들의 개성을 이해하고 그들을 통제함 김중헌의 예상을 뛰어넘는 성과를 거둠 진우는 영물들의 성격을 파악하고 능숙하게 제어함 영물들에게는 공포와 존경의 대상이 됨 김중헌 대리가 인재 확보에 대한 열망을 갖게 만듦 진우는 다음 구역으로 갈 준비를 마침 진우의 재능은 규격 외 수준임 영물들과의 상호작용에서 독보적인 기질을 발휘함 진우는 과거의 경험을 바탕으로 영물들을 다룸 김중헌은 진우를 녹명가의 미래와 연결 지어 생각함 진우는 강화복 MK-3에 익숙한 참전 용사임 영물들의 사나운 본성을 억누르는 기운을 가짐 진우는 본인의 재능에 대해 무심한 태도를 보임 김중헌은 진우를 테스트하기 위해 C구역으로 유도함 진우는 순순히 안내에 따름 김중헌은 진우가 가문의 정점에 도달하게 할 원석이라 믿음 진우의 행동은 김중헌의 가치관을 뒤흔듦 진우는 영물들과 교감하는 것이 아니라 지배하는 것으로 보임 김중헌은 진우를 통해 가문의 영광을 꿈꿈 진우는 영물들에게 먹이를 주고 관리하는 법을 익힘 김중헌은 진우의 정체에 대해 경외감을 느낌 진우는 낡은 장비에 더 익숙함을 느낌 진우는 영물들의 본능적인 복종을 이끌어냄 김중헌의 아이디어에 의해 진우의 일정은 바뀜 진우는 C구역의 도전을 마주하게 됨 진우의 아우라는 영물들을 위축시킴 진우는 평범한 체험객의 수준을 아득히 뛰어넘음 김중헌은 진우의 재능을 본가 쌍둥이와 비교함 진우는 가문의 운명을 바꿀 열쇠로 지목됨 진우는 차분하게 다음 구역으로 향함 영물들은 진우 앞에서 숨을 죽임 진우는 영물 관리원의 전문가들을 당황시킴 김중헌은 진우를 자신의 미래를 걸 인물로 판단함 진우는 묵묵히 자신의 역할을 수행함 진우는 영물들을 복종시킨 후에도 여유로움을 잃지 않음 김중헌은 진우를 안내하며 가슴 벅찬 감정을 느낌 진우의 눈빛은 영물들을 굴복시킴 김중헌은 진우를 3대 가문 이상의 재능으로 평가함 진우는 새로운 장소인 C구역으로 이동함 진우의 등장은 녹명가에 큰 파장을 일으킬 것으로 보임 김중헌은 진우를 전폭적으로 지원하기로 마음먹음 진우는 영물들과 소통하며 상황을 주도함 김중헌은 진우의 행보에 깊은 관심을 보임 진우는 녹명가의 새로운 희망으로 떠오름 진우는 강화복의 보조를 받으며 효율적으로 움직임 김중헌은 진우의 모든 행동에 주목함 진우는 영물들의 습성을 꿰뚫어 보고 있음 김중헌은 진우를 보며 가문의 재흥을 확신함 진우는 긴장을 늦추지 않고 C구역으로 진입함 진우의 재능은 단순한 강함을 넘어선 것임 김중헌은 진우의 존재를 본가에 알릴 계획을 세움 진우는 영물들의 거친 숨소리를 가라앉힘 김중헌은 진우의 안내자 역할을 충실히 수행함 진우는 영물들을 다루는 데 있어 거침이 없음 김중헌은 진우를 시험하는 동시에 보호하려 함 진우의 활약은 영물 관리원 전체에 퍼질 기세임 김중헌은 진우의 잠재력을 무한하다고 느낌 진우는 영물들과의 조우에서 우위를 점함 김중헌은 진우를 녹명가의 보물로 인식함 진우는 다음 단계의 도전을 위해 전진함 진우의 존재감은 영물들의 투지를 꺾음 김중헌은 진우를 통해 자신의 야망을 실현하려 함 진우는 담담히 C구역의 문을 염 진우의 재능은 이미 완성된 상태임 김중헌은 진우의 그림자 아래 가문의 영광을 봄 진우는 영물들의 복종을 자연스럽게 유도함 김중헌은 진우의 특별한 기질에 전율을 느낌 진우는 체험을 넘어선 증명을 하고 있음 김중헌은 진우의 손끝에 가문의 명운을 맡김 진우는 영물들의 오만함을 한순간에 무너뜨림 김중헌은 진우의 뒤를 따르며 미래를 기약함 진우의 존재는 영물 관리원에 새로운 활력을 불어넣음 김중헌은 진우를 위해 C구역의 관문을 열어둠 진우는 영물들의 왕과 같은 위엄을 보여줌 김중헌은 진우의 행보를 본가에 보고할 결심을 함 진우는 다음 전투를 예상하듯 차분하게 움직임 진우의 능력은 영물들에게 각인됨 김중헌은 진우를 녹명가의 새로운 주역으로 인정함 진우는 영물들의 운명을 자신의 손에 쥠 김중헌은 진우의 시험 결과를 초조하게 기다림 진우는 영물들과의 대결에서 승리할 준비가 됨 진우의 아우라는 영물 관리원 전체를 압도함 김중헌은 진우를 보며 가문의 영광을 다시 씀 진우는 영물들의 충성을 한 몸에 받음 김중헌은 진우의 재능에 전적인 신뢰를 보임 진우는 C구역의 도전을 즐기는 듯한 모습을 보임 진우의 행보는 영물 관리원의 역사를 바꿀 것임 김중헌은 진우를 보며 새로운 시대의 개막을 예감함 진우는 영물들의 힘을 자신의 것으로 만듦 김중헌은 진우의 곁에서 가문의 부흥을 노래함 진우는 최강의 영물들마저 굴복시킬 기세임 진우의 재능은 영물 관리원의 상식을 깨뜨림 김중헌은 진우를 가문의 최고의 자산으로 여김 진우는 영물들의 영혼을 울리는 교감을 함 진우의 모습은 영물 관리원 사육사들에게 경이로움을 줌 김중헌은 진우를 통해 자신의 꿈을 실현하려 함 진우는 영물들의 고귀함을 인정하면서도 그들을 지배함 진우의 능력은 가문의 경계를 넘어섬 김중헌은 진우의 성공을 위해 모든 것을 지원함 진우는 다음 구역에서 벌어질 일을 기대함 진우의 재능은 영물 관리원 역사상 최고임 김중헌은 진우의 활약에 깊은 감명을 받음 진우는 영물들을 이끄는 진정한 드루이드의 기질을 보임 진우의 존재는 가문의 서열을 뒤바꿀 힘을 가짐 김중헌은 진우의 성공을 확신함 진우는 영물들과의 관계에서 절대적인 우위를 지킴 진우의 행보는 모두의 기대를 한 몸에 받음 김중헌은 진우의 안내를 멈추지 않음 진우는 영물 관리원의 새로운 전설로 기록될 것임 진우의 능력은 본가의 후계자들마저 위협할 정도임 김중헌은 진우를 보며 가문의 영광을 독식하려 함 진우는 영물들의 투지를 꺾고 순종하게 함 진우의 재능은 영물 관리원의 미래를 밝힘 김중헌은 진우의 결말을 보기 위해 C구역으로 향함 진우는 영물들의 본질을 꿰뚫는 눈을 가짐 진우의 모습은 모두에게 강렬한 인상을 남김 김중헌은 진우를 자신의 파트너로 삼기로 함 진우는 영물들의 세계를 평정할 준비를 마침 진우의 능력은 영물 관리원의 한계를 뛰어넘음 김중헌은 진우의 성장을 지켜보며 기쁨을 느낌 진우는 다음 목적지를 향해 발걸음을 옮김 진우의 재능은 영물 관리원의 모든 이들을 놀라게 함 김중헌은 진우의 그림자 속에서 안식을 찾음 진우는 영물들의 복종을 이끌어내며 승리를 확신함 진우의 능력은 영물 관리원의 질서를 재정립함 김중헌은 진우를 위해 최선을 다해 안내함 진우는 영물들의 마음을 얻으며 상황을 종료함 진우의 활약은 영물 관리원의 자부심이 됨 김중헌은 진우의 능력을 만방에 알릴 계획임 진우는 영물들과의 교감을 통해 자신을 증명함 진우의 재능은 영물 관리원의 빛이 됨 김중헌은 진우를 향한 찬사를 아끼지 않음 진우는 다음 구역의 도전을 마주하며 scene을 마무리함)\n- **상태(Status)**: ALIVE\n\n### Source: [[15화.Scene_1 - SCENE1]]\n\n- **역할(Role)**: 체험객 및 전직 군인\n- **상태(Status)**: ALIVE\n\n### Source: [[16화.Scene_1 - SCENE1]]\n\n- **역할(Role)**: 체험 방문객\n- **상태(Status)**: ALIVE\n\n### Source: [[15화.Scene_1 - SCENE1]]\n\n- **역할(Role)**: 직업 체험자(전직 군인)\n- **상태(Status)**: ALIVE\n\n### Source: [[15화.Scene_1 - SCENE1]]\n\n- **역할(Role)**: 직업 체험자\n- **상태(Status)**: ALIVE\n",
+    "info": {
+      "role": "전직 군인",
+      "grade": "MAIN",
+      "status": "ALIVE",
+      "alias": "아지다하카 (Azhi Dahaka), 진우",
+      "relations": [
+        {
+          "name": "한예린",
+          "display": "러닝 메이트",
+          "mood": "FRIENDLY",
+          "tense": "CURRENT"
+        },
+        {
+          "name": "윤서준",
+          "display": "주치의 / 조력자",
+          "mood": "FRIENDLY",
+          "tense": "CURRENT"
+        },
+        {
+          "name": "박철기",
+          "display": "적 (철기 길드장)",
+          "mood": "HOSTILE",
+          "tense": "CURRENT"
+        },
+        {
+          "name": "천무진",
+          "display": "옛 동료, 형",
+          "mood": "FRIENDLY",
+          "tense": "PAST"
+        },
+        {
+          "name": "천세희",
+          "display": "옛 동료의 동생",
+          "mood": "NEUTRAL",
+          "tense": "CURRENT"
+        },
+        {
+          "name": "카이저",
+          "display": "옛 상관",
+          "mood": "FRIENDLY",
+          "tense": "PAST"
+        },
+        {
+          "name": "에레보스",
+          "display": "사살 대상",
+          "mood": "HOSTILE",
+          "tense": "PAST"
+        },
+        {
+          "name": "김민규",
+          "display": "찜질방 사장님",
+          "mood": "FRIENDLY",
+          "tense": "CURRENT"
+        },
+        {
+          "name": "녹시우&녹시연",
+          "display": "귀찮은 녀석들",
+          "mood": "NEUTRAL",
+          "tense": "CURRENT"
+        },
+        {
+          "name": "뇌전벌꿀오소리",
+          "display": "반려 동물 (?)",
+          "mood": "FRIENDLY",
+          "tense": "CURRENT"
+        },
+        {
+          "name": "무광 단검",
+          "type": "주무기"
+        },
+        {
+          "name": "MK-3",
+          "type": "장비"
+        },
+        {
+          "name": "로랑 살루트",
+          "type": "기호품"
+        },
+        {
+          "name": "노란 꽃핀",
+          "type": "키 아이템"
+        },
+        {
+          "source": "강진우",
+          "name": "그렘린 늑대",
+          "display": "진우가 그렘린 늑대를 제압함",
+          "mood": "HOSTILE",
+          "tense": "CURRENT"
+        },
+        {
+          "source": "강진우",
+          "name": "초보 헌터 셋",
+          "display": "진우가 초보 헌터들의 행동을 지켜봄",
+          "mood": "NEUTRAL",
+          "tense": "CURRENT"
+        },
+        {
+          "source": "강진우",
+          "name": "남자아이",
+          "display": "진우가 남자아이를 구출함",
+          "mood": "FRIENDLY",
+          "tense": "CURRENT"
+        },
+        {
+          "source": "강진우",
+          "name": "어머니",
+          "display": "진우가 어머니를 회상함",
+          "mood": "NEUTRAL",
+          "tense": "PAST"
+        }
+      ],
+      "rank": "예비역 병장 / 해결사",
+      "name": "강진우",
+      "affiliation": "UNKNOWN",
+      "tags": [
+        "먼치킨",
+        "PTSD",
+        "무능력자",
+        "고스트"
+      ],
+      "image": "./99_Assets/images/Gemini_Generated_Image_hgzguwhgzguwhgzg.png",
+      "type": "character",
+      "title": "강진우",
+      "desc": "Auto-generated",
+      "mental": "상실감, 고독",
+      "action": "마물 제압, 과거 회상"
+    }
+  },
+  {
+    "id": "NovelBibleWiki/EX급 귀환자/20_Wiki/1.Characters/구상웅.md",
+    "name": "구상웅",
+    "type": "character",
+    "image": "./99_Assets/images/i16570115951.jpg",
+    "tags": [
+      "마물 숭배자(Fanatic)",
+      "문신(Tattoo)",
+      "청혈의 갑주",
+      "거구(Giant)"
+    ],
+    "content": "\n",
+    "info": {
+      "role": "중간 보스 (Mid-Boss)",
+      "grade": "MINOR",
+      "status": "Deceased (사망)",
+      "relations": [
+        {
+          "name": "강진우",
+          "display": "공포의 대상 / 살해자",
+          "mood": "HOSTILE",
+          "tense": "PAST"
+        },
+        {
+          "name": "한예린",
+          "display": "제거 대상 (실패)",
+          "mood": "HOSTILE",
+          "tense": "PAST"
+        },
+        {
+          "name": "박철기",
+          "display": "고용주 (일시적 협력)",
+          "mood": "NEUTRAL",
+          "tense": "PAST"
+        },
+        {
+          "name": "카트르쿠락",
+          "display": "숭배 대상 (우상)",
+          "mood": "WORSHIP",
+          "tense": "CURRENT"
+        }
+      ],
+      "name": "구상웅",
+      "role_detail": "마물 숭배자 (카트르쿠락의 신도) / 행동대장",
+      "affiliation": "마물 숭배 집단 (부유하는 바다뱀 파벌)",
+      "type": "character",
+      "tags": [
+        "마물 숭배자(Fanatic)",
+        "문신(Tattoo)",
+        "청혈의 갑주",
+        "거구(Giant)"
+      ],
+      "image": "./99_Assets/images/i16570115951.jpg",
+      "title": "구상웅",
+      "desc": "Auto-generated"
+    }
+  },
+  {
+    "id": "NovelBibleWiki/EX급 귀환자/20_Wiki/1.Characters/김민규.md",
+    "name": "김민규",
+    "type": "character",
+    "image": "./99_Assets/images/다운로드 (28).jpg",
+    "tags": [
+      "찜질방사장",
+      "조력자"
+    ],
+    "content": "\n# 김민규\n\n새로운 문서입니다.\n\n### 제목 테스트\n\n[[강진우]] 백링크 테스트\n\n추가\n\n",
+    "info": {
+      "role": "정보 제공 / 조력자",
+      "grade": "MINOR",
+      "status": "Active",
+      "relations": [
+        {
+          "name": "강진우",
+          "display": "단골 손님",
+          "mood": "FRIENDLY",
+          "tense": "CURRENT"
+        }
+      ],
+      "name": "김민규",
+      "type": "character",
+      "tags": [
+        "찜질방사장",
+        "조력자"
+      ],
+      "created": "2026-01-30T00:00:00.000Z",
+      "image": "./99_Assets/images/다운로드 (28).jpg",
+      "age": "58",
+      "desc": "Auto-generated"
+    }
+  },
+  {
+    "id": "NovelBibleWiki/EX급 귀환자/20_Wiki/1.Characters/김중헌.md",
+    "name": "김중헌",
+    "type": "character",
+    "image": "./99_Assets/images/wndgjsel.png",
+    "tags": [],
+    "content": "\n## 개요\n신규 등장한 캐릭터입니다.\n\n\n### Source: [[15화.Scene_1 - SCENE1]]\n\n- **역할(Role)**: 선임 드루이드 (영물 관리원 대리/녹명가 방계 출신/강진우의 안내자/영물 연구 전문가/가문의 위상 회복을 꿈꾸는 야심가/천재를 알아보는 감정사적 안목 보유/과거부터 동물들과 함께 자란 숙련자/윤서준 센터장과 안면이 있음/강진우를 시험하기 위해 C구역으로 안내함/본가 직계 쌍둥이에 대한 자부심과 경쟁심을 동시에 가짐/가문의 미래를 걱정함/강진우의 재능에 경악하며 기회를 포착함/현재 전동 카트를 운전하며 이동 중임/원래는 안전 위주의 체험을 계획했으나 진우의 실력을 보고 계획을 전격 수정함/강진우를 가문의 보물로 여기기 시작함.)\n- **상태(Status)**: ALIVE\n",
+    "info": {
+      "role": "직원",
+      "grade": "MINOR",
+      "status": "ALIVE",
+      "relations": [],
+      "name": "김중헌",
+      "affiliation": "UNKNOWN",
+      "type": "character",
+      "desc": "Auto-generated",
+      "image": "./99_Assets/images/wndgjsel.png",
+      "title": "김중헌",
+      "tags": []
+    }
+  },
+  {
+    "id": "NovelBibleWiki/EX급 귀환자/20_Wiki/1.Characters/남성일.md",
+    "name": "남성일",
+    "type": "character",
+    "image": null,
+    "tags": [
+      "검사(Swordsman)",
+      "C급 헌터",
+      "오만함",
+      "전투력 측정기"
+    ],
+    "content": "\n### 남성일 (Nam Seong-il)\n\n### Source: [[2화.이물질,그리고 개입 - SCENE 9, 10]]\n\n- **신분 및 위치:**\n    - '철기 길드'의 실세 중 하나인 3팀장.\n    - **C급 헌터 라이센스** 보유자. B급 승급을 앞두고 있다는 소문이 돌 정도로 인근 지역에서는 강자로 통함.\n    - 일반 깡패들과 달리 '노멀(일반인)'을 하대하며 선민의식을 가지고 있음.\n\n- **외형 및 장비:**\n    - 말쑥한 정장 차림.\n    - 허리춤에 **장검(Long Sword)**을 패용하고 다님.\n\n- **능력 (Combat):**\n    - **[검기 운용]:** 검날 위로 푸르스름한 마력을 아지랑이처럼 피어오르게 할 수 있음 (마력의 외부 발출).\n    - **[검술]:** 시위용으로 화려한 검풍을 일으키거나, 인체의 근맥을 정확히 노리는 등 정식 훈련을 받은 티가 남.\n\n- **성격/태도:**\n    - **[강약약강]:** 약자인 한예린이나 일반인에게는 잔혹하고 오만하지만, 강진우의 이질적인 분위기에는 잠시 주춤함.\n    - **[방심]:** 진우의 행색(꽃핀, 비닐봉지)을 보고 비웃다가 틈을 보임.\n\n- **주요 행적 (Timeline):**\n    - 청호 고시원 철거를 위해 용역 깡패들을 지휘하여 입구를 점거함.\n    - 강진우를 비웃으며 팔의 근맥을 끊으려 검을 휘두름.\n    - 진우의 **장저(Palm Strike)** 한 방(축구공 차듯 날린 일격)에 명치를 가격당해 허무하게 기절함.",
+    "info": {
+      "role": "악역 (Villain)",
+      "grade": "MINOR",
+      "status": "Stunned",
+      "alias": "남 팀장",
+      "relations": [
+        {
+          "name": "강진우",
+          "display": "정체불명의 괴물 (패배)",
+          "mood": "HOSTILE",
+          "tense": "CURRENT"
+        },
+        {
+          "name": "한예린",
+          "display": "먹잇감 (철거 대상)",
+          "mood": "HOSTILE",
+          "tense": "CURRENT"
+        },
+        {
+          "name": "마석두",
+          "display": "부하 (하청)",
+          "mood": "NEUTRAL",
+          "tense": "CURRENT"
+        },
+        {
+          "name": "박철기",
+          "display": "길드장 (상관)",
+          "mood": "FRIENDLY",
+          "tense": "CURRENT"
+        }
+      ],
+      "name": "남성일",
+      "role_detail": "철기 길드 3팀장 / C급 헌터",
+      "affiliation": "철기 길드",
+      "type": "character",
+      "tags": [
+        "검사(Swordsman)",
+        "C급 헌터",
+        "오만함",
+        "전투력 측정기"
+      ],
+      "image": null
+    }
+  },
+  {
+    "id": "NovelBibleWiki/EX급 귀환자/20_Wiki/1.Characters/남자아이.md",
+    "name": "남자아이",
+    "type": "character",
+    "image": null,
+    "tags": [],
+    "content": "\n## 개요\n\n",
+    "info": {
+      "grade": "EXTRA",
+      "name": "남자아이",
+      "type": "character"
+    }
+  },
+  {
+    "id": "NovelBibleWiki/EX급 귀환자/20_Wiki/1.Characters/뇌전벌꿀오소리.md",
+    "name": "뇌전벌꿀오소리",
+    "type": "character",
+    "image": "./99_Assets/images/벌꿀인성질 - Clipchamp로 제작.gif",
+    "tags": [
+      "영물",
+      "성격파탄",
+      "츤데레"
+    ],
+    "content": "\n\n![[화면 캡처 2026-01-29 164644.png]]\n\n![[Honey Badger vs_ Crested Porcupine.jpeg]]\n\n![[Can Honey Badger Kill Cobra_.jpeg]]\n\n\n",
+    "info": {
+      "role": "영물",
+      "grade": "SUB",
+      "status": "ALIVE",
+      "alias": "썬더 라텔, 뇌전 벌꿀 오소리, 뇌전 오소리",
+      "relations": [
+        {
+          "name": "강진우",
+          "display": "주인(?) / 서열 1위",
+          "mood": "FRIENDLY",
+          "tense": "CURRENT"
+        }
+      ],
+      "name": "뇌전벌꿀오소리",
+      "affiliation": "UNKNOWN",
+      "type": "character",
+      "image": "./99_Assets/images/벌꿀인성질 - Clipchamp로 제작.gif",
+      "tags": [
+        "영물",
+        "성격파탄",
+        "츤데레"
+      ]
+    }
+  },
+  {
+    "id": "NovelBibleWiki/EX급 귀환자/20_Wiki/1.Characters/랭커들.md",
+    "name": "랭커들",
+    "type": "character",
+    "image": null,
+    "tags": [],
+    "content": "### Source: [[1화.이름 없는 영웅 - SCENE1]]\n\n### Source: [[1화.이름 없는 영웅 - SCENE2]]\n\n- **평가 업데이트:**\n    - 카이저 왈: \"영약이나 물처럼 처먹인 온실 속 화초.\"\n    - 강진우 왈: \"우물 밖의 지옥을 구경도 못 해본 애송이들.\"\n    - 피비린내와 포위 상황을 견디지 못하는 정신적 미숙함이 드러남.\n\n",
+    "info": {}
+  },
+  {
+    "id": "NovelBibleWiki/EX급 귀환자/20_Wiki/1.Characters/레오하르트.md",
+    "name": "레오하르트",
+    "type": "character",
+    "image": "./99_Assets/images/다운로드 (2).jpg",
+    "tags": [],
+    "content": "\n\n- **역할:** 1화의 메인 '얼굴마담'이자 가짜 영웅(Fake Hero).\n- **분류:** 등장인물 > 랭커 / 반동 인물(Foil)\n- **이명:** 성기사 (Paladin)\n- **소속:** [[새벽의 방패 길드]] (간판 스타)\n- **외양:** 금발, 푸른 눈. 실전성보다는 화려함을 중시한 금색 도금 [[강화복]] 착용. 항상 망토를 휘날리도록 연출함.\n- **성격:** 전형적인 '쇼 비즈니스 영웅'. 카메라 앞에서는 정의롭고 여유롭지만, 본질은 오만하고 겁이 많음. 자신의 안위와 인기를 최우선으로 함.\n- **주요 행적 (Ep.1):**\n    - [[에레보스]] 토벌 작전의 메인 딜러로 참전.\n    - 카메라를 향해 승리를 장담했으나, 에레보스의 반격에 우측 팔이 절단됨.\n    - 동료와 시민을 버리고 가장 먼저 비명을 지르며 도주 시도.\n- **Writer's Note:** 주인공 강진우와 완벽한 대척점에 있는 인물. '겉만 화려한 가짜'를 대변하며, 그의 몰락은 독자에게 \"이 세계관의 랭커들이 얼마나 썩었는지\"를 단적으로 보여줌.\n\n> **[기본 프로필]**\n> - **이명:** 성기사\n> - **소속:** 새벽의 방패 길드\n\n### Source: [[1화.이름 없는 영웅 - SCENE1]]\n\n- **상태:**\n    - 승리를 확신하며 등장했으나, 에레보스의 반격에 **오른쪽 어깨가 절단됨.**\n    - 전의를 상실하고 비명을 지르며 도주.\n- **외양:**\n    - 금색 도금 강화복 착용.\n    - 실용성보다 보여주기식(망토, 화려한 회로) 디자인.\n- **성격/행동:**\n    - 카메라를 매우 의식함 (쇼맨십).\n    - 위기 상황에서 동료보다 자신의 안위를 챙기는 비겁함 노출.\n- **인물 관계 및 등장 (Relations):**\n    - **[New] 레오하르트 ↔ 에레보스:** 포식자(인 줄 알았던 사냥감) vs 재앙(코스믹 호러).\n    - **[New] 레오하르트 ↔ 대중:** 안심과 승리를 약속하는 영웅이었으나, 비명을 지르며 도망치는 추태를 보임.\n\n### Source: [[1화.이름 없는 영웅 - SCENE2]]\n\n- **평가 업데이트:**\n    - 카이저 왈: \"영약이나 물처럼 처먹인 온실 속 화초.\"\n    - 강진우 왈: \"우물 밖의 지옥을 구경도 못 해본 애송이들.\"\n    - 피비린내와 포위 상황을 견디지 못하는 정신적 미숙함이 드러남.",
+    "info": {
+      "type": "character",
+      "image": "./99_Assets/images/다운로드 (2).jpg"
+    }
+  },
+  {
+    "id": "NovelBibleWiki/EX급 귀환자/20_Wiki/1.Characters/마석두.md",
+    "name": "마석두",
+    "type": "character",
+    "image": null,
+    "tags": [
+      "깡패",
+      "오함마",
+      "근육뇌"
+    ],
+    "content": "\n### 마석두 (Ma Seok-du)\n\n### Source: [[2화.이물질,그리고 개입 - SCENE 8, 9]]\n\n- **신분:**\n    - 철기 길드의 하청을 받아 재개발 구역 철거를 담당하는 용역 깡패들의 행동대장.\n    - 헌터 라이센스는 없으나, 일반인을 압도하는 거구와 완력을 지님.\n\n- **외형 및 장비:**\n    - 위협적인 거구.\n    - **오함마(Sledgehammer)**를 주무기로 사용하며, 이를 한 손으로 가볍게 다룸.\n\n- **성격/태도:**\n    - **[잔혹성]:** 피를 토하는 한예린에게 폭언을 퍼붓고, 얼굴을 향해 망치를 휘두를 정도로 폭력적임.\n    - **[탐욕]:** 보상금을 미끼로 건물을 헐값에 강탈하려 함.\n\n- **주요 행적 (Timeline):**\n    - 한예린을 협박하며 고시원 기물을 파손함.\n    - \"건물과 같이 묻어버리겠다\"며 한예린을 내리치려는 순간, 난입한 강진우에게 일격을 맞고 **거품을 물며 기절**함.\n    - 이후 깨어나지 못하고 진우의 **진각(震脚)**에 확인 사살(기절 유지) 당함.",
+    "info": {
+      "role": "악역 (Villain)",
+      "grade": "MINOR",
+      "status": "Stunned (기절/거품)",
+      "relations": [
+        {
+          "name": "한예린",
+          "display": "협박 대상 (독한 년)",
+          "mood": "HOSTILE",
+          "tense": "CURRENT"
+        },
+        {
+          "name": "강진우",
+          "display": "갑자기 튀어나온 놈",
+          "mood": "HOSTILE",
+          "tense": "CURRENT"
+        },
+        {
+          "name": "남성일",
+          "display": "고용주 (팀장님)",
+          "mood": "FRIENDLY",
+          "tense": "CURRENT"
+        }
+      ],
+      "name": "마석두",
+      "role_detail": "철기 길드 행동대장",
+      "affiliation": "철기 길드",
+      "type": "character",
+      "tags": [
+        "깡패",
+        "오함마",
+        "근육뇌"
+      ],
+      "image": null
+    }
+  },
+  {
+    "id": "NovelBibleWiki/EX급 귀환자/20_Wiki/1.Characters/민수.md",
+    "name": "민수",
+    "type": "character",
+    "image": null,
+    "tags": [],
+    "content": "\n## 개요\n신규 등장한 캐릭터입니다.\n\n\n### Source: [[19화.Scene_1 - SCENE1]]\n\n- **역할(Role)**: Unknown\n",
+    "info": {
+      "role": "Unknown",
+      "grade": "MINOR",
+      "status": "ALIVE",
+      "relations": [],
+      "name": "민수",
+      "type": "character",
+      "desc": "Auto-generated"
+    }
+  },
+  {
+    "id": "NovelBibleWiki/EX급 귀환자/20_Wiki/1.Characters/박 실장.md",
+    "name": "박 실장",
+    "type": "character",
+    "image": "./99_Assets/images/01.41102206.1.jpg",
+    "tags": [],
+    "content": "\n## 개요\n신규 등장한 캐릭터입니다.\n\n\n### Source: [[17화.Scene_3 - SCENE3]]\n\n- **역할(Role)**: 부동산 중개업자\n- **상태(Status)**: ALIVE\n",
+    "info": {
+      "role": "부동산 중개업자",
+      "grade": "MINOR",
+      "status": "ALIVE",
+      "relations": [],
+      "name": "박 실장",
+      "affiliation": "UNKNOWN",
+      "type": "character",
+      "image": "./99_Assets/images/01.41102206.1.jpg",
+      "title": "박 실장",
+      "tags": []
+    }
+  },
+  {
+    "id": "NovelBibleWiki/EX급 귀환자/20_Wiki/1.Characters/박철기.md",
+    "name": "박철기",
+    "type": "character",
+    "image": "./99_Assets/images/Elmo.jpeg",
+    "tags": [
+      "화염 능력자",
+      "열등감",
+      "악역"
+    ],
+    "content": "# 박철기\n\n새로운 문서입니다.\n",
+    "info": {
+      "role": "메인 빌런 (Chapter 1)",
+      "grade": "MINOR",
+      "status": "Active (Hostile)",
+      "relations": [
+        {
+          "name": "강진우",
+          "display": "제거 대상",
+          "mood": "HOSTILE",
+          "tense": "CURRENT"
+        },
+        {
+          "name": "한예린",
+          "display": "먹잇감",
+          "mood": "HOSTILE",
+          "tense": "CURRENT"
+        }
+      ],
+      "name": "박철기",
+      "role_detail": "철기 길드장",
+      "affiliation": "철기 길드 (마물숭배자 하수)",
+      "type": "character",
+      "created": "2026-01-30T00:00:00.000Z",
+      "tags": [
+        "화염 능력자",
+        "열등감",
+        "악역"
+      ],
+      "image": "./99_Assets/images/Elmo.jpeg",
+      "title": "박철기"
+    }
+  },
+  {
+    "id": "NovelBibleWiki/EX급 귀환자/20_Wiki/1.Characters/어머니.md",
+    "name": "어머니",
+    "type": "character",
+    "image": null,
+    "tags": [],
+    "content": "\n## 개요\n\n",
+    "info": {
+      "grade": "MINOR",
+      "name": "어머니",
+      "type": "character"
+    }
+  },
+  {
+    "id": "NovelBibleWiki/EX급 귀환자/20_Wiki/1.Characters/에레보스.md",
+    "name": "에레보스",
+    "type": "character",
+    "image": "./99_Assets/images/다운로드 (26).jpg",
+    "tags": [
+      "마왕",
+      "코스믹호러",
+      "전투력측정기"
+    ],
+    "content": "\n### Source: [[1화.이름 없는 영웅 - SCENE1]]\n\n- **역할:** 재앙(Calamity). 주인공의 강함을 증명할 전투력 측정기.\n- **외양:** 우주의 심연 같은 질감의 검은 인간형. 이목구비 없음.\n- **능력:**\n    - [흡수]: 모든 형태의 마나/물리 공격 무효화.\n    - [공간 파동]: 손가락 튕기기로 결계 파괴 및 광역 살상.\n- **지능:** \"형용할 수 없는 공포\"로 묘사되나, 인간을 벌레 보듯 하는 지성 존재.\n\n- **분류:** 등장인물 > 몬스터 / 마왕\n- **이명:** 칠흑의 재앙, 포식자\n- **등급:** 재앙급 (Calamity Class) - 기존 랭킹 시스템으로 측정 불가.\n- **외양:**\n    - 1페이즈: 지름 10m의 검은 구체 (알 형태).\n    - 2페이즈: 우주의 심연을 빚어 만든 듯한 검은 인간형. 이목구비가 없는 매끈한 얼굴.\n- **능력:**\n    - **절대 흡수:** 물리적 타격 및 마법 에너지를 흡수하여 자신의 양분으로 삼음.\n    - **공간 파동:** 손가락을 튕기는 단순한 동작으로 공간 자체를 뒤틀어 광역 파괴를 일으킴.\n- **주요 행적 (Ep.1):** 연합군의 총공세를 비웃듯 흡수하고, 단 한 번의 손짓으로 [[아크로폴리스]] 함대를 궤멸시킴.\n- **Writer's Note:** 주인공의 전투력 측정기. 기존 랭커들이 절대로 이길 수 없는 '절망'을 보여준 뒤, 주인공에게 허무하게 사냥당함으로써 주인공의 격(Level)을 증명해야 함.\n- **인물 관계 및 등장 (Relations)**:\n    - **[New] 레오하르트 ↔ 에레보스:** 포식자(인 줄 알았던 사냥감) vs 재앙(코스믹 호러).\n\n\n### Source: [[1화.이름 없는 영웅 - SCENE3]]\n\n- **최후:**\n    - [[강진우]]의 난입에 감각 기관이 반응조차 못 함.\n    - 단검에 찔린 후 \"인간이 어떻게?\"라는 당혹감을 느끼며 체내 에너지가 붕괴되어 폭사(소멸).\n- **평가:** 인간을 \"시끄럽고 약해빠진 종족\"이라 평했으나, 가장 조용하고 강한 인간에게 죽음.",
+    "info": {
+      "role": "마왕 (Main Villain)",
+      "grade": "MINOR",
+      "status": "Deceased (사망)",
+      "alias": "칠흑의 재앙",
+      "relations": [
+        {
+          "name": "강진우",
+          "display": "인간",
+          "mood": "HOSTILE",
+          "tense": "PAST"
+        }
+      ],
+      "rank": "재앙급 (Calamity)",
+      "name": "에레보스",
+      "affiliation": "마계",
+      "tags": [
+        "마왕",
+        "코스믹호러",
+        "전투력측정기"
+      ],
+      "image": "./99_Assets/images/다운로드 (26).jpg",
+      "type": "character"
+    }
+  },
+  {
+    "id": "NovelBibleWiki/EX급 귀환자/20_Wiki/1.Characters/윤서준.md",
+    "name": "윤서준",
+    "type": "character",
+    "image": "./99_Assets/images/image.png",
+    "tags": [
+      "이능력자",
+      "안경캐"
+    ],
+    "content": "# 윤서준\n\n새로운 문서입니다.\n\n### Source: [[16화.Scene_1 - SCENE1]]\n\n- **역할(Role)**: Unknown\n",
+    "info": {
+      "role": "Unknown",
+      "grade": "SUB",
+      "status": "Active",
+      "relations": [
+        {
+          "name": "강진우",
+          "display": "흥미로운 환자",
+          "mood": "FRIENDLY",
+          "tense": "CURRENT"
+        },
+        {
+          "name": "천세희",
+          "display": "고용주 (이사님)",
+          "mood": "NEUTRAL",
+          "tense": "CURRENT"
+        }
+      ],
+      "name": "윤서준",
+      "role_detail": "심리상담사 / 센터장",
+      "affiliation": "더 레스트 (The Rest)",
+      "type": "character",
+      "tags": [
+        "이능력자",
+        "안경캐"
+      ],
+      "created": "2026-01-30T00:00:00.000Z",
+      "image": "./99_Assets/images/image.png"
+    }
+  },
+  {
+    "id": "NovelBibleWiki/EX급 귀환자/20_Wiki/1.Characters/천무진.md",
+    "name": "천무진",
+    "type": "character",
+    "image": "./99_Assets/images/CHFHDCHFHD.jpg",
+    "tags": [],
+    "content": "\n\n### [[3화.실수 - SCENE1]]\n\n- **기본 정보**\n    - **소속:** [[검무천가]] 장남(가출) → [[블랙맘바]] 팀장급(추정).\n    - **상태:** 사망 (진우의 회상과 악몽 속에만 등장).\n    - **외모:** 검을 쓸 때 춤사위처럼 유려함. 피와 땀에 젖어도 귀티가 흐름.\n- **성격/내면**\n    - **결핍:** 압도적 재능을 가진 여동생에 대한 열등감. \"도망쳐서 인정받고 싶다\"는 역설적 욕망.\n    - **진우와의 관계:** 진우의 압도적 살상력을 보며 \"세상은 넓고 괴물은 많다\"고 안도함. 서로가 서로에게 위로가 된 존재.\n- **전투 스타일:** [[검무천가]]의 검술. 유려하고 아름다운 궤적.\n",
+    "info": {
+      "role": "전우",
+      "grade": "SUB",
+      "status": "DECEASED",
+      "relations": [
+        {
+          "name": "강진우",
+          "display": "아끼는 후임",
+          "mood": "FRIENDLY",
+          "tense": "PAST"
+        },
+        {
+          "name": "천세희",
+          "display": "여동생",
+          "mood": "FRIENDLY",
+          "tense": "PAST"
+        }
+      ],
+      "name": "천무진",
+      "role_detail": "옛 동료 / 블랙맘바 팀장",
+      "type": "character",
+      "image": "./99_Assets/images/CHFHDCHFHD.jpg",
+      "affiliation": "UNKNOWN"
+    }
+  },
+  {
+    "id": "NovelBibleWiki/EX급 귀환자/20_Wiki/1.Characters/천세희.md",
+    "name": "천세희",
+    "type": "character",
+    "image": "./99_Assets/images/Gemini_Generated_Image_447c69447c69447c.png",
+    "tags": [
+      "검사",
+      "천재",
+      "재벌"
+    ],
+    "content": "[이미지 원본]\n./99_Assets/images/image (100).png\n\n### [[3화.실수 - SCENE2]]\n\n- **기본 정보**\n    - **소속:** [[검무천가]] 차녀 (오빠 사망 후 실질적 후계자).\n    - **외모:** 검은 정장, 놀라운 미모.\n    - **분위기:** 올곧은 자세, 벼려진 근육. 살아있는 검(剣)과 같은 기세.\n- **성격/능력**\n    - **통찰력:** 진우가 놓은 술병만 보고 단번에 정체를 유추함.\n    - **화법:** 예의 바르지만 집요함. \"웃고 있지만 눈은 웃고 있지 않음.\"\n- **관계:**\n    - vs 진우: 오빠의 시신을 수습해 준 '평생을 갚아도 모자랄 은인'. 하지만 경계심도 동시에 품고 있음.\n\n\n### [[4화.치유, 새로운 경험, 삶 - SCENE1]]\n\n- **직위:** [[검무천가]] 소가주 (차기 가주 확정).\n- **통찰력:** 사실 여부보다 상대의 **'분위기(Aura)'**를 읽음. 진우의 건조하고 터질 듯한 공허함을 보고 신뢰함.\n- **내면:** 오빠([[천무진]])에 대한 그리움이 깊음. 진우에게서 오빠의 '살아 돌아왔을 가능성(If)'을 투영하여 호의를 베풂.\n\n",
+    "info": {
+      "role": "Unknown",
+      "grade": "SUB",
+      "status": "Active",
+      "alias": "소가주",
+      "relations": [
+        {
+          "name": "강진우",
+          "display": "오빠의 흔적",
+          "mood": "NEUTRAL",
+          "tense": "CURRENT"
+        },
+        {
+          "name": "윤서준",
+          "display": "협력자",
+          "mood": "FRIENDLY",
+          "tense": "CURRENT"
+        },
+        {
+          "name": "천무진",
+          "display": "오빠",
+          "mood": "FRIENDLY",
+          "tense": "PAST"
+        }
+      ],
+      "rank": "S급 헌터",
+      "name": "천세희",
+      "role_detail": "검무천가 소가주",
+      "affiliation": "검무천가",
+      "tags": [
+        "검사",
+        "천재",
+        "재벌"
+      ],
+      "image": "./99_Assets/images/Gemini_Generated_Image_447c69447c69447c.png",
+      "type": "character"
+    }
+  },
+  {
+    "id": "NovelBibleWiki/EX급 귀환자/20_Wiki/1.Characters/철진이.md",
+    "name": "철진이",
+    "type": "character",
+    "image": null,
+    "tags": [],
+    "content": "\n## 개요\n신규 등장한 캐릭터입니다.\n\n\n### Source: [[19화.Scene_1 - SCENE1]]\n\n- **역할(Role)**: Unknown\n",
+    "info": {
+      "role": "Unknown",
+      "grade": "MINOR",
+      "status": "ALIVE",
+      "relations": [],
+      "name": "철진이",
+      "type": "character",
+      "desc": "Auto-generated"
+    }
+  },
+  {
+    "id": "NovelBibleWiki/EX급 귀환자/20_Wiki/1.Characters/초보 헌터 셋.md",
+    "name": "초보 헌터 셋",
+    "type": "character",
+    "image": null,
+    "tags": [],
+    "content": "\n## 개요\n\n",
+    "info": {
+      "relations": [],
+      "name": "초보 헌터 셋",
+      "type": "character"
+    }
+  },
+  {
+    "id": "NovelBibleWiki/EX급 귀환자/20_Wiki/1.Characters/카이저.md",
+    "name": "카이저",
+    "type": "character",
+    "image": "./99_Assets/images/다운로드 (23).jpg",
+    "tags": [
+      "사령관",
+      "이해자"
+    ],
+    "content": "\n\n### Source: [[1화.이름 없는 영웅 - SCENE2]]\n\n- **직책:** [[세계연합군(W.A.F)]] 총사령관.\n- **성향:**\n    - 책상물림 정치인들과 겉멋 든 [[랭커들]]을 극도로 혐오함.\n    - 현장 지휘관 출신으로 실전 경험과 실력을 중시함.\n- **관계:** [[강진우]]의 실력을 아는 소수의 인물. 그를 '자네'라고 부르며 존중(혹은 애원)함. 진우를 놓아주기 싫어 전역을 계속 반려해왔음.\n- **인물 관계 및 역학 (Relations & Dynamics):**\n    - **[New] 강진우 $\\leftrightarrow$ 카이저:** 계급은 [병장 < 총사령관]이나, 실질적 지위(Status)는 [해결사(갑) > 의뢰인(을)]으로 역전되어 있음.\n",
+    "info": {
+      "role": "Unknown",
+      "grade": "MINOR",
+      "status": "Active (Overseas)",
+      "relations": [
+        {
+          "name": "강진우",
+          "display": "최고의 병사",
+          "mood": "FRIENDLY",
+          "tense": "PAST"
+        }
+      ],
+      "rank": "총사령관",
+      "name": "카이저",
+      "affiliation": "세계연합군 (W.A.F)",
+      "type": "character",
+      "image": "./99_Assets/images/다운로드 (23).jpg",
+      "tags": [
+        "사령관",
+        "이해자"
+      ]
+    }
+  },
+  {
+    "id": "NovelBibleWiki/EX급 귀환자/20_Wiki/1.Characters/한예린.md",
+    "name": "한예린",
+    "type": "character",
+    "image": "./99_Assets/images/Gemini_Generated_Image_4vqhu34vqhu34vqh.png",
+    "tags": [
+      "예비헌터",
+      "악바리",
+      "감각형천재"
+    ],
+    "content": "\n[이미지 원본]\n./99_Assets/images/image (1).png\n\n### Source: [[2화.전역,귀환 - SCENE3]]\n\n- **기본 정보**\n    - **소속:** [[청호 고시원]] 총무 / 거주자.\n    - **외모:** 부스스한 머리, 트레이닝복 차림. 꾸밈없는 생활형 캐릭터.\n    - **성격:** 무심한 듯하지만 할 일은 하는 타입. 타인을 외양으로 빠르게 판단하는 경향(진우=고시생).\n    - **식성:** 카운터에서 컵라면을 먹음.\n- **강진우와의 관계**\n    - **첫인상:** \"눈이 죽어있는 걸 보니 영락없는 장수 고시생이네.\" (오해)\n    - **상호작용:** 진우의 특이한 취향(소음, 좁은 방 선호)을 이해 못 하고 \"특이한 분\"이라 평가.\n\n\n\n### Source: [[4화.치유, 새로운 경험, 삶 - SCENE3]]\n\n- **전투 능력 (Combat Spec):**\n    - **스타일:** 마력을 주먹 끝에 싣는 타격기 위주. 지형지물 활용 능숙.\n    - **수준:** 일반 깡패 3명은 가볍게 제압하나, 기척을 숨긴 살수(Pro)에게는 반응하지 못함. (실전 경험 부족 or 감각 스탯 낮음).\n    - **비밀:** 아카데미 생도도, 헌터도 아니면서 무력을 단련 중.\n",
+    "info": {
+      "role": "일반인",
+      "grade": "SUB",
+      "status": "ALIVE",
+      "relations": [
+        {
+          "name": "강진우",
+          "display": "스승님(?) / 은인",
+          "mood": "FRIENDLY",
+          "tense": "CURRENT"
+        },
+        {
+          "name": "박철기",
+          "display": "적",
+          "mood": "HOSTILE",
+          "tense": "CURRENT"
+        }
+      ],
+      "name": "한예린",
+      "role_detail": "성장형 히로인",
+      "type": "character",
+      "image": "./99_Assets/images/Gemini_Generated_Image_4vqhu34vqhu34vqh.png",
+      "tags": [
+        "예비헌터",
+        "악바리",
+        "감각형천재"
+      ],
+      "affiliation": "UNKNOWN",
+      "desc": "Auto-generated"
+    }
+  },
+  {
+    "id": "NovelBibleWiki/EX급 귀환자/20_Wiki/2. 세력 및 단체/검무천가.md",
+    "name": "검무천가",
+    "type": "faction",
+    "image": "./99_Assets/images/제목 없는 비디오 - Clipchamp로 제작.gif",
+    "tags": [],
+    "content": "\n\n- **개요:** 대한민국 3대 초인 무가(武家) 중 하나.\n- **특징:** 혈통과 재능을 중시함. 원로들의 입김이 셈.\n- **관련 인물:** [[천무진]](장남, 이탈), 여동생(천재, 가문의 기대주).\n",
+    "info": {
+      "name": "검무천가",
+      "type": "faction",
+      "image": "./99_Assets/images/제목 없는 비디오 - Clipchamp로 제작.gif"
+    }
+  },
+  {
+    "id": "NovelBibleWiki/EX급 귀환자/20_Wiki/2. 세력 및 단체/블랙맘바.md",
+    "name": "블랙맘바",
+    "type": "faction",
+    "image": null,
+    "tags": [],
+    "content": "- **개요:** 세계 연합 소속 특무부대. 진우와 천무진이 소속되었던 팀.\n- **최후:** 아프리카 전선([[그린 헬]])에서 괴멸. (광신도와 마수의 개입 암시).\n- **진우에게 의미:** 유일하게 '사람'으로서 대우받았던, 잃어버린 가족이자 안식처.\n",
+    "info": {}
+  },
+  {
+    "id": "NovelBibleWiki/EX급 귀환자/20_Wiki/2. 세력 및 단체/새벽의 방패 길드.md",
+    "name": "새벽의 방패 길드",
+    "type": "faction",
+    "image": null,
+    "tags": [],
+    "content": "### Source: [[1화.이름 없는 영웅 - SCENE1]]\n\n- **연관 인물:** [[레오하르트]].\n- **마케팅:** 전쟁터 한복판(레오하르트의 등 뒤)에 \"당신의 안전을 책임집니다\"라는 문구의 거대한 홀로그램 네온사인을 띄움.",
+    "info": {}
+  },
+  {
+    "id": "NovelBibleWiki/EX급 귀환자/20_Wiki/2. 세력 및 단체/세계연합군(W.A.F).md",
+    "name": "세계연합군(W.A.F)",
+    "type": "faction",
+    "image": null,
+    "tags": [],
+    "content": "### Source: [[1화.이름 없는 영웅 - SCENE1]]\n\n- **보유 전력:** 제3 마도 함대.\n- **활동:** 아프리카 대륙 상공에서 에레보스 토벌 작전을 수행.\n- **특징:** 전쟁을 생사를 건 투쟁이 아닌, 거대하고 화려한 '엔터테인먼트 쇼'이자 '사업'으로 취급하는 경향이 묘사됨.",
+    "info": {}
+  },
+  {
+    "id": "NovelBibleWiki/EX급 귀환자/20_Wiki/2. 세력 및 단체/철기 길드.md",
+    "name": "철기 길드",
+    "type": "faction",
+    "image": null,
+    "tags": [],
+    "content": "\n",
+    "info": {
+      "name": "철기 길드",
+      "type": "faction",
+      "image": null
+    }
+  },
+  {
+    "id": "NovelBibleWiki/EX급 귀환자/20_Wiki/기술 및 아이템/MK-3 보병용 외골격.md",
+    "name": "MK-3 보병용 외골격",
+    "type": "item",
+    "image": ".\\99_Assets\\images\\mk3.jpg",
+    "tags": [],
+    "content": "\r\n### Source: [[1화.이름 없는 영웅 - SCENE2]]\r\n\r\n- **유형:** 구형 양산형 [[강화복]].\r\n- **상태:**\r\n  - 도색이 벗겨져 쇠 냄새가 나고, 유압 실린더가 삐걱거리는 소음을 냄.\r\n  - 박물관에나 있을 법한 고물 취급.\r\n- **의의:** Scene 1의 '금도금 [[강화복]](랭커용)'과 극적인 시각적 대비를 이룸. \"장비가 좋아서 강한 게 아니다\"라는 클리셰 파괴의 도구.\r\n",
+    "info": {
+      "type": "item",
+      "image": ".\\99_Assets\\images\\mk3.jpg",
+      "title": "MK-3 보병용 외골격",
+      "tags": []
+    }
+  },
+  {
+    "id": "NovelBibleWiki/EX급 귀환자/20_Wiki/기술 및 아이템/강화복.md",
+    "name": "강화복",
+    "type": "item",
+    "image": null,
+    "tags": [],
+    "content": "### Source: [[1화.이름 없는 영웅 - SCENE1]]\n\n- **착용자:** [[레오하르트]] 및 도열한 영웅들.\n- **기능:**\n    - **방어/보조:** 기본적으로 매끈한 형태를 띰.\n    - **자동 지혈:** 착용자가 부상을 입었을 때 작동해야 하나, 레오하르트의 팔이 뜯겨나갔을 때는 작동할 틈도 없이 피가 솟구침.\n- **외양(레오하르트):** 금색 도금, 어깨의 화려한 마법 회로 등 보여주기식 디자인이 강조됨.",
+    "info": {}
+  },
+  {
+    "id": "NovelBibleWiki/EX급 귀환자/20_Wiki/기술 및 아이템/로랑 샬루트 22년산.md",
+    "name": "로랑 샬루트 22년산",
+    "type": "item",
+    "image": ".\\99_Assets\\images\\royal.jpg",
+    "tags": [],
+    "content": "\r\n- **속성:** 컬트 위스키. 마니아들 사이에서도 환상종이라 불림.\r\n- **서사적 기능:** [[천무진]]이 가장 좋아했던 술이자, [[강진우]]와 [[천세희]]를 연결하는 매개체(Trigger). 진우의 정체를 발각시키는 결정적 단서.\r\n",
+    "info": {
+      "type": "item",
+      "image": ".\\99_Assets\\images\\royal.jpg",
+      "tags": []
+    }
+  },
+  {
+    "id": "NovelBibleWiki/EX급 귀환자/20_Wiki/기술 및 아이템/마나 엔진.md",
+    "name": "마나 엔진",
+    "type": "item",
+    "image": null,
+    "tags": [],
+    "content": "### Source: [[1화.이름 없는 영웅 - SCENE1]]\n\n- **기능:** 고농도로 정제된 마나석을 태워 동력을 얻는 기관.\n- **특징:** 가동 시 대기를 짓누르는 중저음의 진동(심장 박동 소리)을 냄.\n- **상태:** [[에레보스]]의 파동에 휩싸이자 '마나 수치 역류' 및 '과부하' 경고가 발생함.",
+    "info": {}
+  },
+  {
+    "id": "NovelBibleWiki/EX급 귀환자/20_Wiki/기술 및 아이템/무광 단검.md",
+    "name": "무광 단검",
+    "type": "item",
+    "image": ".\\99_Assets\\images\\300A25A8-DDB3-4BC4-9B1D-DE0E67247D50.jpg",
+    "tags": [],
+    "content": "\r\n\r\n### Source: [[1화.이름 없는 영웅 - SCENE2]]\r\n\r\n- **외양:** 칠흑처럼 검고 무광 처리됨. 화려한 장식 없음.\r\n- **용도:** 강진우의 주무기. 마법 검이 아닌 물리적 살상 무기.",
+    "info": {
+      "name": "무광 단검",
+      "type": "item",
+      "image": ".\\99_Assets\\images\\300A25A8-DDB3-4BC4-9B1D-DE0E67247D50.jpg",
+      "info": {
+        "category": "무기",
+        "rank": "C급 (추정)",
+        "owner": "강진우",
+        "effect": "마력 전도율 0%, 내구도 무한"
+      }
+    }
+  },
+  {
+    "id": "NovelBibleWiki/EX급 귀환자/20_Wiki/기술 및 아이템/지갑 속 빛바랜 사진.md",
+    "name": "지갑 속 빛바랜 사진",
+    "type": "item",
+    "image": null,
+    "tags": [],
+    "content": "\n## 개요\n\n",
+    "info": {
+      "name": "지갑 속 빛바랜 사진",
+      "type": "item"
+    }
+  },
+  {
+    "id": "NovelBibleWiki/EX급 귀환자/20_Wiki/기술 및 아이템/티탄의 분노.md",
+    "name": "티탄의 분노",
+    "type": "item",
+    "image": null,
+    "tags": [],
+    "content": "### Source: [[1화.이름 없는 영웅 - SCENE1]]\r\n\r\n- **유형:** 전함 [[아크로폴리스]]의 주포.\r\n- **스펙:** 구경 800mm 입자포.\r\n- **위력:** 발사 시 대기의 벽을 찢고, 지나간 자리를 진공 상태로 만들어 구름조차 소멸시킴.",
+    "info": {}
+  },
+  {
+    "id": "NovelBibleWiki/EX급 귀환자/20_Wiki/기술 및 아이템/홀로그램 워치.md",
+    "name": "홀로그램 워치",
+    "type": "item",
+    "image": null,
+    "tags": [],
+    "content": "\n## 개요\n\n",
+    "info": {
+      "name": "홀로그램 워치",
+      "type": "item"
+    }
+  },
+  {
+    "id": "NovelBibleWiki/EX급 귀환자/20_Wiki/몬스터/그렘린 늑대.md",
+    "name": "그렘린 늑대",
+    "type": "monster",
+    "image": null,
+    "tags": [],
+    "content": "\n## 개요\n",
+    "info": {
+      "role": "마물",
+      "status": "DECEASED",
+      "name": "그렘린 늑대",
+      "type": "monster",
+      "affiliation": "UNKNOWN",
+      "mental": "UNKNOWN",
+      "action": "공항 난동, 공격"
+    }
+  },
+  {
+    "id": "NovelBibleWiki/EX급 귀환자/20_Wiki/상징/아지다하카.md",
+    "name": "아지다하카",
+    "type": "symbol",
+    "image": null,
+    "tags": [],
+    "content": "\r\n\r\n- **정의:** [[강진우]]를 지칭하는 이명(Alias).\r\n    \r\n- **어원:** 조로아스터교 신화의 악룡(Aži Dahāka).\r\n    \r\n- **상징:** 낡은 강화복, 피 묻은 단검, 붉은 선이 그어진 면갑.\r\n    \r\n- **인식:** 마경(검은 사막)의 전설이자 신화.",
+    "info": {}
+  },
+  {
+    "id": "NovelBibleWiki/EX급 귀환자/20_Wiki/세계 시스템/한국_사회상.md",
+    "name": "한국_사회상",
+    "type": "system",
+    "image": null,
+    "tags": [],
+    "content": "\r\n\r\n- **기술 수준:** [[홀로그램 워치]] 상용화. [[인공 방향제]], [[전자기파]]가 넘쳐나는 고도 문명 사회.\r\n- **안전 불감증:** 게이트가 열리고 몬스터가 나와도 도망가는 대신 스마트폰으로 촬영하는 시민들 존재.\r\n- **재개발:** 강북의 낡은 주택가는 대규모 공사판으로 변모함. (과거의 흔적 말살).",
+    "info": {}
+  },
+  {
+    "id": "NovelBibleWiki/EX급 귀환자/20_Wiki/장소/강북 재개발 지구.md",
+    "name": "강북 재개발 지구",
+    "type": "location",
+    "image": null,
+    "tags": [],
+    "content": "\n## 개요\n\n",
+    "info": {
+      "status": "OCCUPIED",
+      "name": "강북 재개발 지구",
+      "type": "location",
+      "dangerLevel": "LOW",
+      "occupant": "건설 회사"
+    }
+  },
+  {
+    "id": "NovelBibleWiki/EX급 귀환자/20_Wiki/장소/검은 사막.md",
+    "name": "검은 사막",
+    "type": "location",
+    "image": "./99_Assets/images/image (101).png",
+    "tags": [
+      "마경",
+      "아프리카_최전선"
+    ],
+    "content": "![[300A25A8-DDB3-4BC4-9B1D-DE0E67247D50.jpg]]\r\n\r\n### Source: [[1화.이름 없는 영웅 - SCENE1]]\r\n\r\n- **위치:** 아프리카 대륙 상공 아래.\r\n- **별칭:** 죽음의 땅.\r\n- **지형:** 랭커들의 공격(화염, 빙결, 뇌전) 여파로 모래 언덕이 고열에 녹아 유리 결정으로 변할 정도의 피해를 입음.\r\n\r\n",
+    "info": {
+      "name": "검은 사막",
+      "tags": [
+        "마경",
+        "아프리카_최전선"
+      ],
+      "image": "./99_Assets/images/image (101).png",
+      "type": "location"
+    }
+  },
+  {
+    "id": "NovelBibleWiki/EX급 귀환자/20_Wiki/장소/국립 현충원.md",
+    "name": "국립 현충원",
+    "type": "location",
+    "image": null,
+    "tags": [],
+    "content": "- **특징:** 묘역 전체를 감싸는 거대 마력 순환기 가동. 사시사철 꽃이 피고 봄날처럼 따뜻함.\r\n- **의미:** 국가 차원의 '영웅 마케팅'의 정점. 죽음마저 성역화하여 입대/각성을 장려함.",
+    "info": {}
+  },
+  {
+    "id": "NovelBibleWiki/EX급 귀환자/20_Wiki/장소/그린 헬.md",
+    "name": "그린 헬",
+    "type": "location",
+    "image": null,
+    "tags": [],
+    "content": "- **위치:** [[검은 사막]] 작전 지역 내 열대우림 구역.\r\n- **환경:** 고온다습, 썩은 낙엽 냄새, 질척한 늪지대. 시야 확보가 어려운 녹음과 어둠.\n",
+    "info": {}
+  },
+  {
+    "id": "NovelBibleWiki/EX급 귀환자/20_Wiki/장소/낡은 붉은 벽돌집.md",
+    "name": "낡은 붉은 벽돌집",
+    "type": "location",
+    "image": null,
+    "tags": [],
+    "content": "\n## 개요\n\n",
+    "info": {
+      "name": "낡은 붉은 벽돌집",
+      "type": "location"
+    }
+  },
+  {
+    "id": "NovelBibleWiki/EX급 귀환자/20_Wiki/장소/더 레스트.md",
+    "name": "더 레스트",
+    "type": "location",
+    "image": "./99_Assets/images/다운로드.gif",
+    "tags": [],
+    "content": "\r\n### Source : [[4화.치유, 새로운 경험, 삶 - SCENE1]]\r\n\r\n**문서명: Org_더 레스트 (The Rest) (신규)**\r\n\r\n- **유형:** 재활 지원 센터.\r\n- **소속:** 천세희가 개인적으로 운영하는 재단 산하.\r\n- **목적:** 부상/은퇴한 헌터 및 군인의 사회 적응 지원.\r\n- **특이사항:** 센터장이 괴짜임. 효과는 확실함.\r\n- **기능:** 진우가 '일상'으로 돌아가기 위해 거쳐야 할 **[치유의 관문]**이자, 새로운 조연들을 만날 **[만남의 광장]** 역할 예상.\r\n\r\n### Source : [[4화.치유, 새로운 경험, 삶 - SCENE2]]\r\n\r\n- **상태:** 진우가 예약 전화를 검.\r\n- **진입:** 진우가 자발적으로 선택한 첫 번째 사회적 커뮤니티가 될 예정.",
+    "info": {
+      "type": "location",
+      "image": "./99_Assets/images/다운로드.gif"
+    }
+  },
+  {
+    "id": "NovelBibleWiki/EX급 귀환자/20_Wiki/장소/북한.md",
+    "name": "북한",
+    "type": "location",
+    "image": "./99_Assets/images/Gemini_Generated_Image_52atl052atl052at.png",
+    "tags": [],
+    "content": "- **상태:** [[마경(魔境)]].\r\n- **원인:** 영생불사를 원한 독재자가 게이트의 힘으로 금기 의식을 치르다 실패 → 주민 전체 마물화.\r\n- **기능:** 한국을 '통제 가능한 전장'과 맞대게 하여, 군인/헌터 육성의 최적지로 만듦.\r\n",
+    "info": {
+      "type": "location",
+      "image": "./99_Assets/images/Gemini_Generated_Image_52atl052atl052at.png",
+      "title": "북한",
+      "tags": []
+    }
+  },
+  {
+    "id": "NovelBibleWiki/EX급 귀환자/20_Wiki/장소/아크로폴리스.md",
+    "name": "아크로폴리스",
+    "type": "location",
+    "image": null,
+    "tags": [],
+    "content": "### Source: [[1화.이름 없는 영웅 - SCENE1]]\r\n\r\n- **유형:** 공중 전함.\r\n- **제원:** 길이 500미터.\r\n- **특징:**\r\n    - 전함 하부에서 푸른색 배기 가스를 뿜으며 비행함.\r\n    - 수백 대의 드론 카메라가 주위를 날아다님.\r\n    - 7중 복합 마법진으로 보호받고 있었으나 [[에레보스]]의 공격에 파괴됨.",
+    "info": {}
+  },
+  {
+    "id": "NovelBibleWiki/EX급 귀환자/20_Wiki/장소/청호 고시원.md",
+    "name": "청호 고시원",
+    "type": "location",
+    "image": "./99_Assets/images/고시원.jpg",
+    "tags": [],
+    "content": "\r\n- **개요:** 강진우가 선택한 첫 번째 거주지.\r\n- **특징:**\r\n  - **구조:** 1.5평의 좁은 방(관 같은 공간). 벽이 얇아 옆방 소리가 다 들림.\r\n  - **진우의 평가:** \"완벽한 참호.\" (퇴로 확보 용이, 외부 기척 감지 용이, 등 뒤가 안전함).\r\n- **규칙:** 보증금 무, 월 30만 원. 밥/김치 제공. 실내 흡연 및 싸움 금지.\r\n",
+    "info": {
+      "alias": [
+        "고시원"
+      ],
+      "type": "location",
+      "image": "./99_Assets/images/고시원.jpg",
+      "title": "청호 고시원",
+      "tags": []
+    }
+  }
+]
