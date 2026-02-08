@@ -7,7 +7,8 @@ import Store from 'electron-store'
 import { setupPlotHandlers } from './handlers/plotHandler'
 import { setupWikiHandlers } from './handlers/wikiHandler'
 import { setupProjectHandlers } from './handlers/projectHandler'
-import { setupAIHandlers } from './handlers/aiHandler' // [NEW]
+import { setupAIHandlers } from './handlers/aiHandler'
+import { setupBlueprintHandlers } from './handlers/blueprintHandler' // [NEW]
 
 const store = new Store()
 
@@ -52,7 +53,8 @@ app.whenReady().then(() => {
   setupWikiHandlers(store) // 위키 기능 (불러오기, 이미지 등)
   setupPlotHandlers(store) // 플롯 기능 (칸반, 파일 정리 등)
   setupProjectHandlers(store)
-  setupAIHandlers(store) // [NEW] AI 기능
+  setupAIHandlers(store)
+  setupBlueprintHandlers(store) // [NEW] Blueprint 기능
 
   createWindow()
 

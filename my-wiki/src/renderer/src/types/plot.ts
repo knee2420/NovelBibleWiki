@@ -28,6 +28,8 @@ export interface SceneCard {
   characters: string[] // 등장인물 태그
   isScripted: boolean // 본문 작성 여부
   delta?: SceneDelta
+  actTitle?: string
+  chapterTitle?: string
 }
 
 export interface ChapterColumn {

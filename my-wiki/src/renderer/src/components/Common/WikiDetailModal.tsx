@@ -23,7 +23,8 @@ import {
 import ReactMarkdown from 'react-markdown'
 import { CharacterHistoryViewer } from '../Analysis/CharacterHistoryViewer' 
 import { CharacterStatusViewer } from '../Analysis/CharacterStatusViewer' 
-import { WikiMentionViewer } from './WikiMentionViewer'  // [NEW] 
+import { WikiMentionViewer } from './WikiMentionViewer'
+import { CharacterGrowthTree } from '../Analysis/CharacterGrowthTree' // [NEW] 
 
 interface WikiDetailModalProps {
   entry: WikiEntry
@@ -548,6 +549,7 @@ export const WikiDetailModal = ({ entry, onClose, onUpdate, onOpenScene }: WikiD
                     >
                         <Search size={14} /> 멘션 (Mentions)
                     </button>
+                    {/* Top-level Engine tab removed */}
                 </div>
             )}
 
@@ -562,14 +564,16 @@ export const WikiDetailModal = ({ entry, onClose, onUpdate, onOpenScene }: WikiD
                 </div>
             ) : (
                 <>
-                    {/* View Mode Switch */}
-                    {entry.type === 'character' && activeTab === 'history' ? (
+                    {/* Overview Sub-tabs Logic */}
+                    {activeTab === 'overview' ? (
+                        <OverviewSection entry={entry} />
+                    ) : entry.type === 'character' && activeTab === 'history' ? (
                         <div className="flex-1 min-h-0 animate-in fade-in slide-in-from-bottom-2 duration-300">
                             <CharacterHistoryViewer characterName={entry.name} aliases={aliases} />
                         </div>
                     ) : entry.type === 'character' && activeTab === 'status' ? (
                         <div className="flex-1 min-h-0 animate-in fade-in slide-in-from-bottom-2 duration-300">
-                            <CharacterStatusViewer characterName={entry.name} aliases={aliases} />
+                            <CharacterStatusViewer entry={entry} />
                         </div>
                     ) : activeTab === 'mentions' ? (
                         <div className="flex-1 min-h-0 animate-in fade-in slide-in-from-bottom-2 duration-300 h-full">
@@ -597,4 +601,64 @@ export const WikiDetailModal = ({ entry, onClose, onUpdate, onOpenScene }: WikiD
       </div>
     </div>
   )
+}
+
+// Sub-component for Overview Sub-tabs
+const OverviewSection = ({ entry }: { entry: WikiEntry }) => {
+    const [subTab, setSubTab] = useState<'profile' | 'growth' | 'mindset'>('profile')
+
+    if (entry.type !== 'character') {
+         return (
+            <div className="flex-1 overflow-y-auto custom-scrollbar p-8">
+                <div className="prose prose-invert prose-slate max-w-none prose-p:leading-relaxed prose-headings:text-slate-200 prose-a:text-blue-400 w-full break-words">
+                    <ReactMarkdown>{entry.content || ''}</ReactMarkdown>
+                </div>
+            </div>
+         )
+    }
+
+    return (
+        <div className="flex-1 flex flex-col h-full bg-[#0f1115]">
+            {/* Overview Sub Tabs */}
+            <div className="flex items-center px-6 pt-4 border-b border-slate-800 gap-6">
+                 <button 
+                    onClick={() => setSubTab('profile')}
+                    className={`pb-3 text-sm font-bold transition-colors border-b-2 ${subTab === 'profile' ? 'border-slate-300 text-slate-100' : 'border-transparent text-slate-500 hover:text-slate-300'}`}
+                 >
+                    프로필 (Profile)
+                 </button>
+                 <button 
+                    onClick={() => setSubTab('growth')}
+                    className={`pb-3 text-sm font-bold transition-colors border-b-2 ${subTab === 'growth' ? 'border-cyan-500 text-cyan-400' : 'border-transparent text-slate-500 hover:text-slate-300'}`}
+                 >
+                    캐릭터 성장 곡선 (Growth)
+                 </button>
+                 <button 
+                    onClick={() => setSubTab('mindset')}
+                    className={`pb-3 text-sm font-bold transition-colors border-b-2 ${subTab === 'mindset' ? 'border-pink-500 text-pink-400' : 'border-transparent text-slate-500 hover:text-slate-300'}`}
+                 >
+                    캐릭터 사고 방식 (Mindset)
+                 </button>
+            </div>
+
+            {/* Content Content by Subtab */}
+            <div className="flex-1 min-h-0 overflow-hidden relative">
+                 {subTab === 'profile' ? (
+                     <div className="flex-1 overflow-y-auto custom-scrollbar p-8 h-full">
+                        <div className="prose prose-invert prose-slate max-w-none prose-p:leading-relaxed prose-headings:text-slate-200 prose-a:text-blue-400 w-full break-words">
+                             <ReactMarkdown>{entry.content || ''}</ReactMarkdown>
+                        </div>
+                     </div>
+                 ) : subTab === 'growth' ? (
+                     <div className="w-full h-full">
+                         <CharacterGrowthTree characterId={entry.id} characterName={entry.name} />
+                     </div>
+                 ) : (
+                     <div className="flex-1 flex items-center justify-center text-slate-600 italic">
+                         Mindset Analysis Engine is under construction.
+                     </div>
+                 )}
+            </div>
+        </div>
+    )
 }

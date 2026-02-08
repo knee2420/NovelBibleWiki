@@ -2,9 +2,10 @@ import { useState, useEffect, useMemo } from 'react'
 import { Activity, Layers, HeartHandshake, ChevronLeft, ChevronRight, Hash, ChevronDown, ChevronUp } from 'lucide-react'
 import { ActBoard, SceneCard } from '../../types/plot'
 
+import { WikiEntry } from '../../../../shared/types/wiki'
+
 interface CharacterStatusViewerProps {
-  characterName: string
-  aliases?: string[]
+  entry: WikiEntry
 }
 
 interface SnapshotState {
@@ -13,7 +14,7 @@ interface SnapshotState {
     lastUpdatedScene: string
 }
 
-export const CharacterStatusViewer = ({ characterName, aliases = [] }: CharacterStatusViewerProps) => {
+export const CharacterStatusViewer = ({ entry }: CharacterStatusViewerProps) => {
   const [plotData, setPlotData] = useState<ActBoard[]>([])
   const [flattenedScenes, setFlattenedScenes] = useState<SceneCard[]>([])
   const [selectedSceneIndex, setSelectedSceneIndex] = useState<number>(-1) // Index in flattenedScenes
@@ -21,6 +22,10 @@ export const CharacterStatusViewer = ({ characterName, aliases = [] }: Character
   // Section Visibility State
   const [expanded, setExpanded] = useState({ status: true, relations: true })
   const toggleSection = (key: 'status' | 'relations') => setExpanded(prev => ({ ...prev, [key]: !prev[key] }))
+
+  const characterName = entry.name
+  // @ts-ignore
+  const aliases = entry.aliases || []
 
   // 1. Fetch & Filter Data
   useEffect(() => {
