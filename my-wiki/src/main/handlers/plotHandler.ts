@@ -160,7 +160,17 @@ export function setupPlotHandlers(store: any): void {
       const prefix = prefixMatch ? prefixMatch[1] : ''
       // 새 이름에 접두사가 없으면 기존 접두사 유지
       const finalName = newName.startsWith(prefix) ? newName : `${prefix}${newName}`
-      await fs.rename(path, join(dir, finalName))
+      const newPath = join(dir, finalName)
+
+      await fs.rename(path, newPath)
+      
+      // Sidecar rename
+      const oldSidecar = path.replace(/\.md$/i, '.script.json')
+      const newSidecar = newPath.replace(/\.md$/i, '.script.json')
+      if (fs.existsSync(oldSidecar)) {
+          await fs.rename(oldSidecar, newSidecar)
+      }
+
       return true
     } catch (e) {
       console.error(e)
@@ -183,15 +193,47 @@ export function setupPlotHandlers(store: any): void {
     }
   })
 
-  // 5. 삭제 (휴지통 이동)
+  // 5. 삭제 (휴지통 이동) - Sidecar 파일도 함께 삭제
   ipcMain.handle('delete-item', async (_, path) => {
     try {
       await shell.trashItem(path)
+      
+      // Sidecar 삭제 (script.json)
+      const sidecarPath = path.replace(/\.md$/i, '.script.json')
+      if (fs.existsSync(sidecarPath)) {
+          await shell.trashItem(sidecarPath)
+      }
+      
       return true
     } catch (e) {
       console.error(e)
       return false
     }
+  })
+  
+  // [NEW] Script Analysis Sidecar Handling
+  ipcMain.handle('save-script-analysis', async (_, { path, data }) => {
+      try {
+          if (!path) return { success: false, message: 'Invalid path' }
+          const sidecarPath = path.replace(/\.md$/i, '.script.json')
+          await fs.writeJSON(sidecarPath, data, { spaces: 2 })
+          return { success: true }
+      } catch (err: any) {
+          console.error('Save Script Analysis failed:', err)
+          return { success: false, message: err.message }
+      }
+  })
+
+  ipcMain.handle('load-script-analysis', async (_, path) => {
+      try {
+          if (!path) return null
+          const sidecarPath = path.replace(/\.md$/i, '.script.json')
+          if (!fs.existsSync(sidecarPath)) return null
+          const data = await fs.readJSON(sidecarPath)
+          return data
+      } catch (err) {
+          return null
+      }
   })
 
   ipcMain.handle('get-timeline-flat', async () => {
@@ -219,6 +261,100 @@ export function setupPlotHandlers(store: any): void {
       }
       return a.sceneNumber - b.sceneNumber
     })
+  })
+  // [NEW] Mention Tracking
+  ipcMain.handle('search-wiki-mentions', async (_, keywords: string[]) => {
+      const vaultPath = store.get('vaultPath') as string
+      if (!vaultPath || !keywords || keywords.length === 0) return []
+
+      const plotBasePath = join(vaultPath, '10_Plot')
+      
+      // 1. Get all scenes
+      // We can reuse the existing recursiveScan logic to get file paths
+      // This might need optimization later (indexing), but for now standard scan is fine
+      // Note: recursiveScan returns Acts/Chapter/Scene structure or just chapters?
+      // recursiveScan returns Chapters arrays (possibly nested in subdirs but flattened structure in scanning)
+      // Actually recursiveScan returns array of "Chapters".
+      const allChapters = recursiveScan(plotBasePath)
+      
+      const results: any[] = []
+
+      // Escape regex special characters
+      const escapedKeywords = keywords.map(k => k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'))
+      const regex = new RegExp(`(${escapedKeywords.join('|')})`, 'gi')
+
+      // 2. Iterate and Scan
+      // Flatten scenes first
+      for (const chapter of allChapters) {
+           // Skip if no scenes
+           if (!chapter.scenes || !Array.isArray(chapter.scenes)) continue;
+           
+           for (const scene of chapter.scenes) {
+               try {
+                   // Reset Regex for new file!
+                   regex.lastIndex = 0;
+                   
+                   const content = await fs.readFile(scene.id, 'utf-8')
+                   const { content: body } = matter(content)
+                   
+                   const matches: any[] = []
+                   let match;
+                   
+                   // Find all matches
+                   while ((match = regex.exec(body)) !== null) {
+                       const index = match.index
+                       const keyword = match[0]
+                       
+                       // Extract Context (KWIC)
+                       const padding = 40
+                       /* 
+                          Use slice to avoid index out of bounds issues gracefully 
+                          (substring handles swap but slice is more predictable for negative start)
+                          Actually substring is fine: substring(indexA, indexB). 
+                          If indexA < 0, it treats as 0. 
+                       */
+                       const start = Math.max(0, index - padding)
+                       // Limit max length to prevent huge strings if padding goes over
+                       const end = Math.min(body.length, index + keyword.length + padding)
+                       
+                       let context = body.substring(start, end)
+                       
+                       // Mark the keyword position relative to context? 
+                       // Frontend can highlight based on keyword text match.
+                       
+                       // Clean up newlines for "one-liner" look
+                       context = context.replace(/[\r\n]+/g, ' ')
+                       
+                       if (start > 0) context = '...' + context
+                       if (end < body.length) context = context + '...'
+
+                       matches.push({
+                           keyword,
+                           context,
+                           index
+                       })
+                   }
+
+                   if (matches.length > 0) {
+                       results.push({
+                           sceneId: scene.id,
+                           sceneTitle: scene.title,
+                           chapterNumber: chapter.chapterNumber, // Extracted from recursiveScan
+                           sceneNumber: scene.sceneNumber,
+                           chapterTitle: chapter.title,
+                           matches
+                       })
+                   }
+               } catch (e) {
+                   console.error(`Error reading scene ${scene.id}`, e)
+               }
+           }
+      }
+
+      return results.sort((a,b) => {
+          if (a.chapterNumber !== b.chapterNumber) return a.chapterNumber - b.chapterNumber
+          return a.sceneNumber - b.sceneNumber
+      })
   })
 }
 

@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from 'react'
 import { Save, RefreshCw, BarChart2, Key, Check, AlertCircle, CheckCircle2 } from 'lucide-react'
-import { AI_MODELS, AIModelConfig } from '../../../../shared/const/ai-models'
+import { AI_MODELS } from '../../../../shared/const/ai-models'
 
 export const AIModelSettings = () => {
     const [apiKey, setApiKey] = useState('')

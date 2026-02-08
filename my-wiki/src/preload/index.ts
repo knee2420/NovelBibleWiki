@@ -38,6 +38,7 @@ const api = {
   selectMultipleFiles: () => ipcRenderer.invoke('select-multiple-files'),
   // [NEW] Character Sync
   updateCharacter: (payload: any) => ipcRenderer.invoke('ai:updateCharacter', payload),
+  processEntityDecisions: (payload: any) => ipcRenderer.invoke('ai:processEntityDecisions', payload),
 
   // [NEW] AI Settings (Schema/Prompt)
   // [NEW] AI Settings (Schema/Prompt)
@@ -62,6 +63,10 @@ const api = {
   saveAIModel: (model: string) => ipcRenderer.invoke('ai:setModel', model),
   getAIModel: () => ipcRenderer.invoke('ai:getModel'),
   getAIUsage: () => ipcRenderer.invoke('ai:getUsageStats'),
+  analyzeScript: (text: string, characters?: string[]) => ipcRenderer.invoke('ai:analyzeScript', text, characters),
+  saveScriptAnalysis: (path: string, data: any) => ipcRenderer.invoke('save-script-analysis', { path, data }),
+  loadScriptAnalysis: (path: string) => ipcRenderer.invoke('load-script-analysis', path),
+  searchWikiMentions: (keywords: string[]) => ipcRenderer.invoke('search-wiki-mentions', keywords),
 }
 
 if (process.contextIsolated) {

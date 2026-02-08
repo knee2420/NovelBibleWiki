@@ -1,0 +1,324 @@
+{
+  "characters": [
+    "강진우",
+    "카이저",
+    "에레보스"
+  ],
+  "segments": [
+    {
+      "text": "지옥도가 펼쳐지는 갑판과는 동떨어진 곳.",
+      "type": "description",
+      "actor": "Narrator"
+    },
+    {
+      "text": "전장의 가장자리, 아무도 신경 쓰지 않는 낡은 참호 속에 한 남자가 있었다.",
+      "type": "description",
+      "actor": "Narrator"
+    },
+    {
+      "text": "치이익.",
+      "type": "action",
+      "actor": "Narrator"
+    },
+    {
+      "text": "라이터 끝에서 불꽃이 일었다. 남자는 깊게 들이마신 담배 연기를 잿빛 하늘을 향해 길게 내뿜었다. 매캐한 화약 냄새와 비릿한 피 냄새 사이로, 싸구려 담배 향이 섞여 들었다.",
+      "type": "description",
+      "actor": "Narrator"
+    },
+    {
+      "text": "병장 강진우.",
+      "type": "description",
+      "actor": "Narrator"
+    },
+    {
+      "text": "그는 쭈그리고 앉은 채, 덜덜거리는 구형 강화복의 관절 부위를 조이고 있었다.",
+      "type": "action",
+      "actor": "강진우"
+    },
+    {
+      "text": "이제는 전쟁 박물관에서나 볼 법한 ‘MK-3 보병용 외골격’.",
+      "type": "description",
+      "actor": "Narrator"
+    },
+    {
+      "text": "도색은 다 벗겨져 쇠 냄새가 풀풀 났고, 흔해 빠진 마법 회로는커녕 유압 실린더가 삐걱거리는 소리만 요란했다.",
+      "type": "description",
+      "actor": "Narrator"
+    },
+    {
+      "text": "···치직.",
+      "type": "action",
+      "actor": "Narrator"
+    },
+    {
+      "text": "[코드네임: 고스트. 듣고 있나?]",
+      "type": "dialogue",
+      "actor": "카이저"
+    },
+    {
+      "text": "귀에 꽂힌 낡은 인이어에서 노이즈 섞인 목소리가 흘러나왔다. 총사령관 카이저였다.",
+      "type": "description",
+      "actor": "Narrator"
+    },
+    {
+      "text": "“들립니다.”",
+      "type": "dialogue",
+      "actor": "강진우"
+    },
+    {
+      "text": "[상황···보고 있지?]",
+      "type": "dialogue",
+      "actor": "카이저"
+    },
+    {
+      "text": "진우가 고개를 들었다.",
+      "type": "action",
+      "actor": "강진우"
+    },
+    {
+      "text": "저 멀리, 마왕 에레보스가 개미 밟듯 전함을 유린하고 있었다. 으스대던 랭커란 놈들은 이미 반쯤 갈려 나갔거나 꽁무니를 뺀 지 오래.",
+      "type": "description",
+      "actor": "Narrator"
+    },
+    {
+      "text": "······예.",
+      "type": "dialogue",
+      "actor": "강진우"
+    },
+    {
+      "text": "[보다시피 최악이다.]",
+      "type": "dialogue",
+      "actor": "카이저"
+    },
+    {
+      "text": "인이어 너머로 이를 가는 소리가 들려왔다.",
+      "type": "action",
+      "actor": "Narrator"
+    },
+    {
+      "text": "[망할 책상물림 놈들 같으니! 할 수 있다고 설칠 때부터 예상은 했지만 이 정도로 말아먹을 줄이야.]",
+      "type": "dialogue",
+      "actor": "카이저"
+    },
+    {
+      "text": "콰앙!",
+      "type": "action",
+      "actor": "Narrator"
+    },
+    {
+      "text": "책상을 치는 소리가 이어졌다.",
+      "type": "action",
+      "actor": "Narrator"
+    },
+    {
+      "text": "진우는 그의 분노를 이해했다. 권력가들에게 이번 마왕 토벌 작전은 전쟁이 아니라 ‘쇼’였으니까.",
+      "type": "description",
+      "actor": "Narrator"
+    },
+    {
+      "text": "카이저가 씹어뱉듯 말을 이었다.",
+      "type": "description",
+      "actor": "Narrator"
+    },
+    {
+      "text": "[랭커? 개 같은 소리지. 영약이나 물처럼 처먹이고, 제대로 된 전쟁은 경험해 본 적도 없는, 온실 속 화초 주제에.]",
+      "type": "dialogue",
+      "actor": "카이저"
+    },
+    {
+      "text": "지금 저 위에서 랭커라고 불리는 놈들은 재능은 타고났을지 몰라도, 우물 밖의 지옥이 어떤 곳인지 구경도 못 해본 애송이들이었다.",
+      "type": "description",
+      "actor": "Narrator"
+    },
+    {
+      "text": "사방이 포위되었을 때의 막막함. 피비린내에 코가 마취되어 가는 엿 같은 경험조차 없다.",
+      "type": "description",
+      "actor": "Narrator"
+    },
+    {
+      "text": "[결국 이 사달이다.]",
+      "type": "dialogue",
+      "actor": "카이저"
+    },
+    {
+      "text": "전쟁은 숫자놀음이나 시뮬레이션이 아니다. 하지만 결정권자들은 카이저 같은 현장 지휘관의 경고를 묵살했다.",
+      "type": "description",
+      "actor": "Narrator"
+    },
+    {
+      "text": "그 같잖은 개짓거리의 대가를, 지금 아무 죄 없는 아프리카 전선이 피로 치르고 있는 거고.",
+      "type": "description",
+      "actor": "Narrator"
+    },
+    {
+      "text": "진우가 담담히 물었다.",
+      "type": "action",
+      "actor": "강진우"
+    },
+    {
+      "text": "“저한테 뭘 바랍니까?”",
+      "type": "dialogue",
+      "actor": "강진우"
+    },
+    {
+      "text": "[···에레보스를 죽여주시게.]",
+      "type": "dialogue",
+      "actor": "카이저"
+    },
+    {
+      "text": "카이저의 목소리에는 침통했다. 천하의 총사령관이, 일개 병사에게 애원하고 있었다.",
+      "type": "description",
+      "actor": "Narrator"
+    },
+    {
+      "text": "진우는 피우던 담배를 바닥에 던지고 군홧발로 비벼 껐다. 까맣게 타들어 간 담배꽁초가 뭉개졌다.",
+      "type": "action",
+      "actor": "강진우"
+    },
+    {
+      "text": "“일개 병사에게 과분한 명령입니다.”",
+      "type": "dialogue",
+      "actor": "강진우"
+    },
+    {
+      "text": "[일개 병사?]",
+      "type": "dialogue",
+      "actor": "카이저"
+    },
+    {
+      "text": "카이저에게서 헛웃음이 튀어 나왔다.",
+      "type": "action",
+      "actor": "Narrator"
+    },
+    {
+      "text": "[천하의 아지다하카가 일개 병사란 말인가?]",
+      "type": "dialogue",
+      "actor": "카이저"
+    },
+    {
+      "text": "“어찌 되었든 직급은 그러합니다.”",
+      "type": "dialogue",
+      "actor": "강진우"
+    },
+    {
+      "text": "결국 원하는 바가 있다는 이야기.",
+      "type": "description",
+      "actor": "Narrator"
+    },
+    {
+      "text": "[···임무 달성 후 복귀하면 자네가 원하는 건 뭐든 들어주지.]",
+      "type": "dialogue",
+      "actor": "카이저"
+    },
+    {
+      "text": "“전역서 수리해주십시오.”",
+      "type": "dialogue",
+      "actor": "강진우"
+    },
+    {
+      "text": "대체 몇 번이나 반려된 건지.",
+      "type": "description",
+      "actor": "Narrator"
+    },
+    {
+      "text": "그냥 탈영이나 할까 하다가 참는 것도 한두 번이다.",
+      "type": "description",
+      "actor": "Narrator"
+    },
+    {
+      "text": "[으음···]",
+      "type": "action",
+      "actor": "카이저"
+    },
+    {
+      "text": "카이저는 심장을 잃은 듯 아까운 기색으로 대답했다.",
+      "type": "description",
+      "actor": "Narrator"
+    },
+    {
+      "text": "[이번 일만 잘 처리되면···그리 하겠네.]",
+      "type": "dialogue",
+      "actor": "카이저"
+    },
+    {
+      "text": "“참....",
+      "type": "dialogue",
+      "actor": "강진우"
+    },
+    {
+      "text": "뭘 저렇게 아쉬워하는 건지. 잠시 황당한 표정을 지은 진우가 자리에서 일어났다.",
+      "type": "action",
+      "actor": "강진우"
+    },
+    {
+      "text": "투박한 강화복이 ‘위잉, 철컥’ 하며 기계음을 냈다. 그의 허리춤에는 화려한 마법 검 대신, 칠흑처럼 검고 무광 처리된 투박한 단검 한 자루가 매달려 있었다.",
+      "type": "description",
+      "actor": "Narrator"
+    },
+    {
+      "text": "“카메라는 다 치워주십시오.”",
+      "type": "dialogue",
+      "actor": "강진우"
+    },
+    {
+      "text": "돈, 명예, 권력.",
+      "type": "description",
+      "actor": "Narrator"
+    },
+    {
+      "text": "그런 걸 원하고 살았다면 진즉에 그리 했다.",
+      "type": "description",
+      "actor": "Narrator"
+    },
+    {
+      "text": "일개 병사로 남지도 않았을 거고.",
+      "type": "description",
+      "actor": "Narrator"
+    },
+    {
+      "text": "[···행운을 비네.]",
+      "type": "dialogue",
+      "actor": "카이저"
+    },
+    {
+      "text": "통신이 끊겼다.",
+      "type": "action",
+      "actor": "Narrator"
+    },
+    {
+      "text": "진우는 목을 좌우로 꺾어 둑둑 소리를 냈다. 깊은 눈동자가 전장의 중심, 마왕 에레보스를 향해 고정되었다.",
+      "type": "action",
+      "actor": "강진우"
+    },
+    {
+      "text": "“그럼.”",
+      "type": "dialogue",
+      "actor": "강진우"
+    },
+    {
+      "text": "그의 몸에서 검붉은 아지랑이가 피어올랐다가 이내 그것이 착각이라는 듯 몸속으로 스며들었다.",
+      "type": "action",
+      "actor": "Narrator"
+    },
+    {
+      "text": "진우에겐 저 위의 랭커들처럼 거창한 이능이 없었다.",
+      "type": "description",
+      "actor": "Narrator"
+    },
+    {
+      "text": "그럼에도 잘 싸운다. 검은 사막이란 사상 최악의 마경 속에서 홀로 살아남을 만큼.",
+      "type": "description",
+      "actor": "Narrator"
+    },
+    {
+      "text": "“드디어 전역인가?”",
+      "type": "dialogue",
+      "actor": "강진우"
+    },
+    {
+      "text": "진우는 작게 웃은 후 얼굴을 가리는 면갑(面甲)을 쓰고는 가볍게 발을 디뎠다.",
+      "type": "action",
+      "actor": "강진우"
+    }
+  ]
+}

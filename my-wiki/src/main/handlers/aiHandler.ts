@@ -1,8 +1,9 @@
 import { ipcMain } from 'electron'
+import { wikiService } from '../services/wikiService'
 import Store from 'electron-store'
 import { GoogleGenerativeAI, Schema, SchemaType } from '@google/generative-ai'
-import { generateSceneAnalysisPrompt } from '../lib/ai/promptBuilder'
-import { SCENE_DATA_JSON_SCHEMA } from '../lib/ai/geminiSchema'
+import { generateSceneAnalysisPrompt, generateScriptAnalysisPrompt } from '../lib/ai/promptBuilder'
+import { SCENE_DATA_JSON_SCHEMA, SCRIPT_DATA_JSON_SCHEMA } from '../lib/ai/geminiSchema'
 import { characterService } from '../services/characterService'
 import { SceneFieldConfig, DEFAULT_SCENE_FIELDS, DEFAULT_CHARACTER_FIELDS, CharacterFieldConfig } from '../../shared/types/field-config'
 import { SchemaProperty, DEFAULT_ROOT_SCHEMA, DEFAULT_SCHEMAS } from '../../shared/types/schema-config'
@@ -300,7 +301,27 @@ export function setupAIHandlers(store: Store): void {
       const customSchema = store.get(STORE_KEY_CUSTOM_SCHEMA)
       const customInstructions = store.get(STORE_KEY_CUSTOM_INSTRUCTIONS) as string
       
-      const effectiveSchema = (customSchema || SCENE_DATA_JSON_SCHEMA) as Schema
+      // [FIX] Force merge strict protocol schemas into effective schema
+      // This prevents stale custom schemas from omitting new entity fields or having loose descriptions.
+      let effectiveSchema = (customSchema ? JSON.parse(JSON.stringify(customSchema)) : JSON.parse(JSON.stringify(SCENE_DATA_JSON_SCHEMA))) as any
+      
+      const strictBase = SCENE_DATA_JSON_SCHEMA as any
+      if (strictBase.properties) {
+          if (!effectiveSchema.properties) effectiveSchema.properties = {}
+          
+          effectiveSchema.properties['wiki-data'] = strictBase.properties['wiki-data']
+          effectiveSchema.properties['wiki-item-data'] = strictBase.properties['wiki-item-data']
+          effectiveSchema.properties['wiki-location-data'] = strictBase.properties['wiki-location-data']
+          effectiveSchema.properties['wiki-faction-data'] = strictBase.properties['wiki-faction-data']
+          
+          // Ensure required fields
+          const reqSet = new Set(effectiveSchema.required || [])
+          reqSet.add('wiki-data')
+          reqSet.add('wiki-item-data')
+          reqSet.add('wiki-location-data')
+          reqSet.add('wiki-faction-data')
+          effectiveSchema.required = Array.from(reqSet)
+      }
 
       // [NEW] Dynamic Model Selection
       const selectedModel = (store.get(STORE_KEY_AI_MODEL_SELECTED) as string) || 'gemini-1.5-flash'
@@ -418,6 +439,52 @@ export function setupAIHandlers(store: Store): void {
     }
   })
 
+  // 3.5. Analyze Script (Dialogue/Action)
+  ipcMain.handle('ai:analyzeScript', async (_, text: string, characters?: string[]) => {
+    try {
+      const apiKey = store.get(STORE_KEY_API_TOKEN) as string
+      if (!apiKey) {
+        throw new Error('API Key not found')
+      }
+
+      // Use the selected model, default to 1.5-flash for speed/cost, user can switch to Pro
+      const selectedModel = (store.get(STORE_KEY_AI_MODEL_SELECTED) as string) || 'gemini-1.5-flash'
+      const isGemma = selectedModel.includes('gemma')
+
+      const genAI = new GoogleGenerativeAI(apiKey)
+      
+      const model = genAI.getGenerativeModel({
+        model: selectedModel,
+        generationConfig: isGemma ? undefined : {
+          responseMimeType: 'application/json',
+          responseSchema: SCRIPT_DATA_JSON_SCHEMA
+        }
+      })
+
+      const prompt = generateScriptAnalysisPrompt(text, characters)
+      
+      console.log(`[AI] Analyzing Script with ${characters?.length || 0} known characters...`)
+      const result = await model.generateContent(prompt)
+      const response = await result.response
+      let responseText = response.text()
+      
+      const jsonStart = responseText.indexOf('{')
+      const jsonEnd = responseText.lastIndexOf('}')
+      if (jsonStart !== -1 && jsonEnd !== -1) {
+          responseText = responseText.substring(jsonStart, jsonEnd + 1)
+      } else {
+          throw new Error('No JSON object found in AI response')
+      }
+      
+      const aiResult = JSON.parse(responseText)
+      return { success: true, data: aiResult }
+
+    } catch (error: any) {
+        console.error('Gemini Script Analysis Error:', error)
+        return { success: false, message: error.message }
+    }
+  })
+
   // 4. Update Characters
   ipcMain.handle('ai:updateCharacter', async (_, payload: { aiResult: any, sceneInfo: any, decisions?: any[] }) => {
     try {
@@ -450,5 +517,73 @@ export function setupAIHandlers(store: Store): void {
         console.error('Character Update Error:', error)
         return { success: false, message: error.message }
     }
+    })
+
+// 5. Process Entity Decisions (Generic)
+  ipcMain.handle('ai:processEntityDecisions', async (_, payload: { aiResult: any, sceneInfo: any, decisions: any }) => {
+      try {
+          const { aiResult, sceneInfo, decisions } = payload
+          const results: any[] = []
+
+          // Helper to process a category
+          const processCategory = async (type: string, dataKey: string) => {
+               const wikiData = aiResult[dataKey]
+               if (!wikiData) return
+
+               const updates = wikiData.update || []
+               // Distinct names from Appear + Update
+               const distinctNames = new Set<string>([
+                   ...(wikiData.appear || []), 
+                   ...(updates.map((u:any) => u.name) || [])
+               ])
+               
+               for (const name of distinctNames) {
+                   if (!name || typeof name !== 'string') continue
+                   
+                   // Find Data
+                   const updateInfo = updates.find((u: any) => u.name === name)
+                   
+                   // Construct AI Data for Service
+                   // Basic changes
+                   const changes = updateInfo ? (updateInfo.changes || {}) : {}
+                   const fullAiData = { ...changes }
+                   
+                   // Attach Relations
+                   // Case 1: Nested relations (Faction)
+                   if (updateInfo?.relations) {
+                       fullAiData.relations = updateInfo.relations
+                   }
+                   // Case 2: Root relations (Character)
+                   if (type === 'character' && wikiData.relations) {
+                       const myRels = wikiData.relations.filter((r: any) => r.source === name)
+                       if (myRels.length > 0) {
+                           // Merge if existing (priority to nested if any?)
+                           fullAiData.relations = [...(fullAiData.relations || []), ...myRels]
+                       }
+                   }
+
+                   // Attach Summary/Desc if available (Character desc is in changes usually)
+                   
+                   // Check Decision
+                   // Decisions keyed by Type -> Name
+                   const decision = decisions[type]?.[name]
+                   
+                   // Execute
+                   // wikiService will skip if no file exists and action != create
+                   const res = await wikiService.upsertWikiEntry(type, name, fullAiData, sceneInfo, decision)
+                   if (res) results.push(res)
+               }
+          }
+
+          if (decisions.character) await processCategory('character', 'wiki-data')
+          if (decisions.item) await processCategory('item', 'wiki-item-data')
+          if (decisions.location) await processCategory('location', 'wiki-location-data')
+          if (decisions.faction) await processCategory('faction', 'wiki-faction-data')
+          
+          return { success: true, results }
+      } catch (e: any) {
+          console.error(e)
+          return { success: false, message: e.message }
+      }
   })
 }

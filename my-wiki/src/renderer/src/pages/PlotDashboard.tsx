@@ -10,13 +10,15 @@ import { WikiEntry } from '../types/wiki'
 
 interface PlotDashboardProps {
   wikiData: WikiEntry[]
+  selectedScenePath: string | null
+  onSelectScene: (path: string | null) => void
 }
 
-export const PlotDashboard = ({ wikiData }: PlotDashboardProps) => {
+export const PlotDashboard = ({ wikiData, selectedScenePath, onSelectScene }: PlotDashboardProps) => {
   const [plotData, setPlotData] = useState<ActBoard[]>([])
   const [currentActIndex, setCurrentActIndex] = useState(0)
   const [loading, setLoading] = useState(true)
-  const [selectedScenePath, setSelectedScenePath] = useState<string | null>(null)
+  // [REMOVED] const [selectedScenePath, setSelectedScenePath] = useState<string | null>(null)
   const [modalConfig, setModalConfig] = useState({ isOpen: false, type: '', path: '', title: '' })
   const [activeMenuId, setActiveMenuId] = useState<string | null>(null)
   
@@ -303,7 +305,7 @@ export const PlotDashboard = ({ wikiData }: PlotDashboardProps) => {
                                     key={scene.id}
                                     scene={scene}
                                     index={index}
-                                    onClick={setSelectedScenePath}
+                                    onClick={onSelectScene}
                                     onDelete={() => {
                                       if (window.confirm('씬 삭제?')) {
                                         // @ts-ignore
@@ -364,7 +366,7 @@ export const PlotDashboard = ({ wikiData }: PlotDashboardProps) => {
         isOpen={!!selectedScenePath}
         filePath={selectedScenePath || ''}
         onUpdate={refresh}
-        onClose={() => setSelectedScenePath(null)}
+        onClose={() => onSelectScene(null)}
         wikiData={wikiData} // [NEW] Pass wikiData
       />
 

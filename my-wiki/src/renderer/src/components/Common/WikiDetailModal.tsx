@@ -17,21 +17,24 @@ import {
   BookOpen,
   Activity,
   Maximize2,
-  Minimize2
+  Minimize2,
+  Search // [NEW]
 } from 'lucide-react'
 import ReactMarkdown from 'react-markdown'
 import { CharacterHistoryViewer } from '../Analysis/CharacterHistoryViewer' 
 import { CharacterStatusViewer } from '../Analysis/CharacterStatusViewer' 
+import { WikiMentionViewer } from './WikiMentionViewer'  // [NEW] 
 
 interface WikiDetailModalProps {
   entry: WikiEntry
   onClose: () => void
   onUpdate?: () => void 
+  onOpenScene?: (sceneId: string) => void // [NEW] Navigation callback
 }
 
-export const WikiDetailModal = ({ entry, onClose, onUpdate }: WikiDetailModalProps) => {
+export const WikiDetailModal = ({ entry, onClose, onUpdate, onOpenScene }: WikiDetailModalProps) => {
   // --- View Mode Data ---
-  const [activeTab, setActiveTab] = useState<'overview' | 'status' | 'history'>('overview')
+  const [activeTab, setActiveTab] = useState<'overview' | 'status' | 'history' | 'mentions'>('overview')
   const [isMaximized, setIsMaximized] = useState(false) // [NEW] Window State
   const [fieldConfig, setFieldConfig] = useState<(CharacterFieldConfig | SceneFieldConfig)[]>([])
 
@@ -514,8 +517,8 @@ export const WikiDetailModal = ({ entry, onClose, onUpdate }: WikiDetailModalPro
           {/* Content Body */}
           <div className="flex-1 w-full min-w-0 bg-[#0b0e14] relative flex flex-col overflow-hidden">
             
-            {/* [NEW] Tabs for Character */}
-            {!isEditing && entry.type === 'character' && (
+             {/* [NEW] Tabs for Entity */}
+            {!isEditing && ['character', 'location', 'item', 'faction'].includes(entry.type) && (
                 <div className="flex items-center border-b border-slate-800 bg-slate-950/50 sticky top-0 z-10 px-6 backdrop-blur-sm shrink-0">
                     <button
                         onClick={() => setActiveTab('overview')}
@@ -523,17 +526,27 @@ export const WikiDetailModal = ({ entry, onClose, onUpdate }: WikiDetailModalPro
                     >
                         <BookOpen size={14} /> 개요 (Overview)
                     </button>
+                    {entry.type === 'character' && (
+                        <>
+                            <button
+                                onClick={() => setActiveTab('status')}
+                                className={`px-4 py-3 text-xs font-bold border-b-2 transition-colors flex items-center gap-2 ${activeTab === 'status' ? 'border-green-500 text-green-400' : 'border-transparent text-slate-500 hover:text-slate-300'}`}
+                            >
+                                <Activity size={14} /> 상태 (Status)
+                            </button>
+                            <button
+                                onClick={() => setActiveTab('history')}
+                                className={`px-4 py-3 text-xs font-bold border-b-2 transition-colors flex items-center gap-2 ${activeTab === 'history' ? 'border-purple-500 text-purple-400' : 'border-transparent text-slate-500 hover:text-slate-300'}`}
+                            >
+                                <Clock size={14} /> 타임라인 (History)
+                            </button>
+                        </>
+                    )}
                     <button
-                        onClick={() => setActiveTab('status')}
-                        className={`px-4 py-3 text-xs font-bold border-b-2 transition-colors flex items-center gap-2 ${activeTab === 'status' ? 'border-green-500 text-green-400' : 'border-transparent text-slate-500 hover:text-slate-300'}`}
+                        onClick={() => setActiveTab('mentions')}
+                        className={`px-4 py-3 text-xs font-bold border-b-2 transition-colors flex items-center gap-2 ${activeTab === 'mentions' ? 'border-orange-500 text-orange-400' : 'border-transparent text-slate-500 hover:text-slate-300'}`}
                     >
-                        <Activity size={14} /> 상태 (Status)
-                    </button>
-                    <button
-                        onClick={() => setActiveTab('history')}
-                        className={`px-4 py-3 text-xs font-bold border-b-2 transition-colors flex items-center gap-2 ${activeTab === 'history' ? 'border-purple-500 text-purple-400' : 'border-transparent text-slate-500 hover:text-slate-300'}`}
-                    >
-                        <Clock size={14} /> 타임라인 (History)
+                        <Search size={14} /> 멘션 (Mentions)
                     </button>
                 </div>
             )}
@@ -557,6 +570,10 @@ export const WikiDetailModal = ({ entry, onClose, onUpdate }: WikiDetailModalPro
                     ) : entry.type === 'character' && activeTab === 'status' ? (
                         <div className="flex-1 min-h-0 animate-in fade-in slide-in-from-bottom-2 duration-300">
                             <CharacterStatusViewer characterName={entry.name} aliases={aliases} />
+                        </div>
+                    ) : activeTab === 'mentions' ? (
+                        <div className="flex-1 min-h-0 animate-in fade-in slide-in-from-bottom-2 duration-300 h-full">
+                            <WikiMentionViewer characterName={entry.name} aliases={aliases} onOpenScene={onOpenScene} />
                         </div>
                     ) : (
                         <div className="flex-1 overflow-y-auto custom-scrollbar p-8">

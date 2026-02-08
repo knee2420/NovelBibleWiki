@@ -4,7 +4,7 @@
  * Generates strict system prompts for LLM based on Scene Data Standard Protocol v1.1
  */
 
-import { SCENE_DATA_JSON_SCHEMA } from './geminiSchema';
+import { SCENE_DATA_JSON_SCHEMA, SCRIPT_DATA_JSON_SCHEMA } from './geminiSchema';
 
 export function generateSceneAnalysisPrompt(novelText: string, customSchema?: any, customInstructions?: string): string {
   const schemaToUse = customSchema || SCENE_DATA_JSON_SCHEMA;
@@ -37,6 +37,13 @@ The user has provided a segment of a novel. You must analyze the characters, the
         - Example: A is scared of B -> A to B (FEAR) "scared".
     - **One-sided**: Even if B doesn't notice A, if A has a strong impression (e.g. A admires B, A fears B), catch it!
     - **Implicit**: Relations like "Subordinate/Superior", "Rival", "Family" should be extracted even if not explicitly spoken.
+    - **Non-Character Relations (IMPORTANT)**:
+        - **Items**: Connect items to their **Owner** (Character/Faction) or **Creator**.
+          - Ex: "Excalibur" -> "Arthur" (Mood: OWNER, Display: "소유자")
+        - **Locations**: Connect locations to **Occupying Factions**, **Rulers**, or **Parent Regions**.
+          - Ex: "Castle Black" -> "Night's Watch" (Mood: OCCUPIED_BY, Display: "본거지")
+        - **Factions**: Connect factions to **Leaders**, **Hostile Factions**, or **Allied Groups**.
+          - Ex: "Alliance" -> "Horde" (Mood: ENEMY, Display: "적대")
 5. **Language (Crucial)**:
     - **ALL output values (summary, titles, etc.) MUST be in KOREAN (Hangul).**
     - Do not translate proper nouns if they are English names in the input, but describe context in Korean.
@@ -55,9 +62,16 @@ The user has provided a segment of a novel. You must analyze the characters, the
         - BAD: "Leo (Paladin / Injured)"
         - GOOD: "name": "Leo", "changes": { "role": "Paladin", "status": "Injured" }
     - **Pure Names Only**: The 'name' field must contain ONLY the character/entity name. No status, no role, no parentheses.
-    - **Objects, Not Strings**: 'update', 'relations', 'wiki-item-data', 'wiki-location-data', and 'wiki-faction-data' must be arrays of OBJECTS with specific keys, NOT strings.
+    - **Objects, Not Strings**: 'update', 'relations', 'wiki-character-data', 'wiki-item-data', 'wiki-location-data', and 'wiki-faction-data' must be arrays of OBJECTS with specific keys, NOT strings.
     - **Nulls**: Do not omit required fields. If a value is unknown, use an empty string "" or "UNKNOWN".
-    - **Wiki Data**: For 'wiki-data', 'wiki-item-data', 'wiki-location-data', and 'wiki-faction-data', you MUST return the full object structure defined in the schema. Do not simplify or summarize.
+    - **Wiki Data**: For 'wiki-character-data', 'wiki-item-data', 'wiki-location-data', and 'wiki-faction-data', you MUST return the full object structure defined in the schema. Do not simplify or summarize.
+8. **Entity Categorization (CRITICAL)**:
+    - **wiki-character-data**: EXCLUSIVELY for Characters (People, Monsters, Sentient Beings). **Do NOT put Locations or Items here.**
+    - **wiki-location-data**: For Places, Buildings, Regions, Dimensions (e.g. "Airport", "Dungeon", "Seoul").
+    - **wiki-item-data**: For Objects, Weapons, Artifacts, Consumables.
+    - **wiki-faction-data**: For Organizations, Guilds, Groups, Families.
+    - **Ambiguity**: If an entity is a "Living Dungeon", treat as Character if it speaks/acts, otherwise Location.
+    - **Strict Separation**: If "Incheon Airport" appears, it MUST be in 'wiki-location-data', NEVER in 'wiki-character-data'.
 `;
 
   const instructions = customInstructions || baseInstructions;
@@ -67,6 +81,43 @@ ${instructions}
 
 # Schema Reference
 Refrain from improvising fields. Stick to this structure:
+${JSON.stringify(schemaToUse, null, 2)}
+
+# Input Novel Text
+---
+${novelText}
+---
+
+Analyze the text above and produce the JSON output.
+`;
+}
+
+export function generateScriptAnalysisPrompt(novelText: string, knownCharacters?: string[]): string {
+  const schemaToUse = SCRIPT_DATA_JSON_SCHEMA;
+  
+  const charListString = knownCharacters && knownCharacters.length > 0 
+      ? `\n  - **Known Characters (PRIORITY)**: ${knownCharacters.join(', ')}\n    (Use these names exactly. Do not create new variations if the character is in this list.)`
+      : '';
+
+  const instructions = `
+  You are an expert literary editor and script analyzer.
+  Your task is to analyze the provided Korean novel text and convert it into a structured script format.
+
+  Instructions:
+  1. Read the text carefully.
+  2. Identify all unique characters. Consolidate names (e.g., 'Jin-woo', 'Kang Jin-woo', 'man' referring to him -> 'Kang Jin-woo').${charListString}
+  3. Split the text into logical segments (paragraphs or dialogue lines). 
+  4. For each segment, determine:
+     - Is it dialogue, action, or general description?
+     - Who is the primary actor or speaker? 
+  5. Be precise. If a sentence describes 'Han Ye-rin' coughing, the actor is 'Han Ye-rin'. If 'Ma Seok-doo' speaks, the actor is 'Ma Seok-doo'.
+  6. Return the result in strict JSON format matching the schema.
+  `;
+
+  return `
+${instructions}
+
+# Schema Reference
 ${JSON.stringify(schemaToUse, null, 2)}
 
 # Input Novel Text

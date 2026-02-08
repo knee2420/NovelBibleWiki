@@ -15,12 +15,13 @@ import {
   ChevronDown,
   ChevronUp
 } from 'lucide-react'
+import { ScriptAnalysisPanel } from '../AI/ScriptAnalysisPanel'
 import { AIAnalyzePanel } from '../AI/AIAnalyzePanel'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import { WikiEntry } from '../../types/wiki'
-import { CharacterReviewModal } from '../AI/CharacterReviewModal'
-import { useCharacterReview } from '../../hooks/useCharacterReview'
+import { EntityReviewDashboard } from '../AI/EntityReviewDashboard'
+import { useEntityReview } from '../../hooks/useEntityReview'
 import { SceneFieldConfig } from '../../../../shared/types/field-config'
 import { WikiDataRenderer } from '../Shared/WikiDataRenderer'
 
@@ -32,6 +33,8 @@ interface SceneDetailModalProps {
   wikiData?: WikiEntry[]
 }
 
+
+
 export const SceneDetailModal = ({
   filePath,
   isOpen,
@@ -40,10 +43,17 @@ export const SceneDetailModal = ({
   wikiData = []
 }: SceneDetailModalProps) => {
   const [loading, setLoading] = useState(false)
+  const [viewMode, setViewMode] = useState<'editor' | 'script'>('editor')
+
+  useEffect(() => {
+    if (isOpen) setViewMode('editor')
+  }, [isOpen])
+
   
   // --- Data State ---
   const [originalData, setOriginalData] = useState<any>(null)
   const [fieldConfig, setFieldConfig] = useState<SceneFieldConfig[]>([])
+  const [scriptData, setScriptData] = useState<any>(null)
   const [isEditing, setIsEditing] = useState(false)
 
   // --- Edit Mode State ---
@@ -61,17 +71,29 @@ export const SceneDetailModal = ({
   const [isGraphDataExpanded, setIsGraphDataExpanded] = useState(false)
   const [isAIPanelOpen, setIsAIPanelOpen] = useState(false)
 
-  // [Hook] Use Character Review
+  // [Hook] Use Entity Review
   const { 
     isReviewing, 
-    pendingReviews, 
-    reviewIndex, 
+    pendingEntities, 
     decisions, 
-    detectNewCharacters, 
-    handleReviewAction, 
+    detectEntities, 
+    handleDecision, 
     waitForReview,
-    resetReview
-  } = useCharacterReview(wikiData)
+    finishReview,
+    resetReview,
+    hasPendingDecisions
+  } = useEntityReview(wikiData)
+
+  const handleDashboardApply = () => {
+      finishReview()
+  }
+
+  const handleDashboardCancel = () => {
+      finishReview() // Just close/resolve, decisions state clears if we resetEntityReview? 
+      // If we want to cancel changes, we should probably clear decisions before finishing.
+      // But typically cancel means "don't apply".
+      // Let's assume user just wants to close modal and maybe continue editing scene manually.
+  }
 
   const titleInputRef = useRef<HTMLInputElement>(null)
 
@@ -104,9 +126,10 @@ export const SceneDetailModal = ({
     setLoading(true)
     try {
       // @ts-ignore
-      const [detailData, configData] = await Promise.all([
+      const [detailData, configData, scriptAnalysis] = await Promise.all([
           (window as any).api.getSceneDetail(filePath),
-          (window as any).api.getFieldConfig()
+          (window as any).api.getFieldConfig(),
+          (window as any).api.loadScriptAnalysis(filePath)
       ])
       
       const config = configData?.scene || []
@@ -125,6 +148,13 @@ export const SceneDetailModal = ({
         const meta = { ...detailData.frontmatter }
         reserved.forEach(k => delete meta[k])
         setEditMetadata(meta)
+
+        // Set Sidecar Data
+        if (scriptAnalysis) {
+            setScriptData(scriptAnalysis)
+        } else {
+            setScriptData(null)
+        }
       }
     } catch (error) {
       console.error(error)
@@ -135,23 +165,54 @@ export const SceneDetailModal = ({
 
   const handleSave = async () => {
     try {
-      const activeDecisions = Object.keys(decisions).length > 0 ? Object.values(decisions) : undefined
-
       const payload = {
         path: filePath,
         content: editContent,
         data: {
           ...originalData.frontmatter,
-          title: editTitle, // Explicitly set title
-          ...editMetadata,  // Spread all dynamic fields
+          title: editTitle,
+          ...editMetadata,
           updatedAt: new Date().toISOString()
         },
-        decisions: activeDecisions
+        decisions: decisions // Pass decisions map mainly for reference, actually processed separately below
       }
 
+      // 1. Update File (Plot Handler)
       // @ts-ignore
       const res = await window.api.updateScene(payload)
+      
       if (res.success) {
+        // [NEW] 2. Process Entity Decisions (AI Handler)
+        if (hasPendingDecisions) {
+             // Reconstruct basic aiResult structure based on current metadata
+             // (Since we lost original full AI result object, we approximate it from what we have stored in metadata)
+             const aiResultProxy = {
+                 'wiki-data': editMetadata['wiki-data'] || {},
+                 'wiki-item-data': editMetadata['wiki-item-data'] || {},
+                 'wiki-location-data': editMetadata['wiki-location-data'] || {},
+                 'wiki-faction-data': editMetadata['wiki-faction-data'] || {}
+             }
+
+             // @ts-ignore
+             const entityRes = await window.api.processEntityDecisions({ 
+                 aiResult: aiResultProxy,
+                 sceneInfo: {
+                     chapter: originalData.frontmatter.chapter,
+                     scene: originalData.frontmatter.scene,
+                     title: editTitle
+                 },
+                 decisions: decisions
+             })
+             
+             if (entityRes.success) {
+                 console.log('Entities updated:', entityRes.results)
+             } else {
+                 console.error('Entity update failed', entityRes)
+             }
+             
+             resetReview()
+        }
+
         setIsEditing(false)
         loadDetail()
         if (onUpdate) onUpdate()
@@ -238,15 +299,21 @@ export const SceneDetailModal = ({
   const getFileName = (path: string) => path.split(/[\\/]/).pop()?.replace(/\.md$/i, '') || ''
 
   const handleAIApply = async (data: any) => {
-    const needsReview = detectNewCharacters(data)
-    if (needsReview) await waitForReview()
+    // 1. Detect
+    const needsReview = detectEntities(data)
+    
+    // 2. Review UI blocks here until finishReview() is called
+    if (needsReview) {
+         await waitForReview()
+         // Check if we still have decisions (user didn't just cancel)?
+         // Actually detectEntities sets pendingEntities.
+         // If user cancelled, decisions might be empty but we proceed to edit metadata.
+    }
 
     if (data.title) setEditTitle(data.title)
     
-    // Apply all other fields dynamically
     setEditMetadata(prev => {
         const next = { ...prev }
-        // Exclude internal
         const exclude = ['title'] 
         Object.keys(data).forEach(key => {
             if (!exclude.includes(key)) {
@@ -265,7 +332,7 @@ export const SceneDetailModal = ({
       const val = editMetadata[field.key]
       
       // Special Handling for Wiki Data (Graph)
-      if (field.key === 'wiki-data') {
+      if (field.key.startsWith('wiki-')) {
           return renderWikiData(val, field)
       }
       
@@ -442,34 +509,32 @@ export const SceneDetailModal = ({
 
         {/* --- Right Column: Content Editor/Viewer --- */}
         <div className="flex-1 flex flex-col bg-[#0b0e14] relative z-0">
-          <div className="h-16 border-b border-slate-800 flex items-center px-6 bg-[#0b0e14] relative shrink-0 z-20">
-            <div className="w-full min-w-0 pr-36">
+          <div className="h-16 border-b border-slate-800 flex items-center justify-between px-6 bg-[#0b0e14] relative shrink-0 z-20">
+            {/* Left Side: Title & View Toggle */}
+            <div className="flex items-center gap-4 min-w-0 mr-4 flex-1">
               {isEditing ? (
                 <input
                   ref={titleInputRef}
                   type="text"
                   value={editTitle}
                   onChange={(e) => setEditTitle(e.target.value)}
-                  className="bg-transparent text-xl font-bold text-white border-b border-blue-500 focus:outline-none w-full pb-1"
+                  className="bg-transparent text-xl font-bold text-white border-b border-blue-500 focus:outline-none w-full pb-1 max-w-lg"
                   placeholder="Scene Title"
                   autoComplete="off"
                 />
               ) : (
-                <h2 className="text-xl font-bold text-white truncate" title={editTitle || getFileName(filePath)}>
-                  {editTitle || getFileName(filePath)}
-                </h2>
+                <>
+                    <h2 className="text-xl font-bold text-white truncate max-w-md shrink-1" title={editTitle || getFileName(filePath)}>
+                    {editTitle || getFileName(filePath)}
+                    </h2>
+                    
+                </>
               )}
             </div>
 
-            <div className="absolute right-6 top-0 h-full flex items-center gap-2">
-              {!isAIPanelOpen && (
-                <button
-                  onClick={() => setIsAIPanelOpen(true)}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold text-purple-300 hover:text-white hover:bg-purple-900/30 border border-purple-500/30 transition-colors mr-4"
-                >
-                  <Sparkles size={14} /> Smart Analyze
-                </button>
-              )}
+            {/* Right Side: Actions */}
+            <div className="flex items-center gap-2 shrink-0">
+
 
               {isEditing ? (
                 <>
@@ -496,8 +561,60 @@ export const SceneDetailModal = ({
             </div>
           </div>
 
+          {/* Sub Header: View Tabs & Actions */}
+          {!isEditing && !loading && (
+            <div className="h-12 border-b border-slate-800 bg-slate-950/30 flex items-center px-6 justify-between shrink-0 animate-in fade-in slide-in-from-top-1 duration-200">
+                {/* Left: View Tabs */}
+                <div className="flex gap-1 bg-slate-900/50 p-1 rounded-lg border border-slate-700/50">
+                    <button 
+                        onClick={() => setViewMode('editor')}
+                        className={`px-4 py-1.5 text-xs font-bold rounded-md transition-all flex items-center gap-2 ${viewMode === 'editor' ? 'bg-slate-700 text-white shadow-sm ring-1 ring-slate-500/50' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/30'}`}
+                    >
+                        <Edit2 size={13} /> Editor
+                    </button>
+                    <button 
+                         onClick={() => setViewMode('script')}
+                         className={`px-4 py-1.5 text-xs font-bold rounded-md transition-all flex items-center gap-2 ${viewMode === 'script' ? 'bg-purple-600/80 text-white shadow-sm ring-1 ring-purple-400/50' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/30'}`}
+                    >
+                        <User size={13} /> Script View
+                    </button>
+                </div>
+                
+                {/* Right: Actions */}
+                <div className="flex items-center gap-2">
+                    {!isAIPanelOpen && viewMode === 'editor' && (
+                        <button
+                          onClick={() => setIsAIPanelOpen(true)}
+                          className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-bold text-purple-300 hover:text-white hover:bg-purple-900/40 border border-purple-500/30 transition-all"
+                        >
+                          <Sparkles size={14} /> Smart Analyze
+                        </button>
+                    )}
+                </div>
+             </div>
+          )}
+
           {loading ? (
             <div className="flex-1 flex items-center justify-center text-slate-500">Loading...</div>
+          ) : viewMode === 'script' ? (
+              <div className="flex-1 overflow-hidden bg-white">
+                  <ScriptAnalysisPanel 
+                    initialText={editContent} 
+                    initialData={scriptData}
+                    knownCharacters={
+                        (editMetadata['characters'] && editMetadata['characters'].length > 0) 
+                            ? editMetadata['characters'] 
+                            : (editMetadata['wiki-data']?.appear || []).filter((name: string) => !name.match(/\((장비|아이템|물건|도구|장소|위치|Item|Object|Location|Place)\)/i))
+                    }
+                    onResult={async (result) => {
+                        setScriptData(result)
+                        // Save immediately to sidecar
+                        // @ts-ignore
+                        await window.api.saveScriptAnalysis(filePath, result)
+                    }}
+                    onClose={() => setViewMode('editor')} 
+                  />
+              </div>
           ) : (
             <div className="flex-1 overflow-y-auto custom-scrollbar p-8 w-full min-w-0">
               {isEditing ? (
@@ -509,8 +626,14 @@ export const SceneDetailModal = ({
                   spellCheck={false}
                 />
               ) : (
-                <article className="prose prose-invert prose-slate max-w-none prose-p:leading-relaxed prose-headings:text-slate-200 prose-pre:whitespace-pre-wrap prose-pre:break-words w-full break-words">
-                  <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                <article className="prose prose-invert prose-slate max-w-3xl mx-auto prose-p:leading-relaxed prose-headings:text-slate-200 prose-pre:whitespace-pre-wrap prose-pre:break-words w-full break-words">
+                  <ReactMarkdown 
+                    remarkPlugins={[remarkGfm]}
+                    components={{
+                      pre: (props) => <pre {...props} style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word', overflowWrap: 'break-word' }} />,
+                      code: (props) => <code {...props} style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word', overflowWrap: 'break-word' }} />
+                    }}
+                  >
                     {editContent || '*No content*'}
                   </ReactMarkdown>
                 </article>
@@ -527,12 +650,14 @@ export const SceneDetailModal = ({
           />
         )}
         
-        <CharacterReviewModal
+        <EntityReviewDashboard
            isOpen={isReviewing}
-           pendingReviews={pendingReviews}
-           reviewIndex={reviewIndex}
-           wikiData={wikiData}
-           onAction={handleReviewAction}
+           pendingEntities={pendingEntities}
+           decisions={decisions} 
+           existingEntities={wikiData}
+           onDecision={handleDecision}
+           onApply={handleDashboardApply}
+           onCancel={handleDashboardCancel}
         />
       </div>
     </div>
