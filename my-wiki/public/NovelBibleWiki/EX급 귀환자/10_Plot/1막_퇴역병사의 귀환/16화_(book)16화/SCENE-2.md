@@ -1,22 +1,21 @@
 ---
 type: scene
-chapter: 16
-scene: 2
-title: 마력 공명 제어기 설명 및 녹명가 남매의 접근
+chapter: 0
+scene: 0
+title: 마력 공명 제어기
 summary: >-
-  김중헌이 마력 공명 제어기와 바이탈 스캐너에 대해 설명하는 동안, 녹명가 쌍둥이 남매 녹시우와 녹시연이 강진우에게 끊임없이 질문을 던지고
-  관심을 보인다. 탈주한 뇌전 벌꿀 오소리가 진우를 따라다니는 특이한 행동을 보이며, 녹명가는 진우와 오소리의 관계에 주목한다.
+  진우는 김중헌에게 영물과 사육사의 파장을 일치시키는 '마력 공명 제어기'와 영물들의 상태를 체크하는 '바이탈 스캐너'에 대한 설명을 듣는다.
+  녹명가의 쌍둥이 남매, 녹시우와 녹시연이 진우에게 끊임없이 질문을 던지며 가입을 권유한다. 탈주한 뇌전 벌꿀 오소리가 진우의 뒤를 쫓아다니는
+  특이한 행동을 보인다. 녹명가의 자녀들은 진우에게 영물 계약을 제안하며, 진우는 영물 애호가인 드루이드에 대해 생각한다.
 characters:
-  - 김중헌
   - 강진우
+  - 김중헌
   - 녹시우
   - 녹시연
   - 뇌전 벌꿀 오소리
-  - 녹명가 가주
 locations:
   - 나무 위
   - 중앙 통제실
-  - 해와 달 보육원
 wiki-data:
   appear:
     - 김중헌
@@ -109,6 +108,145 @@ wiki-data:
       mood: NEUTRAL
       tense: CURRENT
   disappear: []
+items:
+  - 마력 공명 제어기
+  - 바이탈 스캐너
+factions:
+  - 녹명가
+tags:
+  - 영물
+  - 사육사
+  - 계약
+  - 탈주
+  - 드루이드
+wiki-character-data:
+  appear:
+    - 강진우
+    - 김중헌
+    - 녹시우
+    - 녹시연
+    - 뇌전 벌꿀 오소리
+  update:
+    - name: 강진우
+      changes:
+        status: ALIVE
+        role: 헌터
+        mental: 냉정하고 객관적
+        action: 영물과 사육사의 장비 설명을 듣고 쌍둥이의 질문에 답한다.
+    - name: 김중헌
+      changes:
+        status: ALIVE
+        role: 교육 담당
+        action: 장비에 대한 설명을 이어간다.
+    - name: 녹시우
+      changes:
+        status: ALIVE
+        role: 녹명가 자녀
+        action: 진우에게 가입을 권유하고 영물 계약을 제안한다.
+    - name: 녹시연
+      changes:
+        status: ALIVE
+        role: 녹명가 자녀
+        action: 진우에게 가입을 권유하고 영물 계약을 제안한다.
+    - name: 뇌전 벌꿀 오소리
+      changes:
+        status: ALIVE
+        role: 탈주범
+        action: 진우의 뒤를 쫓아다니는 특이한 행동을 보인다.
+  relations:
+    - source: 강진우
+      name: 김중헌
+      display: 설명
+      mood: NEUTRAL
+      tense: CURRENT
+    - source: 강진우
+      name: 녹시우
+      display: 질문
+      mood: NEUTRAL
+      tense: CURRENT
+    - source: 강진우
+      name: 녹시연
+      display: 질문
+      mood: NEUTRAL
+      tense: CURRENT
+    - source: 강진우
+      name: 뇌전 벌꿀 오소리
+      display: 관심
+      mood: NEUTRAL
+      tense: CURRENT
+    - source: 녹시우
+      name: 강진우
+      display: 가입 권유
+      mood: FRIENDLY
+      tense: CURRENT
+    - source: 녹시연
+      name: 강진우
+      display: 가입 권유
+      mood: FRIENDLY
+      tense: CURRENT
+    - source: 녹시우
+      name: 녹시연
+      display: 남매
+      mood: NEUTRAL
+      tense: CURRENT
+  disappear: []
+wiki-item-data:
+  appear:
+    - 마력 공명 제어기
+    - 바이탈 스캐너
+  update:
+    - name: 마력 공명 제어기
+      changes:
+        owner: 김중헌
+        status: 정상
+    - name: 바이탈 스캐너
+      changes:
+        owner: 김중헌
+        status: 정상
+  relations:
+    - source: 마력 공명 제어기
+      name: 영물
+      display: 파장 일치
+      mood: OWNER
+      tense: CURRENT
+    - source: 마력 공명 제어기
+      name: 사육사
+      display: 파장 일치
+      mood: OWNER
+      tense: CURRENT
+    - source: 바이탈 스캐너
+      name: 영물
+      display: 상태 체크
+      mood: OWNER
+      tense: CURRENT
+  disappear: []
+wiki-location-data:
+  appear:
+    - 나무 위
+    - 중앙 통제실
+  update: []
+  relations:
+    - source: 나무 위
+      name: 바이탈 스캐너
+      display: 설치 위치
+      mood: LOCATED_AT
+      tense: CURRENT
+wiki-faction-data:
+  appear:
+    - 녹명가
+  update: []
+  relations:
+    - source: 녹명가
+      name: 녹시우
+      display: 자녀
+      mood: SUB
+      tense: CURRENT
+    - source: 녹명가
+      name: 녹시연
+      display: 자녀
+      mood: SUB
+      tense: CURRENT
+updatedAt: '2026-02-08T14:13:59.032Z'
 ---
 “자, 여기 보시는 이 장비는 ‘마력 공명 제어기’입니다. 영물의 파장과 사육사의 파장을 일치시켜 거부감을 줄여주는 핵심 장치죠.”
 
