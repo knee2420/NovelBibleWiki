@@ -147,11 +147,11 @@ export const WikiDetailModal = ({ entry, onClose, onUpdate, onOpenScene }: WikiD
   }
 
   const handleSelectImage = async () => {
-    // @ts-ignore
     const result = await window.api.selectImage()
     if (result) {
       setEditImage(result.path) // 저장할 땐 경로(String) 사용
       setPreviewImage(result.preview) // 보여줄 땐 Base64 사용
+      setEditInfo((prev) => ({ ...prev, image: result.path })) // Metadata 상태도 동기화
     }
   }
 

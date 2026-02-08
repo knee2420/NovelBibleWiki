@@ -3,7 +3,7 @@ export interface WikiApi {
   getWikiData: () => Promise<any>
   selectFolder: () => Promise<string | null>
   importVault: (path: string) => Promise<any>
-  selectImage: () => Promise<string | null>
+  selectImage: () => Promise<{ path: string; preview: string } | null>
   getPlotData: () => Promise<any>
   getSceneDetail: (path: string) => Promise<any>
   createWikiEntry: (payload: any) => Promise<any>
