@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { WikiEntry } from '../types/wiki'
-import { Search, Plus, Filter } from 'lucide-react'
+import { Search, Plus, Filter, Layers } from 'lucide-react'
 import { CreateNewModal } from '../components/Common/CreateNewModal'
 import { useWikiFilter } from '../hooks/useWikiFilter'
 import { FilterBar } from '../components/Archive/FilterBar'
@@ -24,6 +24,7 @@ export const GenericArchive = ({
 }: GenericArchiveProps) => {
   const [searchTerm, setSearchTerm] = useState('')
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
+  const [groupBy, setGroupBy] = useState<string>('') // [NEW] GroupBy State
 
   // [NEW] Hook을 사용한 필터링 로직
   const { filters, options, filteredData: hookFilteredData, toggleFilter, resetFilters } = useWikiFilter(data)
@@ -44,6 +45,117 @@ export const GenericArchive = ({
   // 현재 보고 있는 "페이지 타입" 추정 (데이터의 첫 번째 요소로 판별하거나 props로 받는 게 확실하긴 함)
   const entryType = createType || (data.length > 0 ? data[0].type : 'other')
 
+  // [NEW] Group By Options Logic
+  const getGroupByOptions = () => {
+    switch (entryType) {
+      case 'character':
+        return [
+          { value: '', label: 'None' },
+          { value: 'status', label: '상태 (Status)' },
+          { value: 'grade', label: '비중 (Grade)' },
+          { value: 'role', label: '역할 (Role)' },
+          { value: 'affiliation', label: '소속 (Affiliation)' }
+        ]
+      case 'item':
+        return [
+          { value: '', label: 'None' },
+          { value: 'category', label: '종류 (Category)' },
+          { value: 'rank', label: '등급 (Rank)' },
+          { value: 'owner', label: '소유자 (Owner)' }
+        ]
+      case 'location':
+        return [
+          { value: '', label: 'None' },
+          { value: 'region', label: '지역 (Region)' },
+          { value: 'dangerLevel', label: '위험도 (Danger Level)' }
+        ]
+      case 'faction':
+        return [
+          { value: '', label: 'None' },
+          { value: 'hostility', label: '우호도 (Hostility)' },
+           { value: 'scale', label: '규모 (Scale)' }
+        ]
+      default:
+        return [{ value: '', label: 'None' }]
+    }
+  }
+
+  const groupByOptions = getGroupByOptions()
+
+  // [NEW] Render Card Helper
+  const renderCard = (entry: WikiEntry) => {
+    const isDraft = entry.id.includes('00_Draft')
+    const info = (entry as any).info || {}
+
+    return (
+      <div
+        key={entry.id}
+        onClick={() => onEntryClick(entry)}
+        className={`flex flex-col items-center p-5 bg-slate-900/80 border rounded-2xl transition-all cursor-pointer group shadow-lg relative
+  ${
+    isDraft
+      ? 'border-amber-500/40 shadow-amber-900/5 hover:border-amber-400'
+      : 'border-slate-800 hover:border-blue-500/40 hover:bg-slate-800/50'
+  }`}
+      >
+        {/* Image & Avatar */}
+        <div className="relative w-24 h-24 mb-4">
+          {/* Status Indicator Ring (Character Only) */}
+          {entry.type === 'character' && info.status === 'DECEASED' && (
+            <div className="absolute -inset-1 rounded-full border-2 border-red-900/50 z-0"></div>
+          )}
+
+          <div
+            className={`absolute -inset-1 rounded-full border border-dashed transition-colors
+    ${isDraft ? 'border-amber-500/30' : 'border-slate-700 group-hover:border-blue-500/30'}`}
+          />
+
+          <div className={`w-full h-full rounded-full overflow-hidden bg-slate-950 border-2 relative z-10 shadow-inner
+              ${info.status === 'DECEASED' ? 'border-red-900 grayscale' : 'border-slate-800'}
+            `}>
+            {entry.image ? (
+              <img
+                src={entry.image}
+                alt={entry.name}
+                className="w-full h-full object-cover opacity-90 group-hover:opacity-100 group-hover:scale-110 transition-all duration-500"
+              />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center text-slate-700 text-[10px] font-bold">
+                NO IMAGE
+              </div>
+            )}
+          </div>
+
+          {/* Grade Badge */}
+          {info.grade && (
+            <div className={`absolute -bottom-1 left-1/2 -translate-x-1/2 px-2 py-0.5 text-[8px] font-black uppercase rounded-full z-20 shadow-md border border-slate-900
+              ${info.grade === 'MAIN' ? 'bg-purple-500 text-white' : 
+                info.grade === 'SUB' ? 'bg-blue-500 text-white' : 'bg-slate-700 text-slate-400'
+              }
+            `}>
+              {info.grade}
+            </div>
+          )}
+        </div>
+
+        <div className="text-center w-full space-y-0.5">
+          <h3
+            className={`text-base font-bold truncate tracking-tight transition-colors
+    ${isDraft ? 'text-amber-200' : 'text-slate-100 group-hover:text-white'}
+    ${info.status === 'DECEASED' ? 'line-through decoration-red-500/50 text-slate-500' : ''}
+    `}
+          >
+            {entry.name}
+          </h3>
+
+          <p className="text-[10px] text-slate-500 font-medium truncate uppercase tracking-wider">
+            {info.role || info.category || info.region || '-'}
+          </p>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="flex flex-col h-screen animate-in fade-in duration-500 overflow-hidden bg-slate-950 text-white">
       {/* Main Content Area - No longer nested in a flex-row with sidebar */}
@@ -58,6 +170,22 @@ export const GenericArchive = ({
             </p>
           </div>
           <div className="flex items-center gap-4">
+             {/* [NEW] Group By Selector */}
+             <div className="flex items-center gap-2 bg-slate-900 border border-slate-700 rounded-lg px-3 py-2">
+                <Layers size={14} className="text-slate-500" />
+                <select
+                  value={groupBy}
+                  onChange={(e) => setGroupBy(e.target.value)}
+                  className="bg-transparent text-sm text-slate-300 focus:outline-none cursor-pointer"
+                >
+                  {groupByOptions.map((opt) => (
+                    <option key={opt.value} value={opt.value} className="bg-slate-900">
+                      {opt.value === '' ? 'Group: None' : opt.label}
+                    </option>
+                  ))}
+                </select>
+             </div>
+
              {/* 검색 바 */}
             <div className="relative w-64">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={16} />
@@ -106,80 +234,73 @@ export const GenericArchive = ({
               )}
             </div>
           ) : (
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 pb-20">
-              {finalFilteredData.map((entry) => {
-                const isDraft = entry.id.includes('00_Draft')
-                const info = (entry as any).info || {}
-
-                return (
-                  <div
-                    key={entry.id}
-                    onClick={() => onEntryClick(entry)}
-                    className={`flex flex-col items-center p-5 bg-slate-900/80 border rounded-2xl transition-all cursor-pointer group shadow-lg relative
-              ${
-                isDraft
-                  ? 'border-amber-500/40 shadow-amber-900/5 hover:border-amber-400'
-                  : 'border-slate-800 hover:border-blue-500/40 hover:bg-slate-800/50'
-              }`}
-                  >
-                     {/* Image & Avatar */}
-                    <div className="relative w-24 h-24 mb-4">
-                       {/* Status Indicator Ring (Character Only) */}
-                       {entry.type === 'character' && info.status === 'DECEASED' && (
-                         <div className="absolute -inset-1 rounded-full border-2 border-red-900/50 z-0"></div>
-                       )}
-
-                      <div
-                        className={`absolute -inset-1 rounded-full border border-dashed transition-colors
-                ${isDraft ? 'border-amber-500/30' : 'border-slate-700 group-hover:border-blue-500/30'}`}
-                      />
-
-                      <div className={`w-full h-full rounded-full overflow-hidden bg-slate-950 border-2 relative z-10 shadow-inner
-                          ${info.status === 'DECEASED' ? 'border-red-900 grayscale' : 'border-slate-800'}
-                        `}>
-                        {entry.image ? (
-                          <img
-                            src={entry.image}
-                            alt={entry.name}
-                            className="w-full h-full object-cover opacity-90 group-hover:opacity-100 group-hover:scale-110 transition-all duration-500"
-                          />
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center text-slate-700 text-[10px] font-bold">
-                            NO IMAGE
-                          </div>
-                        )}
-                      </div>
-
-                      {/* Grade Badge */}
-                      {info.grade && (
-                        <div className={`absolute -bottom-1 left-1/2 -translate-x-1/2 px-2 py-0.5 text-[8px] font-black uppercase rounded-full z-20 shadow-md border border-slate-900
-                          ${info.grade === 'MAIN' ? 'bg-purple-500 text-white' : 
-                            info.grade === 'SUB' ? 'bg-blue-500 text-white' : 'bg-slate-700 text-slate-400'
-                          }
-                        `}>
-                          {info.grade}
-                        </div>
-                      )}
-                    </div>
-
-                    <div className="text-center w-full space-y-0.5">
-                      <h3
-                        className={`text-base font-bold truncate tracking-tight transition-colors
-                ${isDraft ? 'text-amber-200' : 'text-slate-100 group-hover:text-white'}
-                ${info.status === 'DECEASED' ? 'line-through decoration-red-500/50 text-slate-500' : ''}
-                `}
-                      >
-                        {entry.name}
-                      </h3>
-
-                      <p className="text-[10px] text-slate-500 font-medium truncate uppercase tracking-wider">
-                        {info.role || info.category || info.region || '-'}
-                      </p>
-                    </div>
-                  </div>
-                )
-              })}
-            </div>
+             groupBy ? (
+               <div className="space-y-8 pb-20">
+                 {Object.entries(
+                   finalFilteredData.reduce((acc, entry) => {
+                     const info = (entry as any).info || {}
+                     // Ensure fallback is consistent
+                     const key = info[groupBy] || 'Uncategorized'
+                     if (!acc[key]) acc[key] = []
+                     acc[key].push(entry)
+                     return acc
+                   }, {} as Record<string, WikiEntry[]>)
+                 )
+                 .sort(([keyA], [keyB]) => {
+                    // Sorting Logic
+                    if (groupBy === 'grade') {
+                        const order = ['MAIN', 'SUB', 'MINOR', 'EXTRA', 'Uncategorized'];
+                        const idxA = order.indexOf(keyA);
+                        const idxB = order.indexOf(keyB);
+                        // If both are found, sort by index
+                        if (idxA !== -1 && idxB !== -1) return idxA - idxB;
+                        // If only one is found, that one comes first (unless it's Uncategorized which is handled by order array)
+                        // Actually Uncategorized is in the list, so just mapping missing ones to Infinity
+                        const safeIdxA = idxA === -1 ? 99 : idxA;
+                        const safeIdxB = idxB === -1 ? 99 : idxB;
+                        return safeIdxA - safeIdxB;
+                    }
+                    if (groupBy === 'status') {
+                        const order = ['ALIVE', 'UNKNOWN', 'DECEASED', 'Uncategorized'];
+                        const idxA = order.indexOf(keyA);
+                        const idxB = order.indexOf(keyB);
+                        const safeIdxA = idxA === -1 ? 99 : idxA;
+                        const safeIdxB = idxB === -1 ? 99 : idxB;
+                        return safeIdxA - safeIdxB;
+                    }
+                    if (groupBy === 'rank') {
+                         const order = ['S', 'A', 'B', 'C', 'D', 'E', 'F', 'Uncategorized'];
+                         const idxA = order.indexOf(keyA);
+                         const idxB = order.indexOf(keyB);
+                         const safeIdxA = idxA === -1 ? 99 : idxA;
+                         const safeIdxB = idxB === -1 ? 99 : idxB;
+                         return safeIdxA - safeIdxB;
+                    }
+                    // Default Alphabetical
+                    return keyA.localeCompare(keyB);
+                 })
+                 .map(([group, filteredEntries]) => (
+                   <div key={group}>
+                     <h3 className="text-xl font-bold text-slate-300 mb-4 flex items-center gap-2 border-b border-slate-800 pb-2">
+                       <span className="px-2 py-0.5 bg-slate-800 rounded text-sm text-slate-400">
+                          {groupBy.toUpperCase()}
+                       </span>
+                       {group} 
+                       <span className="text-sm font-normal text-slate-500 ml-2">
+                         ({filteredEntries.length})
+                       </span>
+                     </h3>
+                     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+                        {filteredEntries.map((entry) => renderCard(entry))}
+                     </div>
+                   </div>
+                 ))}
+               </div>
+             ) : (
+               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 pb-20">
+                 {finalFilteredData.map((entry) => renderCard(entry))}
+               </div>
+             )
           )}
         </div>
       </div>

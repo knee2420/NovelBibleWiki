@@ -6,7 +6,8 @@ const api = {
   getWikiData: (): Promise<any> => ipcRenderer.invoke('get-wiki-data'),
   selectFolder: (): Promise<string | null> => ipcRenderer.invoke('open-folder-dialog'),
   importVault: (path: string): Promise<any> => ipcRenderer.invoke('import-vault', path),
-  selectImage: (): Promise<string | null> => ipcRenderer.invoke('select-image-dialog'),
+  selectImage: (): Promise<{ path: string; preview: string } | null> =>
+    ipcRenderer.invoke('select-image-dialog'),
 
   getPlotData: (): Promise<any> => ipcRenderer.invoke('get-plot-data'),
   getSceneDetail: (path: string): Promise<any> => ipcRenderer.invoke('get-scene-detail', path),
@@ -67,6 +68,10 @@ const api = {
   saveScriptAnalysis: (path: string, data: any) => ipcRenderer.invoke('save-script-analysis', { path, data }),
   loadScriptAnalysis: (path: string) => ipcRenderer.invoke('load-script-analysis', path),
   searchWikiMentions: (keywords: string[]) => ipcRenderer.invoke('search-wiki-mentions', keywords),
+  
+  // [NEW] Blueprint Engine
+  getCharacterBlueprint: (characterId: string) => ipcRenderer.invoke('get-character-blueprint', characterId),
+  saveCharacterBlueprint: (blueprint: any) => ipcRenderer.invoke('save-character-blueprint', blueprint),
 }
 
 if (process.contextIsolated) {
