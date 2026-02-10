@@ -9,6 +9,7 @@ import { setupWikiHandlers } from './handlers/wikiHandler'
 import { setupProjectHandlers } from './handlers/projectHandler'
 import { setupAIHandlers } from './handlers/aiHandler'
 import { setupBlueprintHandlers } from './handlers/blueprintHandler' // [NEW]
+import { setupAnalysisHandlers } from './handlers/analysisHandler' // [NEW]
 
 const store = new Store()
 
@@ -55,6 +56,7 @@ app.whenReady().then(() => {
   setupProjectHandlers(store)
   setupAIHandlers(store)
   setupBlueprintHandlers(store) // [NEW] Blueprint 기능
+  setupAnalysisHandlers(store) // [NEW] Analysis 기능
 
   createWindow()
 

@@ -25,6 +25,7 @@ import { CharacterHistoryViewer } from '../Analysis/CharacterHistoryViewer'
 import { CharacterStatusViewer } from '../Analysis/CharacterStatusViewer' 
 import { WikiMentionViewer } from './WikiMentionViewer'
 import { CharacterGrowthTree } from '../Analysis/CharacterGrowthTree' // [NEW] 
+import { CharacterAnalysisEngine } from '../Analysis/CharacterAnalysisEngine' // [NEW] 
 
 interface WikiDetailModalProps {
   entry: WikiEntry
@@ -566,7 +567,7 @@ export const WikiDetailModal = ({ entry, onClose, onUpdate, onOpenScene }: WikiD
                 <>
                     {/* Overview Sub-tabs Logic */}
                     {activeTab === 'overview' ? (
-                        <OverviewSection entry={entry} />
+                        <OverviewSection entry={entry} aliases={aliases} onOpenScene={onOpenScene} />
                     ) : entry.type === 'character' && activeTab === 'history' ? (
                         <div className="flex-1 min-h-0 animate-in fade-in slide-in-from-bottom-2 duration-300">
                             <CharacterHistoryViewer characterName={entry.name} aliases={aliases} />
@@ -604,7 +605,11 @@ export const WikiDetailModal = ({ entry, onClose, onUpdate, onOpenScene }: WikiD
 }
 
 // Sub-component for Overview Sub-tabs
-const OverviewSection = ({ entry }: { entry: WikiEntry }) => {
+const OverviewSection = ({ entry, aliases = [], onOpenScene }: { 
+  entry: WikiEntry
+  aliases?: string[]
+  onOpenScene?: (sceneId: string) => void
+}) => {
     const [subTab, setSubTab] = useState<'profile' | 'growth' | 'mindset'>('profile')
 
     if (entry.type !== 'character') {
@@ -653,9 +658,17 @@ const OverviewSection = ({ entry }: { entry: WikiEntry }) => {
                      <div className="w-full h-full">
                          <CharacterGrowthTree characterId={entry.id} characterName={entry.name} />
                      </div>
+                 ) : subTab === 'mindset' ? (
+                     <div className="w-full h-full">
+                         <CharacterAnalysisEngine 
+                             character={entry} 
+                             aliases={aliases}
+                             onOpenScene={onOpenScene}
+                         />
+                     </div>
                  ) : (
                      <div className="flex-1 flex items-center justify-center text-slate-600 italic">
-                         Mindset Analysis Engine is under construction.
+                         Unknown subtab.
                      </div>
                  )}
             </div>

@@ -11,7 +11,8 @@ import {
   ChevronDown,
   FolderOpen,
   Check,
-  Share2
+  Share2,
+  Database
 } from 'lucide-react'
 import { CreateNewModal } from '../Common/CreateNewModal'
 
@@ -156,10 +157,25 @@ export const WikiLayout = ({ children, currentPage, onNavigate }: WikiLayoutProp
         </nav>
 
         {/* Bottom Actions */}
-        <div className="p-4 border-t border-slate-800">
+        <div className="p-4 border-t border-slate-800 space-y-2">
+          <button
+            onClick={() => onNavigate('ai-schema')}
+            className={`w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-all ${
+              currentPage === 'ai-schema'
+                ? 'bg-purple-600/20 text-purple-400 font-semibold'
+                : 'text-slate-500 hover:text-slate-300 hover:bg-slate-800'
+            }`}
+          >
+            <Database size={16} />
+            <span>AI 데이터 설정</span>
+          </button>
           <button
             onClick={() => onNavigate('settings')}
-            className="flex items-center gap-2 text-sm text-slate-500 hover:text-slate-300 transition-colors"
+            className={`w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-all ${
+              currentPage === 'settings'
+                ? 'bg-blue-600/20 text-blue-400 font-semibold'
+                : 'text-slate-500 hover:text-slate-300 hover:bg-slate-800'
+            }`}
           >
             <SettingsIcon size={16} />
             <span>설정 및 데이터 연동</span>
