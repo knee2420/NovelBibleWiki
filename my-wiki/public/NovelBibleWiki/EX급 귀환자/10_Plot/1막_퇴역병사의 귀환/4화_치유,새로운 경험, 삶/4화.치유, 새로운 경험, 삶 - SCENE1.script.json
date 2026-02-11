@@ -1,0 +1,274 @@
+{
+  "characters": [
+    "진우",
+    "천세희",
+    "천무진"
+  ],
+  "segments": [
+    {
+      "text": "“괜찮습니다.”",
+      "type": "dialogue",
+      "actor": "진우"
+    },
+    {
+      "text": "진우는 짧게 대꾸하며 한 걸음 물러섰다. 명백한 거절의 의사였으나, 천세희는 물러설 기색이 없었다.",
+      "type": "description",
+      "actor": "Narrator"
+    },
+    {
+      "text": "그녀의 시선은 ‘로랑 샬루트 22년산’의 라벨에 박혀 있었다.",
+      "type": "description",
+      "actor": "Narrator"
+    },
+    {
+      "text": "“그 술은 제게 있어 단순한 의미를 지닌 물건이 아닙니다.”",
+      "type": "dialogue",
+      "actor": "천세희"
+    },
+    {
+      "text": "천세희의 목소리는 차분했지만, 시선은 뜨거웠다. 속에 깃든 애타는 열망을 숨기지는 않았다.",
+      "type": "description",
+      "actor": "Narrator"
+    },
+    {
+      "text": "“직접적으로 여쭈겠습니다. 부디 제대로 알려주십시오. 오라버니와 어떤 관계이십니까?”",
+      "type": "dialogue",
+      "actor": "천세희"
+    },
+    {
+      "text": "진우는 잠시 침묵했다.",
+      "type": "action",
+      "actor": "진우"
+    },
+    {
+      "text": "‘여기서 어설픈 거짓말은 통하지 않겠지.’",
+      "type": "description",
+      "actor": "진우"
+    },
+    {
+      "text": "그는 최대한 담백한 사실에 약간의 살을 붙이기로 했다.",
+      "type": "description",
+      "actor": "진우"
+    },
+    {
+      "text": "“아프리카 전선에서 복무할 당시 연합 군단 휘하 위성 도시의 암시장에서 구했습니다.”",
+      "type": "dialogue",
+      "actor": "진우"
+    },
+    {
+      "text": "“암시장이요?”",
+      "type": "dialogue",
+      "actor": "천세희"
+    },
+    {
+      "text": "“천무진 팀장님과는 어느 정도 연이 있습니다. 이 술을 그렇게 구하고 싶다고 노래를 부르셨죠.”",
+      "type": "dialogue",
+      "actor": "진우"
+    },
+    {
+      "text": "진우의 시선이 비석을 향했다.",
+      "type": "action",
+      "actor": "진우"
+    },
+    {
+      "text": "“그래서 귀국하면 꼭 한 잔 올리고 싶었습니다. 그분 덕분에 살아서 돌아올 수 있었으니까요.”",
+      "type": "dialogue",
+      "actor": "진우"
+    },
+    {
+      "text": "말하지 않은 건 있을지언정 거짓말은 없다. 그 기억을 떠올리는 진우의 눈빛엔 깊은 회한이 서려 있었다.",
+      "type": "description",
+      "actor": "Narrator"
+    },
+    {
+      "text": "천세희는 말없이 진우를 응시했다. 말이 사실인지 거짓인지 판단하려 하지 않았다. 대신, 그가 풍기는 ‘분위기’를 읽어내고 있었다.",
+      "type": "description",
+      "actor": "Narrator"
+    },
+    {
+      "text": "천가의 소가주인 그녀는 생사의 갈림길에서 생환한 병사들을 몇 번 봐왔다.",
+      "type": "description",
+      "actor": "Narrator"
+    },
+    {
+      "text": "저 건조하고, 터질 듯한 공허함. 그런 씻겨지지 않는 잿가루 같은 게 상대에게서 느껴졌다.",
+      "type": "description",
+      "actor": "Narrator"
+    },
+    {
+      "text": "저런 분위기는 의도한다고 만들어질 수 있는 종류가 아니다.",
+      "type": "description",
+      "actor": "Narrator"
+    },
+    {
+      "text": "“이름이 어떻게 되시죠?”",
+      "type": "dialogue",
+      "actor": "천세희"
+    },
+    {
+      "text": "“······강진우입니다.”",
+      "type": "dialogue",
+      "actor": "진우"
+    },
+    {
+      "text": "“저는 검무천가의 소가주 천세희라고 해요.”",
+      "type": "dialogue",
+      "actor": "천세희"
+    },
+    {
+      "text": "천세희가 한결 부드러워진 목소리로 말을 이었다.",
+      "type": "description",
+      "actor": "Narrator"
+    },
+    {
+      "text": "“먼저 저희 오라버니를 기억해주셔서 감사합니다. 의심해서 죄송해요. 먼저 간 오라버니의 이름을 팔아 저희와 관계를 트려는 무뢰한들이 있던 터라.”",
+      "type": "dialogue",
+      "actor": "천세희"
+    },
+    {
+      "text": "진우의 표정이 굳었다.",
+      "type": "action",
+      "actor": "진우"
+    },
+    {
+      "text": "그런 일이 있지 않았을까 예상은 했지만 속이 끓었다.",
+      "type": "description",
+      "actor": "진우"
+    },
+    {
+      "text": "먼저 떠나간 전우를 이용하고 농락하는 짓이었기에.",
+      "type": "description",
+      "actor": "진우"
+    },
+    {
+      "text": "그럼에도 참았다. 분하다고 한들 유족의 울분과는 비교할 바가 아닐 테니.",
+      "type": "description",
+      "actor": "진우"
+    },
+    {
+      "text": "“충분히 오해하실 만한 상황이었으니 개의치 않으셔도 됩니다.”",
+      "type": "dialogue",
+      "actor": "진우"
+    },
+    {
+      "text": "그럼 이만.",
+      "type": "description",
+      "actor": "Narrator"
+    },
+    {
+      "text": "진우가 고개를 꾸벅 숙이고 돌아서려 했다.",
+      "type": "action",
+      "actor": "진우"
+    },
+    {
+      "text": "‘아직은 아니다.’",
+      "type": "description",
+      "actor": "진우"
+    },
+    {
+      "text": "과한 말은 도리어 의심을 부르는 법이다. 무엇보다 그녀는 검무천가의 적녀를 넘어서 소가주. 오늘 처음 본 상대의 말을 곧이곧대로 믿지는 않을 것이다.",
+      "type": "description",
+      "actor": "Narrator"
+    },
+    {
+      "text": "언젠가는 천무진의 동생을 제대로 마주해야 할 날이 올 테지만 지금은······",
+      "type": "description",
+      "actor": "Narrator"
+    },
+    {
+      "text": "“잠시만요.”",
+      "type": "dialogue",
+      "actor": "천세희"
+    },
+    {
+      "text": "천세희가 품에서 무언가를 꺼냈다. 두 개의 명함.",
+      "type": "action",
+      "actor": "천세희"
+    },
+    {
+      "text": "“식사가 부담스럽다면, 이건 받아주세요.”",
+      "type": "dialogue",
+      "actor": "천세희"
+    },
+    {
+      "text": "진우는 엉겁결에 그것을 받아 들었다.",
+      "type": "action",
+      "actor": "진우"
+    },
+    {
+      "text": "하나는 천세희의 명함이었고. 다른 하나는.",
+      "type": "description",
+      "actor": "Narrator"
+    },
+    {
+      "text": "[재활 지원 센터 - 더 레스트(The Rest)]",
+      "type": "description",
+      "actor": "Narrator"
+    },
+    {
+      "text": "“재활···?”",
+      "type": "dialogue",
+      "actor": "진우"
+    },
+    {
+      "text": "진우가 의아한 눈으로 쳐다보자, 천세희가 씁쓸하게 웃었다.",
+      "type": "action",
+      "actor": "진우"
+    },
+    {
+      "text": "“제가 개인적으로 운영하는 재단이 운영하는 센터예요. 부상을 비롯한 여러 이유로 현역에서 물러난 헌터나 병사분들이 다시 사회에 적응할 수 있도록 돕는 프로그램입니다. 거기 센터장님이 좀 괴인이긴 한데···효과는 확실하니 믿으셔도 돼요.”",
+      "type": "dialogue",
+      "actor": "천세희"
+    },
+    {
+      "text": "“······저한테 왜?”",
+      "type": "dialogue",
+      "actor": "진우"
+    },
+    {
+      "text": "“강진우 님을 보고 있으니, 오라버니가 생각나서요.”",
+      "type": "dialogue",
+      "actor": "천세희"
+    },
+    {
+      "text": "그녀가 씁쓸하게 웃었다.",
+      "type": "action",
+      "actor": "천세희"
+    },
+    {
+      "text": "“만약 오라버니가 살아서 돌아왔다면 아마 당신과 같은 표정을 짓고 있었을 것 같아서.”",
+      "type": "dialogue",
+      "actor": "천세희"
+    },
+    {
+      "text": "개인적으로 동의하지 않는다. 목석 같은 자신과 달리 천무진은 유쾌하고 활발했다.",
+      "type": "description",
+      "actor": "Narrator"
+    },
+    {
+      "text": "-살아서 돌아가면 내 동생이랑 소개팅 시켜줄게! 하하!",
+      "type": "dialogue",
+      "actor": "천무진"
+    },
+    {
+      "text": "사지를 향해 달려가는 마지막 순간까지 저런 헛소리나 해대는 사람이었으니까.",
+      "type": "description",
+      "actor": "Narrator"
+    },
+    {
+      "text": "“강요는 아닙니다. 아 다만, 도움이 필요할 때 저를 통해 주세요. 강진우님은 보다 특별히 모시고 싶으니까요.”",
+      "type": "dialogue",
+      "actor": "천세희"
+    },
+    {
+      "text": "천세희는 부드러운 호의를 품은 얼굴로 정중히 목례를 하고는 먼저 등을 돌렸다. 멀어지는 구두 소리가 유난히 크게 들렸다.",
+      "type": "action",
+      "actor": "천세희"
+    },
+    {
+      "text": "진우는 명함을 돌려봤다. 뒷면에 적힌 [당신의 전쟁은 끝났습니까?] 문구가 비수처럼 가슴에 박혔다.",
+      "type": "action",
+      "actor": "진우"
+    }
+  ]
+}

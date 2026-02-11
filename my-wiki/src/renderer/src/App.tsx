@@ -3,6 +3,7 @@ import { WikiLayout } from './components/Layout/WikiLayout'
 import { HomeDashboard } from './pages/HomeDashboard'
 import { PlotDashboard } from './pages/PlotDashboard'
 import { SettingsPage } from './pages/SettingsPage'
+import { AISchemaPage } from './pages/AISchemaPage'
 import { WikiEntry } from './types/wiki'
 import { WikiDetailModal } from './components/Common/WikiDetailModal' 
 import { GenericArchive } from './pages/GenericArchive'
@@ -130,6 +131,8 @@ function App(): ReactElement {
             onEntryClick={handleEntryClick}
           />
         )
+      case 'ai-schema':
+        return <AISchemaPage />
       case 'settings':
         return <SettingsPage onImportComplete={handleImportComplete} />
       default:
