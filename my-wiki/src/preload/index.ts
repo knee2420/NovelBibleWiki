@@ -69,6 +69,31 @@ const api = {
   loadScriptAnalysis: (path: string) => ipcRenderer.invoke('load-script-analysis', path),
   searchWikiMentions: (keywords: string[]) => ipcRenderer.invoke('search-wiki-mentions', keywords),
   
+  // [NEW] Character Analysis System
+  loadAnalysisSchemas: (category?: string) => ipcRenderer.invoke('load-analysis-schemas', category),
+  saveAnalysisSchema: (schemaPath: string, content: string) => 
+    ipcRenderer.invoke('save-analysis-schema', schemaPath, content),
+  deleteAnalysisSchema: (schemaPath: string) => 
+    ipcRenderer.invoke('delete-analysis-schema', schemaPath),
+  createAnalysisSchema: (schemaName: string, category?: string) => 
+    ipcRenderer.invoke('create-analysis-schema', schemaName, category),
+  parseAnalysisSchema: (rawContent: string) => 
+    ipcRenderer.invoke('parse-analysis-schema', rawContent),
+  stringifyAnalysisSchema: (frontmatter: any, content: string) => 
+    ipcRenderer.invoke('stringify-analysis-schema', frontmatter, content),
+  getCharacterScenes: (characterName: string, aliases?: string[]) => 
+    ipcRenderer.invoke('get-character-scenes', characterName, aliases),
+  getSceneDetails: (sceneIds: string[]) => ipcRenderer.invoke('get-scene-details', sceneIds),
+  analyzeCharacterWithAI: (payload: any) => ipcRenderer.invoke('analyze-character-with-ai', payload),
+  getCharacterAnalysisTopics: (characterId: string) => 
+    ipcRenderer.invoke('get-character-analysis-topics', characterId),
+  saveCharacterAnalysis: (characterId: string, topic: any) => 
+    ipcRenderer.invoke('save-character-analysis', characterId, topic),
+  updateCharacterAnalysis: (characterId: string, topic: any) => 
+    ipcRenderer.invoke('update-character-analysis', characterId, topic),
+  deleteCharacterAnalysis: (characterId: string, topicId: string) => 
+    ipcRenderer.invoke('delete-character-analysis', characterId, topicId),
+  
   // [NEW] Blueprint Engine
   getCharacterBlueprint: (characterId: string) => ipcRenderer.invoke('get-character-blueprint', characterId),
   saveCharacterBlueprint: (blueprint: any) => ipcRenderer.invoke('save-character-blueprint', blueprint),

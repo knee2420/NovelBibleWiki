@@ -325,7 +325,8 @@ export function setupAIHandlers(store: Store): void {
 
       // [NEW] Dynamic Model Selection
       const selectedModel = (store.get(STORE_KEY_AI_MODEL_SELECTED) as string) || 'gemini-1.5-flash'
-      const isGemma = selectedModel.includes('gemma')
+      const modelName = selectedModel.toLowerCase()
+      const isGemma = modelName.includes('gemma')
 
       const genAI = new GoogleGenerativeAI(apiKey)
       
@@ -449,7 +450,8 @@ export function setupAIHandlers(store: Store): void {
 
       // Use the selected model, default to 1.5-flash for speed/cost, user can switch to Pro
       const selectedModel = (store.get(STORE_KEY_AI_MODEL_SELECTED) as string) || 'gemini-1.5-flash'
-      const isGemma = selectedModel.includes('gemma')
+      const modelName = selectedModel.toLowerCase()
+      const isGemma = modelName.includes('gemma')
 
       const genAI = new GoogleGenerativeAI(apiKey)
       
