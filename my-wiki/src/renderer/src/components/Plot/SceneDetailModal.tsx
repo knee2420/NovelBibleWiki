@@ -693,6 +693,7 @@ export const SceneDetailModal = ({
                  <AIWriterPanel 
                     currentContent={editContent}
                     sceneContext={{ chapter: chapterNum, scene: sceneNum }}
+                    wikiData={wikiData}
                     onApplyContent={(text) => {
                         setEditContent(text)
                         setIsEditing(true)

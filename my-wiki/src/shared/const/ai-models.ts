@@ -24,7 +24,7 @@ export const AI_MODELS: AIModelConfig[] = [
     limits: { rpm: 5, tpm: 250000, rpd: 20 }
   },
   {
-    id: 'gemini-3-flash',
+    id: 'gemini-3-flash-preview',
     name: 'Gemini 3 Flash',
     type: 'text',
     limits: { rpm: 5, tpm: 250000, rpd: 20 }

@@ -3,6 +3,7 @@ import { GoogleGenerativeAI } from '@google/generative-ai'
 import fs from 'fs-extra'
 import path from 'path'
 import matter from 'gray-matter'
+import { AI_MODELS, DEFAULT_AI_MODEL } from '../../shared/const/ai-models'
 
 export function setupAnalysisHandlers(store?: any) {
   /**
@@ -884,7 +885,12 @@ CONSTRAINT:
       const apiKey = store?.get('gemini_api_key') as string
       if (!apiKey) return { success: false, error: 'Gemini API key not configured.' }
 
-      const selectedModel = (store?.get('ai_model_selection') as string) || 'gemini-1.5-flash'
+      const rawSelectedModel = store?.get('ai_model_selection') as string
+      // Validate model ID against constants, fallback if not found or empty
+      const selectedModel = AI_MODELS.find(m => m.id === rawSelectedModel)?.id || DEFAULT_AI_MODEL
+      
+      console.log(`[AI Writer] Initializing with model: ${selectedModel} (Requested: ${rawSelectedModel})`)
+      
       const genAI = new GoogleGenerativeAI(apiKey)
 
       // Define Tools
@@ -917,8 +923,90 @@ CONSTRAINT:
             }
           },
           {
+            name: "propose_characters",
+            description: "Propose characters that could appear in this scene. The frontend displays wiki character cards for the user to select. Use this AFTER reading previous scenes. Propose both main (directly appearing) and background (mentioned/indirect) candidates separately.",
+            parameters: {
+              type: "OBJECT" as any,
+              properties: {
+                message: { type: "STRING", description: "A brief message to the user explaining why these characters are proposed (in Korean)" },
+                main_candidates: {
+                  type: "ARRAY",
+                  items: {
+                    type: "OBJECT",
+                    properties: {
+                      name: { type: "STRING", description: "Character name as it appears in wiki" },
+                      reason: { type: "STRING", description: "Why this character should appear (in Korean)" }
+                    },
+                    required: ["name", "reason"]
+                  },
+                  description: "Characters suggested as main/direct appearance"
+                },
+                background_candidates: {
+                  type: "ARRAY",
+                  items: {
+                    type: "OBJECT",
+                    properties: {
+                      name: { type: "STRING", description: "Character name" },
+                      reason: { type: "STRING", description: "Why this character could be mentioned/background" }
+                    },
+                    required: ["name", "reason"]
+                  },
+                  description: "Characters suggested as background/mentioned"
+                }
+              },
+              required: ["message", "main_candidates"]
+            }
+          },
+          {
+            name: "propose_locations",
+            description: "Propose locations/settings for this scene. The frontend displays wiki location cards for the user to select. Use this AFTER character selection is done.",
+            parameters: {
+              type: "OBJECT" as any,
+              properties: {
+                message: { type: "STRING", description: "A brief message explaining location suggestions (in Korean)" },
+                candidates: {
+                  type: "ARRAY",
+                  items: {
+                    type: "OBJECT",
+                    properties: {
+                      name: { type: "STRING", description: "Location name as it appears in wiki" },
+                      reason: { type: "STRING", description: "Why this location fits (in Korean)" }
+                    },
+                    required: ["name", "reason"]
+                  },
+                  description: "Location candidates"
+                }
+              },
+              required: ["message", "candidates"]
+            }
+          },
+          {
+            name: "propose_focus",
+            description: "Propose focus elements for this scene — what the scene should revolve around. These can be items, factions, themes, or specific character dynamics. The frontend displays interactive selection cards. Use this AFTER location selection.",
+            parameters: {
+              type: "OBJECT" as any,
+              properties: {
+                message: { type: "STRING", description: "A brief message explaining focus suggestions (in Korean)" },
+                candidates: {
+                  type: "ARRAY",
+                  items: {
+                    type: "OBJECT",
+                    properties: {
+                      name: { type: "STRING", description: "Focus element name (can be a wiki item/faction name or a narrative concept)" },
+                      type: { type: "STRING", description: "Type: 'character', 'item', 'faction', 'theme', 'conflict', 'emotion'" },
+                      description: { type: "STRING", description: "What this focus means for the scene (in Korean)" }
+                    },
+                    required: ["name", "type", "description"]
+                  },
+                  description: "Focus element candidates"
+                }
+              },
+              required: ["message", "candidates"]
+            }
+          },
+          {
             name: "propose_plot_options",
-            description: "Propose 3 distinct plot directions for the user to choose from. (GenUI)",
+            description: "Propose 3 distinct plot directions for the user to choose from. (GenUI) Use this AFTER the user has selected characters, locations, and focus elements. MUST incorporate the selected characters, location, and focus into the plot options.",
             parameters: {
               type: "OBJECT" as any,
               properties: {
@@ -928,7 +1016,7 @@ CONSTRAINT:
                     type: "OBJECT",
                     properties: {
                       title: { type: "STRING" },
-                      description: { type: "STRING" },
+                      description: { type: "STRING", description: "Detailed plot description incorporating the selected characters, location, and focus." },
                       tone: { type: "STRING" }
                     },
                     required: ["title", "description", "tone"]
@@ -955,11 +1043,6 @@ CONSTRAINT:
         ]
       }]
 
-      // Mock Handler Logic for V1 Demo
-      // In a real implementation, this would involve a complex ReAct loop.
-      // For now, we simulate the 'Thinking' process by checking if the user request implies a tool needs to be called.
-      // Since Gemini handles tool selection, we let it decide.
-      
       const model = genAI.getGenerativeModel({ 
         model: selectedModel,
         tools: tools as any
@@ -980,9 +1063,6 @@ CONSTRAINT:
         history: mappedHistory
       })
 
-      // Initial context injection if new chat OR just a continuation
-      // We always append critical context to the latest message to ensure "Vibe"
-      
       const contextPrompt = `
 Context: Scene #${context.scene}, Chapter #${context.chapter}
 Current Draft Length: ${currentContent.length} chars
@@ -991,28 +1071,38 @@ Existing Draft Preview: "${currentContent.substring(0, 300)}..."
 User Request: "${userMessage}"
 
 SYSTEM INSTRUCTIONS:
-You are an "Agentic Creative Writing Assistant" (Vibe Mode) for a Korean Web Novel.
-Your goal is to actively help the user write, not just chat.
+You are an "Agentic Creative Writing Assistant" (GenUI Mode) for a Korean Web Novel.
+Your goal is to actively help the user BUILD UP a scene step by step through interactive UI widgets.
 
-PROTOCOL:
-1. **ANALYZE**: If the user's request is vague (e.g., "What should I write?"), YOU MUST first check context.
-   - Call 'read_previous_scenes' to see what happened before.
-   - Call 'get_character_info' if key characters are mentioned but unknown.
-2. **PROPOSE**: Once you have context, use 'propose_plot_options' to give 3 distinct choices.
-3. **DRAFT**: If the user chose an option, use 'write_scene_content'.
+PROTOCOL — Follow this BUILD-UP SEQUENCE naturally:
+1. **ANALYZE**: Call 'read_previous_scenes' to see what happened before.
+2. **CHARACTERS**: Call 'propose_characters' — suggest main and background characters based on context.
+   - Match character names EXACTLY as they appear in the wiki.
+   - The frontend will show interactive cards the user can select/deselect.
+3. **LOCATION**: Call 'propose_locations' — suggest where the scene takes place.
+4. **FOCUS**: Call 'propose_focus' — suggest what the scene should revolve around (items, conflicts, emotions, factions).
+5. **PLOT**: Call 'propose_plot_options' — give 3 distinct plot directions.
+   - **CRITICAL**: You MUST incorporate the characters, location, and focus elements the user just selected. Do NOT ignore them.
+6. **DRAFT**: Call 'write_scene_content' — generate the actual scene text.
+
+IMPORTANT:
+- You do NOT have to follow all steps every time. Adapt based on what the user asks.
+- If the user directly asks for plot options, skip to propose_plot_options.
+- If the user asks "이 씬에 누가 나오면 좋을까?" — go straight to propose_characters.
+- But for vague requests like "다음 화 어떻게 할까?" — follow the full build-up sequence starting from read_previous_scenes.
+- After the user makes selections from any propose_* tool, acknowledge their choices and proceed to the next step.
 
 CRITICAL RULES:
-- **ALWAYS SPEAK IN KOREAN.** (Unless the user writes in English, but even then prefer Korean).
-- When using 'propose_plot_options' or 'write_scene_content', the content within the tools MUST be in Korean.
-- ACT like a pro editor who looks up files before speaking.
+- **ALWAYS SPEAK IN KOREAN.**
+- All tool content (titles, descriptions, reasons) MUST be in Korean.
+- Character/location names should match the actual wiki entries as closely as possible.
+- ACT like a pro editor who builds the scene collaboratively with the writer.
 `
       
       let msg = contextPrompt
       if (mappedHistory.length > 0) {
-          // If history exists, we just send the user message but with invisible context appended?
-          // Or just send the user message? 
-          // Better to reinforce the instruction.
-          msg = userMessage + `\n\n[SYSTEM: Remember to use tools! 'read_previous_scenes' or 'propose_plot_options' are recommended if you lack context.]`
+          // Reinforcement for continued conversations
+          msg = userMessage + `\n\n[SYSTEM: Use the appropriate tool for the next step. Follow the build-up sequence: read_previous_scenes → propose_characters → propose_locations → propose_focus → propose_plot_options → write_scene_content. Always respond in Korean. If the user's message indicates a selection was made, acknowledge it and proceed to the next step.]`
       } else {
           // First turn
           msg = contextPrompt
@@ -1026,24 +1116,13 @@ CRITICAL RULES:
       if (calls && calls.length > 0) {
           const call = calls[0]
           
-          // Case 1: UI Interaction (Proposal) -> Return to Frontend
-          if (call.name === 'propose_plot_options' || call.name === 'write_scene_content') {
-               return { 
-                  success: true, 
-                  type: 'tool_call', 
-                  toolName: call.name, 
-                  args: call.args 
-              }
-          }
-
-          // Case 2: Data Retrieval -> Execute & Loop (Simplified for Demo)
-          // Since we can't do full loop easily without risking timeout in this single turn,
-          // for this V1 'Vibe' demo, if the model calls a Read tool, we will just return a text response describing what it found (Mock).
-          // OR, we can just return the tool call to frontend, and let frontend show "Agent is searching..." and loop back.
-          // Let's return the tool call so frontend can visualize "Agent is thinking/reading...".
+          // All tool calls are returned to frontend for GenUI visualization
+          // The frontend handles both:
+          //   - Interactive UI widgets (propose_*, write_scene_content)
+          //   - Data retrieval with auto-resolve (read_previous_scenes, get_character_info)
           return { 
               success: true, 
-              type: 'tool_call', // Treat all as tool calls for visualization
+              type: 'tool_call',
               toolName: call.name, 
               args: call.args 
           }
