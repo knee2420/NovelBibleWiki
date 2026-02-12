@@ -97,6 +97,14 @@ const api = {
   // [NEW] Blueprint Engine
   getCharacterBlueprint: (characterId: string) => ipcRenderer.invoke('get-character-blueprint', characterId),
   saveCharacterBlueprint: (blueprint: any) => ipcRenderer.invoke('save-character-blueprint', blueprint),
+  
+  // [NEW] Schema Wizard
+  generateAnalysisSchemaDraft: (payload: { topic: string, currentDraft?: string, feedback?: string }) => 
+    ipcRenderer.invoke('generate-analysis-schema-draft', payload),
+  generateAnalysisSchemaField: (payload: { currentDraft: string, feedback: string }) => 
+    ipcRenderer.invoke('generate-analysis-schema-field', payload),
+  regenerateAnalysisSchemaSection: (payload: { section: string, currentContent: string, context: string }) =>
+    ipcRenderer.invoke('regenerate-analysis-schema-section', payload),
 }
 
 if (process.contextIsolated) {

@@ -1,6 +1,7 @@
 // AI Schema Management Dashboard - Final Robust Version with Full Editing Support & Prompt Selection Options
 import { useState, useEffect } from 'react'
-import { Database, Plus, Trash2, Edit2, Save, Check, Loader2, BookOpen } from 'lucide-react'
+import { Database, Plus, Trash2, Edit2, Save, Check, Loader2, BookOpen, X } from 'lucide-react'
+import { SchemaWizard } from '../components/Analysis/SchemaWizard'
 
 // Define the API interface for internal typing
 interface WikiApi {
@@ -30,9 +31,58 @@ export const AISchemaPage = () => {
   const [selectedSchema, setSelectedSchema] = useState<SchemaFile | null>(null)
   const [isEditing, setIsEditing] = useState(false)
   const [editContent, setEditContent] = useState('')
-  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
+  // Manual Creation States
+  const [isSelectionModalOpen, setIsSelectionModalOpen] = useState(false)
+  const [isCreateManualOpen, setIsCreateManualOpen] = useState(false)
   const [newSchemaName, setNewSchemaName] = useState('')
+
   const [actionLoading, setActionLoading] = useState(false)
+  const [isWizardOpen, setIsWizardOpen] = useState(false)
+
+  const handleWizardSave = async (draft: string) => {
+    setActionLoading(true)
+    try {
+      // 1. Parse draft to get name/module
+      const parseRes = await api.parseAnalysisSchema(draft)
+      let schemaName = 'New Schema'
+      if (parseRes.success && parseRes.frontmatter) {
+          schemaName = parseRes.frontmatter.analysis_module || 'New Schema'
+      }
+
+      // 2. Create file
+      const createRes = await api.createAnalysisSchema(schemaName, category)
+      if (createRes.success && createRes.path) {
+          // 3. Save content
+          await api.saveAnalysisSchema(createRes.path, draft)
+          await loadSchemas()
+          setIsWizardOpen(false)
+      } else {
+          alert(`Failed to create schema: ${createRes.error}`)
+      }
+    } catch (e) {
+        console.error(e)
+        alert('Failed to save schema wizard draft')
+    } finally {
+      setActionLoading(false)
+    }
+  }
+
+  const handleCreateManualSchema = async () => {
+    if (!newSchemaName.trim()) return
+    setActionLoading(true)
+    try {
+      const result = await api.createAnalysisSchema(newSchemaName.trim(), category)
+      if (result.success) {
+        setIsCreateManualOpen(false)
+        setNewSchemaName('')
+        await loadSchemas()
+      } else {
+        alert(result.error)
+      }
+    } finally {
+      setActionLoading(false)
+    }
+  }
 
   // Manual Editing States
   const [isEditingManual, setIsEditingManual] = useState(false)
@@ -131,20 +181,7 @@ export const AISchemaPage = () => {
     }
   }
 
-  const handleCreateSchema = async () => {
-    if (!newSchemaName.trim()) return
-    setActionLoading(true)
-    try {
-      const result = await api.createAnalysisSchema(newSchemaName.trim(), category)
-      if (result.success) {
-        setIsCreateModalOpen(false)
-        setNewSchemaName('')
-        await loadSchemas()
-      }
-    } finally {
-      setActionLoading(false)
-    }
-  }
+
 
   const refreshData = async () => {
     if (!selectedSchema) return
@@ -452,7 +489,7 @@ export const AISchemaPage = () => {
                 <div className="w-2 h-2 rounded-full bg-purple-500 animate-pulse" />
                 SCHEMA REPOSITORY
               </h2>
-              <button onClick={() => setIsCreateModalOpen(true)} className="p-2.5 bg-white/5 hover:bg-purple-500/20 rounded-xl transition-all cursor-pointer text-slate-300 hover:text-purple-400 border border-transparent hover:border-purple-500/30">
+              <button onClick={() => setIsSelectionModalOpen(true)} className="p-2.5 bg-white/5 hover:bg-purple-500/20 rounded-xl transition-all cursor-pointer text-slate-300 hover:text-purple-400 border border-transparent hover:border-purple-500/30">
                 <Plus size={20} />
               </button>
             </div>
@@ -519,6 +556,72 @@ export const AISchemaPage = () => {
         </div>
       </div>
 
+      {/* Mode Selection Modal */}
+      {isSelectionModalOpen && (
+        <div className="fixed inset-0 bg-black/98 backdrop-blur-3xl flex items-center justify-center z-[200] p-10 animate-in fade-in duration-300">
+           <div className="w-full max-w-4xl grid grid-cols-2 gap-8 relative">
+              <button onClick={() => setIsSelectionModalOpen(false)} className="absolute -top-16 right-0 text-slate-500 hover:text-white transition-colors cursor-pointer">
+                <X size={32} />
+              </button>
+
+              {/* Option 1: AI Wizard */}
+              <button 
+                onClick={() => { setIsSelectionModalOpen(false); setIsWizardOpen(true); }}
+                className="group relative bg-gradient-to-br from-purple-900/10 to-slate-900 border border-purple-500/20 hover:border-purple-500/50 rounded-[3rem] p-12 text-left transition-all hover:scale-[1.02] shadow-2xl hover:shadow-purple-500/20 flex flex-col justify-between h-[400px] cursor-pointer"
+              >
+                 <div className="w-24 h-24 bg-purple-500/10 rounded-full flex items-center justify-center text-purple-500 group-hover:bg-purple-500 group-hover:text-white transition-all border border-purple-500/20">
+                    <Database size={40} />
+                 </div>
+                 <div>
+                    <h3 className="text-4xl font-black text-white mb-4 group-hover:text-purple-400 transition-colors uppercase tracking-tight">AI Architect</h3>
+                    <p className="text-slate-400 text-sm font-bold leading-relaxed opacity-80">
+                       Start with an interactive AI session. Discuss your analytical goals (e.g., "Villain Psychology") and let the AI design the perfect schema for you.
+                    </p>
+                 </div>
+              </button>
+
+              {/* Option 2: Manual */}
+              <button 
+                onClick={() => { setIsSelectionModalOpen(false); setIsCreateManualOpen(true); }}
+                className="group relative bg-gradient-to-br from-blue-900/10 to-slate-900 border border-blue-500/20 hover:border-blue-500/50 rounded-[3rem] p-12 text-left transition-all hover:scale-[1.02] shadow-2xl hover:shadow-blue-500/20 flex flex-col justify-between h-[400px] cursor-pointer"
+              >
+                 <div className="w-24 h-24 bg-blue-500/10 rounded-full flex items-center justify-center text-blue-500 group-hover:bg-blue-500 group-hover:text-white transition-all border border-blue-500/20">
+                    <Edit2 size={40} />
+                 </div>
+                 <div>
+                    <h3 className="text-4xl font-black text-white mb-4 group-hover:text-blue-400 transition-colors uppercase tracking-tight">Manual Engineer</h3>
+                    <p className="text-slate-400 text-sm font-bold leading-relaxed opacity-80">
+                       Create a blank schema protocol and manually configure every field, definition, and output requirement from scratch.
+                    </p>
+                 </div>
+              </button>
+           </div>
+        </div>
+      )}
+
+      {/* Manual Creation Modal */}
+      {isCreateManualOpen && (
+        <div className="fixed inset-0 bg-black/98 backdrop-blur-3xl flex items-center justify-center z-[200] p-10 animate-in fade-in duration-300">
+           <div className="bg-slate-900 border border-white/10 rounded-[4rem] p-16 w-full max-w-xl shadow-inner relative">
+            <button onClick={() => setIsCreateManualOpen(false)} className="absolute top-10 right-10 text-slate-500 hover:text-white cursor-pointer"><X size={24} /></button>
+            <h3 className="text-4xl font-black text-white mb-12 tracking-tighter uppercase">MANUAL PROTOCOL</h3>
+            <div className="mb-16">
+              <label className="block text-[11px] text-slate-500 uppercase font-black tracking-[0.3em] mb-6 ml-4">Identifier</label>
+              <input
+                type="text"
+                value={newSchemaName}
+                onChange={(e) => setNewSchemaName(e.target.value)}
+                autoFocus
+                onKeyDown={(e) => e.key === 'Enter' && handleCreateManualSchema()}
+                placeholder="e.g., character_dynamic_relations"
+                className="w-full px-8 py-6 bg-slate-950 border border-slate-800 rounded-[2rem] text-white outline-none focus:ring-4 focus:ring-blue-500/20 text-xl shadow-inner placeholder-slate-700"
+              />
+            </div>
+            <button onClick={handleCreateManualSchema} className="w-full py-6 bg-blue-600 hover:bg-blue-500 text-white font-black rounded-[2rem] transition-all active:scale-95 shadow-2xl shadow-blue-600/20 text-lg cursor-pointer">INITIALIZE</button>
+           </div>
+        </div>
+      )}
+
       {/* Dynamic Item Modal */}
       {isItemModalOpen && itemModalConfig && (
         <div className="fixed inset-0 bg-black/98 backdrop-blur-3xl flex items-center justify-center z-[200] p-10 animate-in fade-in duration-300">
@@ -579,26 +682,8 @@ export const AISchemaPage = () => {
         </div>
       )}
 
-      {/* Creation Modal */}
-      {isCreateModalOpen && (
-        <div className="fixed inset-0 bg-black/98 backdrop-blur-3xl flex items-center justify-center z-[150] p-10 animate-in fade-in duration-300">
-           <div className="bg-slate-900 border border-white/10 rounded-[4rem] p-16 w-full max-w-xl shadow-inner">
-            <h3 className="text-4xl font-black text-white mb-12 tracking-tighter uppercase">PROTOCOL INITIALIZATION</h3>
-            <div className="mb-16">
-              <label className="block text-[11px] text-slate-500 uppercase font-black tracking-[0.3em] mb-6 ml-4">Identifier</label>
-              <input
-                type="text"
-                value={newSchemaName}
-                onChange={(e) => setNewSchemaName(e.target.value)}
-                autoFocus
-                className="w-full px-8 py-6 bg-slate-950 border border-slate-800 rounded-[2rem] text-white outline-none focus:ring-4 focus:ring-purple-500/20 text-xl shadow-inner"
-              />
-            </div>
-            <button onClick={handleCreateSchema} className="w-full py-6 bg-purple-600 hover:bg-purple-500 text-white font-black rounded-[2rem] transition-all active:scale-95 shadow-2xl shadow-purple-600/20 text-lg">GENERATE PROTOCOL</button>
-            <button onClick={() => setIsCreateModalOpen(false)} className="w-full mt-8 text-slate-600 font-black text-xs uppercase tracking-widest cursor-pointer hover:text-slate-400">ABORT MISSION</button>
-           </div>
-        </div>
-      )}
+      {/* Wizard Modal */}
+      <SchemaWizard isOpen={isWizardOpen} onClose={() => setIsWizardOpen(false)} onSave={handleWizardSave} />
     </div>
   )
 }
