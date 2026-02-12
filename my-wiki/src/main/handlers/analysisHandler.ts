@@ -572,4 +572,226 @@ schema_structure:
       return { success: false, error: String(error) }
     }
   })
+  /**
+   * Generate or Refine Analysis Schema Draft using AI
+   */
+  ipcMain.handle('generate-analysis-schema-draft', async (_, { topic, currentDraft, feedback }: { topic: string, currentDraft?: string, feedback?: string }) => {
+    try {
+      const apiKey = store?.get('gemini_api_key') as string
+      if (!apiKey) {
+        return { success: false, error: 'Gemini API key not configured.' }
+      }
+
+      // Use the selected model
+      const selectedModel = (store?.get('ai_model_selection') as string) || 'gemini-1.5-flash'
+      const modelName = selectedModel.toLowerCase()
+      const isGemma = modelName.includes('gemma')
+      
+      const genAI = new GoogleGenerativeAI(apiKey)
+      
+      const model = genAI.getGenerativeModel({
+        model: selectedModel,
+        generationConfig: isGemma ? {} : {
+          responseMimeType: 'text/plain' // We want markdown text, not JSON
+        }
+      })
+
+      let prompt = ''
+      
+      if (!currentDraft) {
+        // Initial Generation
+        prompt = `
+You are an expert Narrative Architect and System Engineer.
+Your task is to design a high-quality "Character Analysis Schema" for a database system based on the user's requested topic.
+
+TOPIC: "${topic}"
+
+The schema must follow this exact YAML Frontmatter + Markdown format:
+
+---
+analysis_module: (snake_case_name, e.g., character_deficiency_dissection)
+target_character: "{character_name}"
+context_scope: "{selected_scenes_or_entire_script}"
+analysis_persona: (Role for the AI, e.g., "Narrative Anatomist")
+definitions:
+  (key_concept): (short definition)
+output_requirements:
+  format: JSON
+  language: Korean
+  tone: (e.g., Analytical, Insightful)
+schema_structure:
+  (field_name):
+    description: (Detailed explanation of what this field analyzes)
+    type: string
+  (list_field):
+    description: (Explanation)
+    type: list<object>
+    fields:
+      - (sub_field): (type)
+---
+
+# (Schema Name) Analysis Prompt
+
+(A detailed System Instruction for the AI to perform this analysis. Explain the methodology, how to interpret the data, and specific instructions for each field defined in schema_structure.)
+
+IMPORTANT:
+1. The 'schema_structure' is the most critical part. It defines what data we extract.
+2. Field names should be English (snake_case). Descriptions should be Korean.
+3. Make the analysis profound and useful for a writer.
+4. Return ONLY the content of the file (YAML + Markdown). No wrapping code blocks.
+`
+      } else {
+        // Refinement
+        prompt = `
+You are refining a "Character Analysis Schema".
+
+CURRENT DRAFT:
+${currentDraft}
+
+USER FEEDBACK / REQUEST:
+"${feedback}"
+
+INSTRUCTIONS:
+1. Modify the Current Draft according to the User Feedback.
+2. Keep the valid YAML Frontmatter + Markdown structure.
+3. If the user asks to "Fix" or "Lock" certain parts, do not change them (implied by context).
+4. Return the FULL updated content (YAML + Markdown).
+5. Return ONLY the content. No wrapping code blocks.
+`
+      }
+
+      console.log('[Schema Wizard] Generating draft for:', topic)
+      const result = await model.generateContent(prompt)
+      const response = await result.response
+      let text = response.text()
+      
+      // Clean up markdown blocks if present
+      if (text.startsWith('```markdown')) text = text.replace(/^```markdown\s*/, '').replace(/\s*```$/, '')
+      if (text.startsWith('```yaml')) text = text.replace(/^```yaml\s*/, '').replace(/\s*```$/, '')
+      if (text.startsWith('```')) text = text.replace(/^```\s*/, '').replace(/\s*```$/, '')
+
+      return { success: true, draft: text.trim() }
+
+    } catch (error) {
+      console.error('Failed to generate schema draft:', error)
+      return { success: false, error: String(error) }
+    }
+  })
+
+  /**
+   * Generate Single Field for Schema
+   */
+  ipcMain.handle('generate-analysis-schema-field', async (_, { currentDraft, feedback }: { currentDraft: string, feedback: string }) => {
+    try {
+      const apiKey = store?.get('gemini_api_key') as string
+      if (!apiKey) {
+        return { success: false, error: 'Gemini API key not configured.' }
+      }
+
+      const selectedModel = (store?.get('ai_model_selection') as string) || 'gemini-1.5-flash'
+      const modelName = selectedModel.toLowerCase()
+      const isGemma = modelName.includes('gemma')
+      
+      const genAI = new GoogleGenerativeAI(apiKey)
+      
+      const model = genAI.getGenerativeModel({
+        model: selectedModel,
+        generationConfig: isGemma ? {} : {
+          responseMimeType: 'text/plain'
+        }
+      })
+
+      const prompt = `
+You are an expert Narrative Architect helper.
+Your task is to generate ONE SINGLE new field definition for a "Character Analysis Schema" in YAML format.
+
+CURRENT DRAFT CONTEXT:
+${currentDraft}
+
+USER REQUEST:
+"${feedback}"
+
+INSTRUCTIONS:
+1. Analyze the Current Draft to understand the context and style.
+2. Generate a NEW field that complements the existing ones. Do NOT duplicate existing fields.
+3. Return ONLY the YAML definition for that single field.
+   Example format:
+   new_field_name:
+     type: string
+     description: "Description in Korean"
+
+4. Do NOT include "schema_structure:" header. Just the field key and its properties.
+5. Do NOT include markdown code blocks.
+`
+
+      console.log('[Schema Wizard] Generating single field...')
+      const result = await model.generateContent(prompt)
+      const response = await result.response
+      let text = response.text()
+      
+      if (text.startsWith('```')) text = text.replace(/^```\s*/, '').replace(/\s*```$/, '')
+
+      return { success: true, fieldYaml: text.trim() }
+
+    } catch (error) {
+      console.error('Failed to generate schema field:', error)
+      return { success: false, error: String(error) }
+    }
+  })
+
+  /**
+   * Regenerate Specific Section
+   */
+  ipcMain.handle('regenerate-analysis-schema-section', async (_, { section, currentContent, lockedItems }: { section: string, currentContent: string, lockedItems?: string[] }) => {
+    try {
+      const apiKey = store?.get('gemini_api_key') as string
+      if (!apiKey) {
+        return { success: false, error: 'Gemini API key not configured.' }
+      }
+
+      const selectedModel = (store?.get('ai_model_selection') as string) || 'gemini-1.5-flash'
+      const genAI = new GoogleGenerativeAI(apiKey)
+      const model = genAI.getGenerativeModel({ model: selectedModel })
+
+      const prompt = `
+You are an expert Narrative Architect acting as a creative schema editor.
+Your task is to REGENERATE the content of a specific section.
+
+SECTION TYPE: "${section}"
+
+CURRENT CONTENT (YAML/Markdown):
+${currentContent}
+
+Locked Fields (Keys that MUST NOT change): [${lockedItems?.join(', ') || 'None'}]
+
+INSTRUCTIONS:
+1. **LOCKED FIELDS**: For any key listed in "Locked Fields", you MUST copy its definition (type, description, sub-fields) EXACTLY as it appears in CURRENT CONTENT. Word-for-word.
+2. **UNLOCKED FIELDS**: For fields NOT listed in "Locked Fields", you MUST CHANGE AND IMPROVE THEM.
+   - Do NOT just keep them the same.
+   - Make the descriptions more specific to the genre or topic.
+   - Add new psychological depth or analytical nuances.
+   - You MAY rename them slightly if it makes the analysis sharper (e.g., change 'fear' to 'core_trauma_response').
+3. **NO ZOMBIE FIELDS**: Do NOT add back fields that are missing from the input.
+4. **NO DELETIONS**: Do NOT remove fields that are currently present.
+5. **CREATIVITY**: Be bold with the unlocked fields. The user wants to see a DIFFERENT perspective on them.
+
+Output ONLY the raw content (YAML or Markdown body). No code blocks.
+`
+      console.log(`[Schema Wizard] Regenerating section: ${section} (Locked: ${lockedItems?.length || 0})`)
+      const result = await model.generateContent(prompt)
+      const response = await result.response
+      let text = response.text()
+
+      // Cleanup
+      if (text.startsWith('```yaml')) text = text.replace(/^```yaml\s*/, '').replace(/\s*```$/, '')
+      if (text.startsWith('```markdown')) text = text.replace(/^```markdown\s*/, '').replace(/\s*```$/, '')
+      if (text.startsWith('```')) text = text.replace(/^```\s*/, '').replace(/\s*```$/, '')
+
+      return { success: true, content: text.trim() }
+
+    } catch (error) {
+       console.error('Failed to regenerate section:', error)
+       return { success: false, error: String(error) }
+    }
+  })
 }
