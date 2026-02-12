@@ -105,6 +105,8 @@ const api = {
     ipcRenderer.invoke('generate-analysis-schema-field', payload),
   regenerateAnalysisSchemaSection: (payload: { section: string, currentContent: string, context: string }) =>
     ipcRenderer.invoke('regenerate-analysis-schema-section', payload),
+  interactSchemaAgent: (payload: { currentDraft: string, userMessage: string, history: any[] }) =>
+    ipcRenderer.invoke('interact-schema-agent', payload),
 }
 
 if (process.contextIsolated) {

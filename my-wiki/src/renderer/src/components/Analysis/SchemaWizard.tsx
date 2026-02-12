@@ -11,8 +11,12 @@ interface SchemaWizardProps {
 
 type Message = {
     role: 'user' | 'assistant'
-    content: string
+    content?: string
     draft?: string // If assistant generated a draft
+    toolCall?: {
+        name: string
+        args: any
+    }
 }
 
 type SchemaSection = 'metadata' | 'definitions' | 'structure' | 'instructions'
@@ -46,6 +50,31 @@ const dedent = (str: string) => {
     const minIndent = Math.min(...lines.map(l => l.search(/\S/)))
     return str.split('\n').map(l => (l.trim() ? l.slice(minIndent) : l)).join('\n')
 }
+
+const FieldProposalCard = ({ args, onAccept, onReject }: { args: any, onAccept: (args: any) => void, onReject: () => void }) => (
+    <div className="bg-slate-800 border border-purple-500/30 rounded-lg p-4 my-2 w-[300px] animate-in slide-in-from-left-4 duration-300">
+      <div className="flex items-center gap-2 mb-3 border-b border-white/5 pb-2">
+        <div className="p-1 bg-purple-500/20 rounded text-purple-400">
+            <Sparkles size={14} />
+        </div>
+        <span className="text-xs font-bold text-purple-200 uppercase tracking-wider">Proposed Field</span>
+      </div>
+      <div className="bg-slate-900/50 p-3 rounded mb-3 space-y-2">
+          <div className="flex justify-between items-center">
+              <span className="text-emerald-400 font-mono text-sm font-bold">{args.key}</span>
+              <span className="text-[10px] bg-slate-700 text-slate-300 px-1.5 py-0.5 rounded font-mono uppercase">{args.type}</span>
+          </div>
+          <p className="text-slate-300 text-xs leading-relaxed">{args.description}</p>
+          {args.reason && <p className="text-slate-500 text-[10px] italic border-t border-white/5 pt-2 mt-1">Why: {args.reason}</p>}
+      </div>
+      <div className="flex gap-2 justify-end">
+          <button onClick={onReject} className="px-3 py-1.5 text-xs bg-slate-700 hover:bg-slate-600 rounded text-slate-300 transition-colors">Discard</button>
+          <button onClick={() => onAccept(args)} className="px-3 py-1.5 text-xs bg-purple-600 hover:bg-purple-500 rounded text-white font-medium flex items-center gap-1 transition-colors shadow-lg shadow-purple-900/20">
+              <Plus size={12}/> Add Field
+          </button>
+      </div>
+    </div>
+  )
 
 const SchemaBlock = ({ id, title, icon: Icon, content, children, isLocked, onToggleLock, onRegenerate, onDelete }: SchemaBlockProps) => {
     return (
@@ -580,29 +609,55 @@ export const SchemaWizard = ({ isOpen, onClose, onSave }: SchemaWizardProps) => 
         setMessages(prev => [...prev, userMsg])
 
         try {
+            // New GenUI Approach
             // @ts-ignore
-            const result = await window.api.generateAnalysisSchemaField({ 
+            const result = await window.api.interactSchemaAgent({ 
                 currentDraft, 
-                feedback: "Add one new relevant field to 'schema_structure' that is currently missing. Suggest a good key, type, and description." 
+                userMessage: "Add one new relevant field to 'schema_structure' that is currently missing. Propose it.",
+                history: messages.map(m => ({ role: m.role === 'user' ? 'client' : 'model', content: m.content || '' }))
             })
             
-            if (result.success && result.fieldYaml) {
-                 const newDraft = appendFieldToDraft(currentDraft, result.fieldYaml)
-                 setCurrentDraft(newDraft)
-                 
-                 setMessages(prev => [...prev, { 
-                    role: 'assistant', 
-                    content: `Added new field:\n\`\`\`yaml\n${result.fieldYaml}\n\`\`\`` 
-                }])
+            if (result.success) {
+                 if (result.type === 'tool_call') {
+                     // GenUI Proposal
+                     setMessages(prev => [...prev, { 
+                        role: 'assistant', 
+                        toolCall: { name: result.toolName, args: result.args } 
+                    }])
+                 } else {
+                     // Text response (fallback)
+                     setMessages(prev => [...prev, { role: 'assistant', content: result.content }])
+                 }
             } else {
-                 setMessages(prev => [...prev, { role: 'assistant', content: `Error: ${result.error || 'Failed to generate field'}` }])
+                 setMessages(prev => [...prev, { role: 'assistant', content: `Error: ${result.error || 'Failed to interact'}` }])
             }
 
         } catch (e) {
-             setMessages(prev => [...prev, { role: 'assistant', content: "Failed to add field." }])
+             setMessages(prev => [...prev, { role: 'assistant', content: "Failed to connect to agent." }])
         } finally {
             setLoading(false)
         }
+    }
+
+    const acceptProposal = (args: any) => {
+        // Construct YAML from args
+        const fieldYaml = `${args.key}:\n  type: ${args.type}\n  description: "${args.description}"`
+        
+        const newDraft = appendFieldToDraft(currentDraft, fieldYaml)
+        setCurrentDraft(newDraft)
+        
+        // Add a system message confirming addition
+        setMessages(prev => [...prev, { 
+            role: 'assistant', 
+            content: `✅ Added field **${args.key}** to schema.` 
+        }])
+    }
+
+    const rejectProposal = () => {
+        setMessages(prev => [...prev, { 
+            role: 'assistant', 
+            content: `❌ Proposal discarded.` 
+        }])
     }
 
     if (!isOpen) return null
@@ -665,9 +720,18 @@ export const SchemaWizard = ({ isOpen, onClose, onSave }: SchemaWizardProps) => 
                                 <div className="flex-1 overflow-y-auto p-4 space-y-4" ref={scrollRef}>
                                     {messages.map((msg, idx) => (
                                         <div key={idx} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                                            <div className={`max-w-[85%] rounded-2xl px-4 py-3 text-sm ${msg.role === 'user' ? 'bg-purple-600 text-white rounded-br-none' : 'bg-slate-800 text-slate-300 rounded-bl-none border border-slate-700'}`}>
-                                                <p className="whitespace-pre-wrap leading-relaxed">{msg.content}</p>
-                                            </div>
+                                            {msg.content && (
+                                                <div className={`max-w-[85%] rounded-2xl px-4 py-3 text-sm ${msg.role === 'user' ? 'bg-purple-600 text-white rounded-br-none' : 'bg-slate-800 text-slate-300 rounded-bl-none border border-slate-700'}`}>
+                                                    <p className="whitespace-pre-wrap leading-relaxed">{msg.content}</p>
+                                                </div>
+                                            )}
+                                            {msg.toolCall && msg.toolCall.name === 'propose_new_field' && (
+                                                <FieldProposalCard 
+                                                    args={msg.toolCall.args} 
+                                                    onAccept={acceptProposal}
+                                                    onReject={rejectProposal}
+                                                />
+                                            )}
                                         </div>
                                     ))}
                                     {loading && (

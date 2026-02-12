@@ -606,39 +606,35 @@ Your task is to design a high-quality "Character Analysis Schema" for a database
 
 TOPIC: "${topic}"
 
-The schema must follow this exact YAML Frontmatter + Markdown format:
+The schema must follow this exact YAML Frontmatter + Markdown format.
+DO NOT deviate from this structure. Each section is mandatory.
 
 ---
-analysis_module: (snake_case_name, e.g., character_deficiency_dissection)
+analysis_module: (snake_case_name)
 target_character: "{character_name}"
 context_scope: "{selected_scenes_or_entire_script}"
-analysis_persona: (Role for the AI, e.g., "Narrative Anatomist")
-definitions:
-  (key_concept): (short definition)
+analysis_persona: (Role)
 output_requirements:
   format: JSON
   language: Korean
-  tone: (e.g., Analytical, Insightful)
+  tone: Analytical
+definitions:
+  (key): (value)
 schema_structure:
-  (field_name):
-    description: (Detailed explanation of what this field analyzes)
+  field_name:
     type: string
-  (list_field):
-    description: (Explanation)
-    type: list<object>
-    fields:
-      - (sub_field): (type)
+    description: "Description"
 ---
 
-# (Schema Name) Analysis Prompt
+# System Instruction
 
-(A detailed System Instruction for the AI to perform this analysis. Explain the methodology, how to interpret the data, and specific instructions for each field defined in schema_structure.)
+(Write the system instruction here)
 
-IMPORTANT:
-1. The 'schema_structure' is the most critical part. It defines what data we extract.
-2. Field names should be English (snake_case). Descriptions should be Korean.
-3. Make the analysis profound and useful for a writer.
-4. Return ONLY the content of the file (YAML + Markdown). No wrapping code blocks.
+IMPORTANT CONSTRAINTS:
+1. Start immediately with '---'. Do not write "Here is the schema".
+2. Ensure 'schema_structure' is valid YAML nested under the frontmatter.
+3. Do NOT use markdown code blocks (like \`\`\`yaml). Return raw text.
+4. Indentation is critical in YAML. use 2 spaces.
 `
       } else {
         // Refinement
@@ -791,6 +787,94 @@ Output ONLY the raw content (YAML or Markdown body). No code blocks.
 
     } catch (error) {
        console.error('Failed to regenerate section:', error)
+       return { success: false, error: String(error) }
+    }
+  })
+  /**
+   * GenUI: Interactive Schema Agent
+   * Uses Function Calling to propose specific UI actions
+   */
+  ipcMain.handle('interact-schema-agent', async (_, { currentDraft, userMessage, history }: { currentDraft: string, userMessage: string, history: any[] }) => {
+    try {
+      const apiKey = store?.get('gemini_api_key') as string
+      if (!apiKey) return { success: false, error: 'Gemini API key not configured.' }
+
+      const selectedModel = (store?.get('ai_model_selection') as string) || 'gemini-2.5-flash'
+      const genAI = new GoogleGenerativeAI(apiKey)
+
+      // Define Tools
+      const tools = [{
+        functionDeclarations: [
+          {
+            name: "propose_new_field",
+            description: "Propose adding a new field to the schema. Use this when the user asks to add a field or when you suggest a missing aspect.",
+            parameters: {
+              type: "OBJECT" as any,
+              properties: {
+                key: { type: "STRING", description: "The field key (snake_case, english)" },
+                type: { type: "STRING", description: "The data type (string, list<string>, list<object>)" },
+                description: { type: "STRING", description: "Detailed description in Korean" },
+                reason: { type: "STRING", description: "Why this field is relevant" }
+              },
+              required: ["key", "type", "description"]
+            }
+          }
+        ]
+      }]
+
+      const model = genAI.getGenerativeModel({ 
+        model: selectedModel,
+        tools: tools as any
+      })
+
+      const chat = model.startChat({
+        history: history.map(h => ({
+           role: h.role === 'client' ? 'user' : 'model',
+           parts: [{ text: h.content }] 
+        }))
+      })
+
+      const systemPrompt = `
+You are an intelligent Schema Architect.
+You help the user refine their Character Analysis Schema.
+
+Current Schema Draft:
+${currentDraft}
+
+User Request: "${userMessage}"
+
+INSTRUCTIONS:
+1. Understanding: Analyze the user's request. Do they want to ADD something, REMOVE something, or CHANGE something?
+2. Action:
+   - If User wants to ADD a field: You MUST use the 'propose_new_field' tool. Do NOT just say "I can add it". Call the tool.
+   - If User wants to change/remove: Reply with text explaining you will do it (the frontend handles text commands via another path for now, but you can guide them).
+   - If User asks a question: Answer efficiently.
+
+CONSTRAINT:
+- When calling 'propose_new_field', ensure the 'key' is in English snake_case (e.g., 'hidden_trauma').
+- The 'description' must be in Korean and very detailed/analytical.
+- The 'type' should be 'string' (for detailed text) or 'list<string>' (for keywords) or 'list<object>' (for complex items).
+`
+
+      const result = await chat.sendMessage(systemPrompt)
+      const response = await result.response
+      
+      // Check for function calls
+      const calls = response.functionCalls()
+      if (calls && calls.length > 0) {
+          const call = calls[0]
+          return { 
+              success: true, 
+              type: 'tool_call', 
+              toolName: call.name, 
+              args: call.args 
+          }
+      }
+
+      return { success: true, type: 'text', content: response.text() }
+
+    } catch (error) {
+       console.error('Schema Agent Error:', error)
        return { success: false, error: String(error) }
     }
   })
