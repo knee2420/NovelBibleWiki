@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, useMemo, useCallback } from 'react'
-import { Sparkles, ArrowRight, Bot, BookOpen, Search, PenTool, CheckCircle, XCircle, ChevronDown, ChevronUp, Users, User, MapPin, Target, X, Plus, Crosshair, Swords, Heart, Shield } from 'lucide-react'
+import { Sparkles, ArrowRight, Bot, BookOpen, Search, PenTool, CheckCircle, XCircle, ChevronDown, ChevronUp, Users, User, MapPin, Target, X, Plus, Crosshair, Swords, Heart, Shield, FileText, Scroll } from 'lucide-react'
 import { WikiEntry } from '../../types/wiki'
 
 interface AIWriterPanelProps {
@@ -527,6 +527,104 @@ export const AIWriterPanel = ({ currentContent, sceneContext, wikiData, onApplyC
     const [loading, setLoading] = useState(false)
     const [isSetupOpen, setIsSetupOpen] = useState(true) // Scene Setup expanded by default
     const scrollRef = useRef<HTMLDivElement>(null)
+    const inputRef = useRef<HTMLInputElement>(null)
+
+    // --- Mention Logic State ---
+    const [mentionState, setMentionState] = useState<{ active: boolean, query: string, index: number }>({ active: false, query: '', index: 0 })
+
+    // Filtered items for mention
+    const mentionItems = useMemo(() => {
+        if (!mentionState.active) return []
+        const query = mentionState.query.toLowerCase()
+        return wikiData
+            .filter(w => w.name.toLowerCase().includes(query) || (w.id || '').toLowerCase().includes(query))
+            .slice(0, 10) // Limit results
+    }, [mentionState.active, mentionState.query, wikiData])
+
+    const getIconForType = (type: string) => {
+        switch(type) {
+            case 'character': return <User size={14} className="shrink-0" />
+            case 'location': return <MapPin size={14} className="shrink-0" />
+            case 'item': return <Shield size={14} className="shrink-0" />
+            case 'faction': return <Users size={14} className="shrink-0" />
+            case 'scene': return <FileText size={14} className="shrink-0" />
+            default: return <Scroll size={14} className="shrink-0" />
+        }
+    }
+
+    const confirmMention = (item: WikiEntry) => {
+        if (!inputRef.current) return
+        const cursor = inputRef.current.selectionStart || 0
+        const textBefore = input.slice(0, cursor)
+        const match = textBefore.match(/@([^\s]*)$/)
+        
+        if (match) {
+            const prefix = input.slice(0, cursor - match[0].length)
+            const suffix = input.slice(cursor)
+            const insertion = `[[${item.name}]]`
+            const newValue = prefix + insertion + ' ' + suffix
+            setInput(newValue)
+            setMentionState({ active: false, query: '', index: 0 })
+            
+            // Allow React render cycle to update value, then set focus?
+            // Usually inputRef focus remains.
+        }
+    }
+
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const val = e.target.value
+        setInput(val)
+        
+        const cursor = e.target.selectionStart || 0
+        const textBefore = val.slice(0, cursor)
+        // Check for @ followed by non-space chars at end of string
+        const match = textBefore.match(/@([^\s]*)$/) 
+        
+        if (match) {
+             setMentionState({ active: true, query: match[1], index: 0 })
+        } else {
+             setMentionState(prev => prev.active ? { ...prev, active: false } : prev)
+        }
+    }
+    
+    const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (mentionState.active && mentionItems.length > 0) {
+            if (e.key === 'ArrowUp') {
+                e.preventDefault()
+                setMentionState(prev => ({ ...prev, index: Math.max(0, prev.index - 1) }))
+            } else if (e.key === 'ArrowDown') {
+                e.preventDefault()
+                setMentionState(prev => ({ ...prev, index: Math.min(mentionItems.length - 1, prev.index + 1) }))
+            } else if (e.key === 'Enter' || e.key === 'Tab') {
+                e.preventDefault()
+                confirmMention(mentionItems[mentionState.index])
+            } else if (e.key === 'Escape') {
+                e.preventDefault()
+                setMentionState(prev => ({ ...prev, active: false }))
+            }
+        } else {
+            if (e.key === 'Enter') {
+               handleSend()
+            }
+        }
+    }
+
+    // --- Mention Chips Logic ---
+    const mentionedFiles = useMemo(() => {
+        const matches = input.match(/\[\[(.*?)\]\]/g) || []
+        const uniqueNames = Array.from(new Set(matches.map(m => m.slice(2, -2))))
+        return uniqueNames.map(name => {
+            const entry = wikiData.find(w => w.name === name)
+            return entry || { name, type: 'other' as const, id: 'Not found in wiki', description: '', tags: [], content: '', info: {} } as WikiEntry
+        })
+    }, [input, wikiData])
+
+    const removeMention = (name: string) => {
+        // Escaping special regex characters in name if necessary? For simplicity assuming standard names.
+        // A safer replace would be split/join or non-regex if we expect conflicts.
+        const token = `[[${name}]]`
+        setInput(prev => prev.replace(token, ''))
+    }
 
     // --- Scene Setup State ---
     const [sceneSetup, setSceneSetup] = useState<SceneSetup>({
@@ -650,9 +748,52 @@ export const AIWriterPanel = ({ currentContent, sceneContext, wikiData, onApplyC
         try {
             // Inject scene setup context into the message
             const setupContext = buildSetupContext()
-            const enrichedMessage = setupContext 
-                ? `${contentToSend}\n\n[SCENE SETUP - 작가가 이 씬에 대해 설정한 정보입니다. 반드시 참고하세요]\n${setupContext}`
-                : contentToSend
+            
+            // Extract and inject referenced wiki entries (WikiLinks)
+            const wikiLinkMatches = contentToSend.match(/\[\[(.*?)\]\]/g) || []
+            const uniqueNames = Array.from(new Set(wikiLinkMatches.map(m => m.slice(2, -2))))
+            const referencedEntries = uniqueNames
+                .map(name => {
+                    // Strategy 1: Exact Name Match
+                    let entry = wikiData.find(w => w.name === name)
+                    
+                    // Strategy 2: Filename Match (fallback)
+                    // Users might type [[FileName]] which differs from frontmatter Title
+                    if (!entry) {
+                        const targetName = name.trim().normalize()
+                        entry = wikiData.find(w => {
+                            const filename = w.id.split(/[\\/]/).pop()?.replace(/\.md$/i, '').normalize() || ''
+                            return filename === targetName
+                        })
+                    }
+                    return entry
+                })
+                .filter(entry => entry !== undefined) as WikiEntry[]
+            
+            let referencedContext = ''
+            if (referencedEntries.length > 0) {
+                console.log('[AIWriterPanel] Found referenced entries:', referencedEntries.map(e => e.name))
+                referencedContext = '\n\n[REFERENCED WIKI ENTRIES - 사용자가 명시적으로 언급한 자료입니다. 반드시 이 내용을 바탕으로 답변하세요]\n'
+                referencedEntries.forEach(entry => {
+                    console.log(`[AIWriterPanel] Injecting ${entry.name}. Content Len: ${entry.content?.length}, Info Keys: ${Object.keys(entry.info || {}).join(', ')}`)
+                    
+                    referencedContext += `\n## [[${entry.name}]] (${entry.type})\n`
+                    referencedContext += `파일: ${entry.id}\n`
+                    if (entry.description) referencedContext += `설명: ${entry.description}\n`
+                    
+                    // Inject Frontmatter (Critical for Analysis Files)
+                    if (entry.info && Object.keys(entry.info).length > 0) {
+                        referencedContext += `\n[메타데이터/속성 정보]:\n${JSON.stringify(entry.info, null, 2)}\n`
+                    }
+                    
+                    referencedContext += `\n[본문 내용]:\n${entry.content || '(본문 없음)'}\n`
+                    referencedContext += `\n---\n`
+                })
+            }
+            
+            const enrichedMessage = `${contentToSend}${referencedContext}${setupContext ? `\n\n[SCENE SETUP - 작가가 이 씬에 대해 설정한 정보입니다. 반드시 참고하세요]\n${setupContext}` : ''}`
+            
+            console.log('[AIWriterPanel] FINAL MESSAGE TO AI:\n', enrichedMessage)
 
             // @ts-ignore
             const result = await window.api.interactSceneWriterAgent({
@@ -993,12 +1134,69 @@ ${contextText}
 
             {/* Input */}
             <div className="p-4 border-t border-slate-800 bg-[#111113] shrink-0">
+                {/* Mention Chips (Selected Files) */}
+                {mentionedFiles.length > 0 && (
+                    <div className="flex flex-wrap gap-2 mb-2 animate-in slide-in-from-bottom-2">
+                        {mentionedFiles.map((file, i) => (
+                             <div 
+                                key={`${file.name}-${i}`} 
+                                className="flex items-center gap-1.5 bg-slate-800/80 border border-slate-700 px-2 py-1 rounded-md text-[10px] text-slate-300 group hover:border-blue-500/50 transition-colors"
+                                title={file.id} // Toolkit showing full path
+                             >
+                                 <span className={file.type === 'other' && file.id === 'Not found in wiki' ? 'text-slate-500' : 'text-blue-400'}>
+                                     {getIconForType(file.type)}
+                                 </span>
+                                 <span className="font-medium max-w-[120px] truncate">{file.name}</span>
+                                 <button 
+                                    onClick={() => removeMention(file.name)} 
+                                    className="ml-0.5 text-slate-500 hover:text-red-400 transition-colors opacity-0 group-hover:opacity-100"
+                                >
+                                     <X size={10} />
+                                 </button>
+                             </div>
+                        ))}
+                    </div>
+                )}
+
                 <div className="relative">
+                    {/* Mention Suggestions Popup */}
+                    {mentionState.active && mentionItems.length > 0 && (
+                        <div className="absolute bottom-full left-0 mb-2 w-full max-h-60 overflow-y-auto bg-slate-900 border border-slate-700 rounded-lg shadow-xl z-50 flex flex-col gap-0.5 p-1 animate-in fade-in zoom-in-95 duration-100">
+                            <div className="px-2 py-1 text-[10px] text-slate-500 font-bold uppercase tracking-wider bg-slate-950/50 rounded flex items-center justify-between">
+                                <span>SUGGESTIONS</span>
+                                <span className="text-[9px]">ENTER to select</span>
+                            </div>
+                            {mentionItems.map((item, idx) => (
+                                <button 
+                                    key={item.id}
+                                    onClick={() => confirmMention(item)}
+                                    className={`w-full text-left px-3 py-2 text-xs flex items-center gap-3 rounded-md transition-colors ${
+                                        idx === mentionState.index 
+                                            ? 'bg-blue-600 text-white' 
+                                            : 'text-slate-300 hover:bg-slate-800'
+                                    }`}
+                                >
+                                   {getIconForType(item.type)}
+                                   <div className="flex-1 min-w-0">
+                                       <div className="font-bold truncate">{item.name}</div>
+                                       <div className={`text-[9px] truncate ${idx === mentionState.index ? 'text-blue-200' : 'text-slate-500'}`}>{item.id}</div>
+                                   </div>
+                                   <span className={`text-[9px] px-1.5 py-0.5 rounded border ${
+                                       idx === mentionState.index ? 'border-blue-400 bg-blue-500/30' : 'border-slate-700 bg-slate-800'
+                                   }`}>
+                                       {item.type.toUpperCase()}
+                                   </span>
+                                </button>
+                            ))}
+                        </div>
+                    )}
+
                     <input 
+                        ref={inputRef}
                         type="text" 
                         value={input}
-                        onChange={(e) => setInput(e.target.value)}
-                        onKeyDown={(e) => e.key === 'Enter' && handleSend()}
+                        onChange={handleInputChange}
+                        onKeyDown={handleInputKeyDown}
                         placeholder="이야기를 시작해보세요..."
                         className="w-full bg-slate-900 border border-slate-700 rounded-xl pl-4 pr-12 py-3 text-sm text-white focus:border-purple-500 outline-none transition-all shadow-inner"
                         disabled={loading}
