@@ -107,6 +107,12 @@ const api = {
     ipcRenderer.invoke('regenerate-analysis-schema-section', payload),
   interactSchemaAgent: (payload: { currentDraft: string, userMessage: string, history: any[] }) =>
     ipcRenderer.invoke('interact-schema-agent', payload),
+  interactSceneWriterAgent: (payload: { currentContent: string, userMessage: string, history: any[], context: any }) =>
+    ipcRenderer.invoke('interact-scene-writer-agent', payload),
+  
+  // [NEW] Context Retriever
+  getPreviousScenes: (chapter: number, scene: number, count: number) => 
+    ipcRenderer.invoke('get-previous-scenes', { chapter, scene, count }),
 }
 
 if (process.contextIsolated) {

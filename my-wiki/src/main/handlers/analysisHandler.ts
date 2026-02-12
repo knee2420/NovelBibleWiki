@@ -1,12 +1,9 @@
 import { ipcMain } from 'electron'
-import * as fs from 'fs'
-import * as path from 'path'
-import matter from 'gray-matter'
 import { GoogleGenerativeAI } from '@google/generative-ai'
+import fs from 'fs-extra'
+import path from 'path'
+import matter from 'gray-matter'
 
-/**
- * Setup all analysis-related IPC handlers
- */
 export function setupAnalysisHandlers(store?: any) {
   /**
    * Load all available analysis schemas by category
@@ -875,6 +872,187 @@ CONSTRAINT:
 
     } catch (error) {
        console.error('Schema Agent Error:', error)
+       return { success: false, error: String(error) }
+    }
+  })
+  /**
+   * GenUI: Scene Writer Agent
+   * Agentic AI that helps write scene content with context awareness
+   */
+  ipcMain.handle('interact-scene-writer-agent', async (_, { currentContent, userMessage, history, context }: { currentContent: string, userMessage: string, history: any[], context: any }) => {
+    try {
+      const apiKey = store?.get('gemini_api_key') as string
+      if (!apiKey) return { success: false, error: 'Gemini API key not configured.' }
+
+      const selectedModel = (store?.get('ai_model_selection') as string) || 'gemini-1.5-flash'
+      const genAI = new GoogleGenerativeAI(apiKey)
+
+      // Define Tools
+      const tools = [{
+        functionDeclarations: [
+          {
+            name: "read_previous_scenes",
+            description: "Read summaries of previous scenes to understand context.",
+            parameters: {
+              type: "OBJECT" as any,
+              properties: {
+                count: { type: "NUMBER", description: "Number of previous scenes to read (max 5)" }
+              },
+              required: ["count"]
+            }
+          },
+          {
+            name: "get_character_info",
+            description: "Get detailed information about specific characters from the Wiki.",
+            parameters: {
+              type: "OBJECT" as any,
+              properties: {
+                names: { 
+                  type: "ARRAY", 
+                  items: { type: "STRING" },
+                  description: "List of character names to lookup" 
+                }
+              },
+              required: ["names"]
+            }
+          },
+          {
+            name: "propose_plot_options",
+            description: "Propose 3 distinct plot directions for the user to choose from. (GenUI)",
+            parameters: {
+              type: "OBJECT" as any,
+              properties: {
+                options: {
+                  type: "ARRAY",
+                  items: {
+                    type: "OBJECT",
+                    properties: {
+                      title: { type: "STRING" },
+                      description: { type: "STRING" },
+                      tone: { type: "STRING" }
+                    },
+                    required: ["title", "description", "tone"]
+                  },
+                  description: "List of 3 plot options"
+                }
+              },
+              required: ["options"]
+            }
+          },
+          {
+            name: "write_scene_content",
+            description: "Generate the actual scene text based on an outline.",
+            parameters: {
+              type: "OBJECT" as any,
+              properties: {
+                outline: { type: "STRING", description: "The agreed outline or plot direction" },
+                focus: { type: "STRING", description: "Specific focus (e.g., dialogue, action, emotion)" },
+                tone: { type: "STRING" }
+              },
+              required: ["outline"]
+            }
+          }
+        ]
+      }]
+
+      // Mock Handler Logic for V1 Demo
+      // In a real implementation, this would involve a complex ReAct loop.
+      // For now, we simulate the 'Thinking' process by checking if the user request implies a tool needs to be called.
+      // Since Gemini handles tool selection, we let it decide.
+      
+      const model = genAI.getGenerativeModel({ 
+        model: selectedModel,
+        tools: tools as any
+      })
+
+      // Sanitize History for Gemini (Must start with 'user')
+      let mappedHistory = history.map(h => ({
+           role: h.role === 'client' ? 'user' : 'model',
+           parts: h.tool_response ? [{ functionResponse: h.tool_response }] : (h.tool_call ? [{ functionCall: h.tool_call }] : [{ text: h.content }])
+      }))
+
+      // Remove leading 'model' messages (e.g. initial greeting)
+      while (mappedHistory.length > 0 && mappedHistory[0].role === 'model') {
+          mappedHistory.shift()
+      }
+
+      const chat = model.startChat({
+        history: mappedHistory
+      })
+
+      // Initial context injection if new chat OR just a continuation
+      // We always append critical context to the latest message to ensure "Vibe"
+      
+      const contextPrompt = `
+Context: Scene #${context.scene}, Chapter #${context.chapter}
+Current Draft Length: ${currentContent.length} chars
+Existing Draft Preview: "${currentContent.substring(0, 300)}..."
+
+User Request: "${userMessage}"
+
+SYSTEM INSTRUCTIONS:
+You are an "Agentic Creative Writing Assistant" (Vibe Mode) for a Korean Web Novel.
+Your goal is to actively help the user write, not just chat.
+
+PROTOCOL:
+1. **ANALYZE**: If the user's request is vague (e.g., "What should I write?"), YOU MUST first check context.
+   - Call 'read_previous_scenes' to see what happened before.
+   - Call 'get_character_info' if key characters are mentioned but unknown.
+2. **PROPOSE**: Once you have context, use 'propose_plot_options' to give 3 distinct choices.
+3. **DRAFT**: If the user chose an option, use 'write_scene_content'.
+
+CRITICAL RULES:
+- **ALWAYS SPEAK IN KOREAN.** (Unless the user writes in English, but even then prefer Korean).
+- When using 'propose_plot_options' or 'write_scene_content', the content within the tools MUST be in Korean.
+- ACT like a pro editor who looks up files before speaking.
+`
+      
+      let msg = contextPrompt
+      if (mappedHistory.length > 0) {
+          // If history exists, we just send the user message but with invisible context appended?
+          // Or just send the user message? 
+          // Better to reinforce the instruction.
+          msg = userMessage + `\n\n[SYSTEM: Remember to use tools! 'read_previous_scenes' or 'propose_plot_options' are recommended if you lack context.]`
+      } else {
+          // First turn
+          msg = contextPrompt
+      }
+
+      const result = await chat.sendMessage(msg)
+      const response = await result.response
+      
+      const calls = response.functionCalls()
+      
+      if (calls && calls.length > 0) {
+          const call = calls[0]
+          
+          // Case 1: UI Interaction (Proposal) -> Return to Frontend
+          if (call.name === 'propose_plot_options' || call.name === 'write_scene_content') {
+               return { 
+                  success: true, 
+                  type: 'tool_call', 
+                  toolName: call.name, 
+                  args: call.args 
+              }
+          }
+
+          // Case 2: Data Retrieval -> Execute & Loop (Simplified for Demo)
+          // Since we can't do full loop easily without risking timeout in this single turn,
+          // for this V1 'Vibe' demo, if the model calls a Read tool, we will just return a text response describing what it found (Mock).
+          // OR, we can just return the tool call to frontend, and let frontend show "Agent is searching..." and loop back.
+          // Let's return the tool call so frontend can visualize "Agent is thinking/reading...".
+          return { 
+              success: true, 
+              type: 'tool_call', // Treat all as tool calls for visualization
+              toolName: call.name, 
+              args: call.args 
+          }
+      }
+
+      return { success: true, type: 'text', content: response.text() }
+
+    } catch (error) {
+       console.error('Writer Agent Error:', error)
        return { success: false, error: String(error) }
     }
   })
