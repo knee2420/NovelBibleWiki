@@ -26,6 +26,12 @@ const api = {
     ipcRenderer.invoke('create-chapter', { actPath, title }),
   createScene: (chapterPath: string, title: string) =>
     ipcRenderer.invoke('create-scene', { chapterPath, title }),
+  createDirectory: (path: string) => ipcRenderer.invoke('create-directory', path), // [NEW] Sandbox
+  createFile: (path: string, content?: string) => ipcRenderer.invoke('create-file', { path, content }), // [NEW] Sandbox
+  renameFile: (path: string, newName: string) => ipcRenderer.invoke('rename-file', { path, newName }), // [NEW] Sandbox
+  readFile: (path: string) => ipcRenderer.invoke('read-file', path),
+  saveFile: (path: string, content: string) => ipcRenderer.invoke('save-file', { path, content }),
+  getDirectoryTree: (path: string) => ipcRenderer.invoke('get-directory-tree', path), // [NEW] Sandbox
   getTimelineFlat: () => ipcRenderer.invoke('get-timeline-flat'),
   renameItem: (path: string, newName: string) =>
     ipcRenderer.invoke('rename-item', { path, newName }),

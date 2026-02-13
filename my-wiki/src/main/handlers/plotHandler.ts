@@ -236,6 +236,103 @@ export function setupPlotHandlers(store: any): void {
       }
   })
 
+  // 7. Get Recursive File Tree (for Work Directory)
+  ipcMain.handle('get-directory-tree', async (_, dirPath) => {
+      try {
+          if (!fs.existsSync(dirPath)) return null
+          
+          const buildTree = (currentPath: string): any => {
+              const name = basename(currentPath)
+              const stat = fs.statSync(currentPath)
+              
+              if (!stat.isDirectory()) {
+                  return {
+                      id: currentPath,
+                      title: name,
+                      type: 'file',
+                      isFolder: false
+                  }
+              }
+
+              const children = fs.readdirSync(currentPath)
+                  .map(child => buildTree(join(currentPath, child)))
+                  .sort((a, b) => {
+                      // Sort folders first, then files
+                      if (a.isFolder === b.isFolder) return a.title.localeCompare(b.title)
+                      return a.isFolder ? -1 : 1
+                  })
+
+              return {
+                  id: currentPath,
+                  title: name,
+                  type: 'plot', // generic type
+                  isFolder: true,
+                  children
+              }
+          }
+
+          return buildTree(dirPath)
+      } catch (e) {
+          console.error(e)
+          return null
+      }
+  })
+
+  // 6. Generic File System Operations for Sandbox
+  ipcMain.handle('create-directory', async (_, path) => {
+      try {
+          await fs.ensureDir(path)
+          return true
+      } catch (e) {
+          console.error(e)
+          return false
+      }
+  })
+
+  ipcMain.handle('create-file', async (_, { path, content }) => {
+    try {
+        if (fs.existsSync(path)) return false
+        await fs.writeFile(path, content || '')
+        return true
+    } catch (e) {
+        console.error(e)
+        return false
+    }
+  })
+
+  ipcMain.handle('rename-file', async (_, { path, newName }) => {
+      try {
+          if (!fs.existsSync(path)) return false
+          const dir = dirname(path)
+          const newPath = join(dir, newName)
+          await fs.rename(path, newPath)
+          return true
+      } catch (e) {
+          console.error(e)
+          return false
+      }
+  })
+
+  ipcMain.handle('read-file', async (_, path) => {
+      try {
+          if (!fs.existsSync(path)) return null
+          return fs.readFileSync(path, 'utf-8')
+      } catch (e) {
+          console.error(e)
+          return null
+      }
+  })
+
+  ipcMain.handle('save-file', async (_, { path, content }) => {
+      try {
+          await fs.writeFile(path, content, 'utf-8')
+          return true
+      } catch (e) {
+          console.error(e)
+          return false
+      }
+  })
+
   ipcMain.handle('get-timeline-flat', async () => {
     const vaultPath = store.get('vaultPath') as string
     if (!vaultPath) return []
