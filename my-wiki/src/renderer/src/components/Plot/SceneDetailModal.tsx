@@ -17,6 +17,7 @@ import {
 } from 'lucide-react'
 import { ScriptAnalysisPanel } from '../AI/ScriptAnalysisPanel'
 import { AIAnalyzePanel } from '../AI/AIAnalyzePanel'
+import { AIWriterPanel } from '../AI/AIWriterPanel'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import { WikiEntry } from '../../types/wiki'
@@ -70,6 +71,7 @@ export const SceneDetailModal = ({
 
   const [isGraphDataExpanded, setIsGraphDataExpanded] = useState(false)
   const [isAIPanelOpen, setIsAIPanelOpen] = useState(false)
+  const [isAIWriterOpen, setIsAIWriterOpen] = useState(false)
 
   // [Hook] Use Entity Review
   const { 
@@ -584,10 +586,16 @@ export const SceneDetailModal = ({
                 <div className="flex items-center gap-2">
                     {!isAIPanelOpen && viewMode === 'editor' && (
                         <button
-                          onClick={() => setIsAIPanelOpen(true)}
+                          onClick={() => {
+                              if (!editContent || !editContent.trim()) {
+                                  setIsAIWriterOpen(true)
+                              } else {
+                                  setIsAIPanelOpen(true)
+                              }
+                          }}
                           className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-bold text-purple-300 hover:text-white hover:bg-purple-900/40 border border-purple-500/30 transition-all"
                         >
-                          <Sparkles size={14} /> Smart Analyze
+                          <Sparkles size={14} /> {(!editContent || !editContent.trim()) ? 'Auto Write' : 'Smart Analyze'}
                         </button>
                     )}
                 </div>
@@ -616,17 +624,39 @@ export const SceneDetailModal = ({
                   />
               </div>
           ) : (
-            <div className="flex-1 overflow-y-auto custom-scrollbar p-8 w-full min-w-0">
+            <div className="flex-1 overflow-y-auto custom-scrollbar p-8 w-full min-w-0 relative">
+              
+              {/* AI Writer Trigger for Empty Content */}
+              {(!editContent || !editContent.trim()) && !loading && (
+                  <div className="absolute inset-0 flex items-center justify-center z-10 pointer-events-none">
+                      <div className="pointer-events-auto">
+                          <button 
+                            onClick={() => setIsAIWriterOpen(true)}
+                            className="group relative inline-flex items-center justify-center gap-3 px-8 py-4 font-bold text-white transition-all duration-300 bg-slate-900 border border-slate-700/50 rounded-2xl hover:border-purple-500/50 hover:bg-slate-800 hover:scale-105 shadow-2xl shadow-purple-900/10 overflow-hidden"
+                          >
+                            <div className="absolute inset-0 bg-gradient-to-r from-purple-500/10 to-blue-500/10 opacity-0 group-hover:opacity-100 transition-opacity" />
+                            <div className="p-2 bg-gradient-to-br from-purple-500 to-blue-600 rounded-lg shadow-lg">
+                                <Sparkles size={20} className="text-white animate-pulse" />
+                            </div>
+                            <div className="flex flex-col items-start">
+                                <span className="text-sm font-bold tracking-wide">AI와 함께 생성하기</span>
+                                <span className="text-[10px] text-slate-400 font-medium">GenUI Writer Mode</span>
+                            </div>
+                          </button>
+                      </div>
+                  </div>
+              )}
+
               {isEditing ? (
                 <textarea
                   value={editContent}
                   onChange={(e) => setEditContent(e.target.value)}
-                  className="w-full h-full min-h-[500px] bg-transparent text-slate-300 text-sm leading-relaxed focus:outline-none resize-none font-mono"
+                  className="w-full h-full min-h-[500px] bg-transparent text-slate-300 text-sm leading-relaxed focus:outline-none resize-none font-mono relative z-0"
                   placeholder="Scene content..."
                   spellCheck={false}
                 />
               ) : (
-                <article className="prose prose-invert prose-slate max-w-3xl mx-auto prose-p:leading-relaxed prose-headings:text-slate-200 prose-pre:whitespace-pre-wrap prose-pre:break-words w-full break-words">
+                <article className="prose prose-invert prose-slate max-w-3xl mx-auto prose-p:leading-relaxed prose-headings:text-slate-200 prose-pre:whitespace-pre-wrap prose-pre:break-words w-full break-words relative z-0">
                   <ReactMarkdown 
                     remarkPlugins={[remarkGfm]}
                     components={{
@@ -634,13 +664,44 @@ export const SceneDetailModal = ({
                       code: (props) => <code {...props} style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word', overflowWrap: 'break-word' }} />
                     }}
                   >
-                    {editContent || '*No content*'}
+                    {editContent || ''}
                   </ReactMarkdown>
                 </article>
               )}
             </div>
           )}
         </div>
+
+        {isAIWriterOpen && (() => {
+             // Parse chapter/scene robustly: frontmatter > filepath fallback
+             let chapterNum = Number(originalData?.frontmatter?.chapter) || 0
+             let sceneNum = Number(originalData?.frontmatter?.scene) || 0
+
+             // Fallback: parse from filepath (e.g. ".../20화_타이틀/SCENE-1.md")
+             if (!chapterNum && filePath) {
+                 const chapterMatch = filePath.match(/(\d+)화[_\s(]/i)
+                 if (chapterMatch) chapterNum = parseInt(chapterMatch[1])
+             }
+             if (!sceneNum && filePath) {
+                 const sceneMatch = filePath.match(/SCENE[-_]?(\d+)/i)
+                 if (sceneMatch) sceneNum = parseInt(sceneMatch[1])
+             }
+             
+             console.log('[AIWriter] sceneContext resolved:', { chapter: chapterNum, scene: sceneNum, filePath })
+             
+             return (
+                 <AIWriterPanel 
+                    currentContent={editContent}
+                    sceneContext={{ chapter: chapterNum, scene: sceneNum }}
+                    wikiData={wikiData}
+                    onApplyContent={(text) => {
+                        setEditContent(text)
+                        setIsEditing(true)
+                    }}
+                    onClose={() => setIsAIWriterOpen(false)}
+                 />
+             )
+        })()}
 
         {isAIPanelOpen && (
           <AIAnalyzePanel

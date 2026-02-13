@@ -236,6 +236,103 @@ export function setupPlotHandlers(store: any): void {
       }
   })
 
+  // 7. Get Recursive File Tree (for Work Directory)
+  ipcMain.handle('get-directory-tree', async (_, dirPath) => {
+      try {
+          if (!fs.existsSync(dirPath)) return null
+          
+          const buildTree = (currentPath: string): any => {
+              const name = basename(currentPath)
+              const stat = fs.statSync(currentPath)
+              
+              if (!stat.isDirectory()) {
+                  return {
+                      id: currentPath,
+                      title: name,
+                      type: 'file',
+                      isFolder: false
+                  }
+              }
+
+              const children = fs.readdirSync(currentPath)
+                  .map(child => buildTree(join(currentPath, child)))
+                  .sort((a, b) => {
+                      // Sort folders first, then files
+                      if (a.isFolder === b.isFolder) return a.title.localeCompare(b.title)
+                      return a.isFolder ? -1 : 1
+                  })
+
+              return {
+                  id: currentPath,
+                  title: name,
+                  type: 'plot', // generic type
+                  isFolder: true,
+                  children
+              }
+          }
+
+          return buildTree(dirPath)
+      } catch (e) {
+          console.error(e)
+          return null
+      }
+  })
+
+  // 6. Generic File System Operations for Sandbox
+  ipcMain.handle('create-directory', async (_, path) => {
+      try {
+          await fs.ensureDir(path)
+          return true
+      } catch (e) {
+          console.error(e)
+          return false
+      }
+  })
+
+  ipcMain.handle('create-file', async (_, { path, content }) => {
+    try {
+        if (fs.existsSync(path)) return false
+        await fs.writeFile(path, content || '')
+        return true
+    } catch (e) {
+        console.error(e)
+        return false
+    }
+  })
+
+  ipcMain.handle('rename-file', async (_, { path, newName }) => {
+      try {
+          if (!fs.existsSync(path)) return false
+          const dir = dirname(path)
+          const newPath = join(dir, newName)
+          await fs.rename(path, newPath)
+          return true
+      } catch (e) {
+          console.error(e)
+          return false
+      }
+  })
+
+  ipcMain.handle('read-file', async (_, path) => {
+      try {
+          if (!fs.existsSync(path)) return null
+          return fs.readFileSync(path, 'utf-8')
+      } catch (e) {
+          console.error(e)
+          return null
+      }
+  })
+
+  ipcMain.handle('save-file', async (_, { path, content }) => {
+      try {
+          await fs.writeFile(path, content, 'utf-8')
+          return true
+      } catch (e) {
+          console.error(e)
+          return false
+      }
+  })
+
   ipcMain.handle('get-timeline-flat', async () => {
     const vaultPath = store.get('vaultPath') as string
     if (!vaultPath) return []
@@ -355,6 +452,81 @@ export function setupPlotHandlers(store: any): void {
           if (a.chapterNumber !== b.chapterNumber) return a.chapterNumber - b.chapterNumber
           return a.sceneNumber - b.sceneNumber
       })
+  })
+
+  // [NEW] Get Previous Scenes Context
+  ipcMain.handle('get-previous-scenes', async (_, { chapter, scene, count }) => {
+    const vaultPath = store.get('vaultPath') as string
+    console.log('[PlotHandler] get-previous-scenes Request:', { chapter, scene, count, vaultPath })
+    
+    if (!vaultPath) {
+        console.error('[PlotHandler] Vault Path Missing!')
+        return []
+    }
+    const plotBasePath = join(vaultPath, '10_Plot')
+    if (!fs.existsSync(plotBasePath)) {
+        console.error('[PlotHandler] Plot Base Path not found:', plotBasePath)
+        return []
+    }
+
+    // 1. Get all scenes flattened
+    const allChapters = recursiveScan(plotBasePath)
+    const allScenes = allChapters.flatMap(c => c.scenes.map(s => ({
+        ...s, 
+        chapterNumber: c.chapterNumber ?? 999 
+    })))
+    
+    // 2. Sort global timeline
+    allScenes.sort((a, b) => {
+        if (a.chapterNumber !== b.chapterNumber) return a.chapterNumber - b.chapterNumber
+        return a.sceneNumber - b.sceneNumber
+    })
+
+    console.log('[PlotHandler] Total Scenes Found:', allScenes.length)
+    if (allScenes.length > 0) {
+        console.log('[PlotHandler] Sample:', allScenes[0].chapterNumber, allScenes[0].sceneNumber)
+        console.log('[PlotHandler] Last:', allScenes[allScenes.length - 1].chapterNumber, allScenes[allScenes.length - 1].sceneNumber)
+    }
+
+    const targetChapter = typeof chapter === 'string' ? parseInt(chapter) : chapter
+    const targetScene = typeof scene === 'string' ? parseInt(scene) : scene
+
+    // 3. Filter scenes BEFORE the current target
+    const previousScenes = allScenes.filter(s => {
+        if (s.chapterNumber < targetChapter) return true
+        if (s.chapterNumber === targetChapter && s.sceneNumber < targetScene) return true
+        return false
+    })
+
+    console.log('[PlotHandler] Previous Scenes Filtered:', previousScenes.length) // How many are strictly previous?
+
+    // 4. Take last N scenes
+    const selected = previousScenes.slice(-Math.min(count, 10)) // Max 10 safety
+    console.log('[PlotHandler] Selected:', selected.length)
+    
+    // 5. Read full content
+    const results = selected.map(s => {
+        try {
+             // Re-read file to be sure we have latest content (although recursiveScan parses some)
+             // recursiveScan 'summary' logic truncates. We need FULL content.
+             const content = fs.readFileSync(s.id, 'utf-8')
+             const { content: body } = matter(content)
+             return {
+                 path: s.id,
+                 fileName: basename(s.id),
+                 title: s.title,
+                 content: body,
+                 chapter: s.chapterNumber,
+                 scene: s.sceneNumber
+             }
+        } catch(e) { 
+             console.error('[PlotHandler] Read Failed:', e)
+             return null 
+        }
+    }).filter(Boolean)
+
+    console.log('[PlotHandler] Final Results:', results.length)
+    return results
   })
 }
 

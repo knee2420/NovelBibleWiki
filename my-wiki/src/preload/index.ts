@@ -26,6 +26,12 @@ const api = {
     ipcRenderer.invoke('create-chapter', { actPath, title }),
   createScene: (chapterPath: string, title: string) =>
     ipcRenderer.invoke('create-scene', { chapterPath, title }),
+  createDirectory: (path: string) => ipcRenderer.invoke('create-directory', path), // [NEW] Sandbox
+  createFile: (path: string, content?: string) => ipcRenderer.invoke('create-file', { path, content }), // [NEW] Sandbox
+  renameFile: (path: string, newName: string) => ipcRenderer.invoke('rename-file', { path, newName }), // [NEW] Sandbox
+  readFile: (path: string) => ipcRenderer.invoke('read-file', path),
+  saveFile: (path: string, content: string) => ipcRenderer.invoke('save-file', { path, content }),
+  getDirectoryTree: (path: string) => ipcRenderer.invoke('get-directory-tree', path), // [NEW] Sandbox
   getTimelineFlat: () => ipcRenderer.invoke('get-timeline-flat'),
   renameItem: (path: string, newName: string) =>
     ipcRenderer.invoke('rename-item', { path, newName }),
@@ -97,6 +103,22 @@ const api = {
   // [NEW] Blueprint Engine
   getCharacterBlueprint: (characterId: string) => ipcRenderer.invoke('get-character-blueprint', characterId),
   saveCharacterBlueprint: (blueprint: any) => ipcRenderer.invoke('save-character-blueprint', blueprint),
+  
+  // [NEW] Schema Wizard
+  generateAnalysisSchemaDraft: (payload: { topic: string, currentDraft?: string, feedback?: string }) => 
+    ipcRenderer.invoke('generate-analysis-schema-draft', payload),
+  generateAnalysisSchemaField: (payload: { currentDraft: string, feedback: string }) => 
+    ipcRenderer.invoke('generate-analysis-schema-field', payload),
+  regenerateAnalysisSchemaSection: (payload: { section: string, currentContent: string, context: string }) =>
+    ipcRenderer.invoke('regenerate-analysis-schema-section', payload),
+  interactSchemaAgent: (payload: { currentDraft: string, userMessage: string, history: any[] }) =>
+    ipcRenderer.invoke('interact-schema-agent', payload),
+  interactSceneWriterAgent: (payload: { currentContent: string, userMessage: string, history: any[], context: any }) =>
+    ipcRenderer.invoke('interact-scene-writer-agent', payload),
+  
+  // [NEW] Context Retriever
+  getPreviousScenes: (chapter: number, scene: number, count: number) => 
+    ipcRenderer.invoke('get-previous-scenes', { chapter, scene, count }),
 }
 
 if (process.contextIsolated) {
