@@ -1063,6 +1063,21 @@ CONSTRAINT:
         history: mappedHistory
       })
 
+
+const formattingInstruction = `
+*** RESPONSE FORMATTING (CRITICAL) ***
+You MUST use a specific format to highlight important entities so the user can "collect" them.
+1. **Use \`[[Type::Name]]\` syntax** for ALL proper nouns (Characters, Locations, Items, Factions).
+2. **AGGRESSIVELY TAG EVENTS**: You MUST identify and tag key plot incidents as [[Event::Event Name]].
+   - If an event doesn't have a proper name, **CREATE A NAME** for it and format it.
+   - Example: "They fought fiercely" -> "They fought fiercely ([[Event::Battle of the Alley]])".
+   - Example: "He signed the contract" -> "He signed the [[Event::Contract of Betrayal]]."
+3. **DO NOT use bolding** (\`**Name**\`) for entities. Use the bracket syntax instead.
+   - ❌ WRONG: **Hong Gil-dong** is in **Seoul**.
+   - ✅ RIGHT: [[Character::Hong Gil-dong]] is in [[Location::Seoul]].
+4. Supported Types: Character, Location, Item, Faction, Event, Concept.
+`
+
       const contextPrompt = `
 Context: Scene #${context.scene}, Chapter #${context.chapter}
 Current Draft Length: ${currentContent.length} chars
@@ -1089,7 +1104,7 @@ CORE PRINCIPLE: DYNAMIC ADAPTATION & CONTEXT AWARENESS
 4. **INCORPORATE FEEDBACK**: If the user says "I don't like X, make it Y", use the appropriate tool to propose Y.
 
 STANDARD SEQUENCE (Use this for vague requests like "What should I write next?"):
-1. **ANALYZE**: 'read_previous_scenes' (ONLY if context is missing).
+1. **ANALYZE**: 'read_previous_scenes' (CHECK CONTEXT FIRST - Do not skip this unless you are 100% sure).
 2. **CHARACTERS**: 'propose_characters' (Must reflect REFERENCED DATA if present).
 3. **LOCATION**: 'propose_locations'.
 4. **FOCUS**: 'propose_focus'.
@@ -1101,19 +1116,51 @@ CRITICAL RULES:
 - All tool content (titles, descriptions, reasons) MUST be in Korean.
 - Character/location names should match the actual wiki entries as closely as possible.
 - ACT like a pro editor who builds the scene collaboratively with the writer.
+- **START WITH ANALYSIS**: If you are unsure about the current story state, ALWAYS use \`read_previous_scenes\`.
+
+${formattingInstruction}
 `
       
       let msg = contextPrompt
       if (mappedHistory.length > 0) {
-          // Reinforcement for continued conversations
-          msg = userMessage + `\n\n[SYSTEM: Use the appropriate tool for the next step. Follow the build-up sequence: read_previous_scenes → propose_characters → propose_locations → propose_focus → propose_plot_options → write_scene_content. Always respond in Korean. If the user's message indicates a selection was made, acknowledge it and proceed to the next step.]`
+          // Reinforcement for continued conversations - Explicitly remind of the sequence and tools
+          msg = userMessage + `\n\n[SYSTEM CHECK]
+1. Role: Agentic Creative Writing Assistant (Korean Web Novel).
+2. Protocol: Follow the 'STANDARD SEQUENCE'. If you lack story context, call 'read_previous_scenes' NOW.
+3. Format: Use [[Type::Name]] for entities.
+4. Language: Korean only.
+${formattingInstruction}`
       } else {
           // First turn
           msg = contextPrompt
       }
 
-      const result = await chat.sendMessage(msg)
-      const response = await result.response
+      let result: any
+      let response: any
+      
+      // Retry Logic for 503/429 Errors
+      let attempt = 0
+      const maxRetries = 3
+      
+      while (attempt < maxRetries) {
+          try {
+              result = await chat.sendMessage(msg)
+              response = await result.response
+              break // Success
+          } catch (e: any) {
+              const errStr = String(e)
+              if (errStr.includes('503') || errStr.includes('429') || errStr.includes('Service Unavailable') || errStr.includes('Overloaded')) {
+                  attempt++
+                  console.warn(`[AI Writer] API Error (503/429). Retrying... (${attempt}/${maxRetries})`)
+                  if (attempt >= maxRetries) throw e
+                  
+                  // Exponential backoff: 1s, 2s, 4s
+                  await new Promise(resolve => setTimeout(resolve, 1000 * Math.pow(2, attempt - 1)))
+              } else {
+                  throw e // Rethrow other errors immediately
+              }
+          }
+      }
       
       const calls = response.functionCalls()
       
@@ -1121,9 +1168,6 @@ CRITICAL RULES:
           const call = calls[0]
           
           // All tool calls are returned to frontend for GenUI visualization
-          // The frontend handles both:
-          //   - Interactive UI widgets (propose_*, write_scene_content)
-          //   - Data retrieval with auto-resolve (read_previous_scenes, get_character_info)
           return { 
               success: true, 
               type: 'tool_call',
@@ -1132,7 +1176,11 @@ CRITICAL RULES:
           }
       }
 
-      return { success: true, type: 'text', content: response.text() }
+      const responseText = response.text()
+      // [LOGGING] Log the raw AI response to see if entity highlighting is working
+      console.log(`[AI Writer] Raw Response Text:\n${responseText}\n-----------------------------------`)
+
+      return { success: true, type: 'text', content: responseText }
 
     } catch (error) {
        console.error('Writer Agent Error:', error)
