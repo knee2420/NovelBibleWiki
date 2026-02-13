@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { WikiEntry } from '../types/wiki'
 import { EpisodeCreateModal } from '../components/Episode/EpisodeCreateModal'
 import { EpisodeDetailModal } from '../components/Episode/EpisodeDetailModal'
-import { Plus, Search, Clapperboard, CheckCircle2, Circle, Clock } from 'lucide-react'
+import { Plus, Search, Clapperboard, CheckCircle2, Circle } from 'lucide-react'
 
 interface EpisodeArchiveProps {
     onEntryClick: (entry: WikiEntry) => void
@@ -76,6 +76,73 @@ export const EpisodeArchive = ({ onEntryClick }: EpisodeArchiveProps) => {
     ep.tags?.some(t => t.toLowerCase().includes(searchTerm.toLowerCase()))
   )
 
+  const renderCard = (ep: WikiEntry) => {
+    const isUsed = (ep.info as any)?.isUsed || false
+    const imageUrl = ep.image || (ep.info as any)?.image 
+
+    return (
+        <div 
+            key={ep.id}
+            onClick={() => setSelectedEpisode(ep)}
+            className={`group relative bg-[#11121c] border rounded-2xl overflow-hidden cursor-pointer transition-all duration-300 hover:-translate-y-1 hover:shadow-xl
+                ${isUsed ? 'border-slate-800 opacity-60 hover:opacity-100 grayscale hover:grayscale-0' : 'border-slate-700 hover:border-blue-500/50'}
+            `}
+        >
+            {/* Image Placeholder */}
+            <div className="aspect-video bg-black relative overflow-hidden">
+                {imageUrl ? (
+                    <img src={imageUrl} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                ) : (
+                    <div className="w-full h-full flex items-center justify-center bg-slate-900 text-slate-700 font-bold uppercase tracking-wider text-xs">
+                        No Image
+                    </div>
+                )}
+                <div className="absolute inset-0 bg-gradient-to-t from-[#11121c] via-transparent to-transparent opacity-80" />
+                
+                {/* Status Toggle (On Card) */}
+                <button
+                    onClick={(e) => toggleStatus(e, ep)}
+                    className={`absolute top-3 right-3 p-1.5 rounded-full backdrop-blur-md border transition-all z-10
+                        ${isUsed ? 'bg-green-500/20 text-green-400 border-green-500/30' : 'bg-slate-900/50 text-slate-400 border-slate-700 hover:text-white'}
+                    `}
+                    title={isUsed ? "사용 완료 (Used)" : "미사용 (Unused)"}
+                >
+                    {isUsed ? <CheckCircle2 size={16} /> : <Circle size={16} />}
+                </button>
+            </div>
+
+            {/* Content */}
+            <div className="p-5 relative">
+                <div className="flex items-start justify-between mb-2">
+                    <div className="flex-1 min-w-0">
+                        <h3 className={`font-bold text-lg truncate pr-2 ${isUsed ? 'text-slate-500 decoration-slate-600 line-through' : 'text-slate-100 group-hover:text-blue-400 transition-colors'}`}>
+                            {ep.name}
+                        </h3>
+                    </div>
+                </div>
+
+                <p className="text-slate-400 text-sm line-clamp-2 mb-4 h-10 leading-relaxed">
+                    {ep.content?.replace(/[#*`]/g, '').slice(0, 100) || '내용 없음'}
+                </p>
+
+                {/* Footer (Tags) */}
+                <div className="flex items-center justify-between pt-4 border-t border-slate-800/50">
+                     <div className="flex gap-1.5 overflow-hidden">
+                        {ep.tags?.slice(0, 2).map((tag, i) => (
+                            <span key={i} className="px-2 py-0.5 bg-slate-800/50 text-slate-500 text-[10px] rounded border border-slate-700/50">
+                                #{tag}
+                            </span>
+                        ))}
+                        {(ep.tags?.length || 0) > 2 && (
+                            <span className="text-[10px] text-slate-600">+{ep.tags!.length - 2}</span>
+                        )}
+                     </div>
+                </div>
+            </div>
+        </div>
+    )
+  }
+
   return (
     <div className="flex flex-col h-screen bg-[#0b0c15] text-slate-200 p-8 overflow-hidden">
         {/* Header */}
@@ -112,79 +179,40 @@ export const EpisodeArchive = ({ onEntryClick }: EpisodeArchiveProps) => {
         </div>
 
         {/* Grid */}
-        <div className="flex-1 overflow-y-auto pb-20 custom-scrollbar">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6">
-                {filteredEpisodes.map(ep => {
-                    const isUsed = (ep.info as any)?.isUsed || false
-                    const imageUrl = ep.image || (ep.info as any)?.image 
-                    
-                    return (
-                        <div 
-                            key={ep.id}
-                            onClick={() => setSelectedEpisode(ep)}
-                            className={`group relative bg-[#11121c] border rounded-2xl overflow-hidden cursor-pointer transition-all duration-300 hover:-translate-y-1 hover:shadow-xl
-                                ${isUsed ? 'border-slate-800 opacity-60 hover:opacity-100 grayscale hover:grayscale-0' : 'border-slate-700 hover:border-blue-500/50'}
-                            `}
-                        >
-                            {/* Image Placeholder */}
-                            <div className="aspect-video bg-black relative overflow-hidden">
-                                {imageUrl ? (
-                                    <img src={imageUrl} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
-                                ) : (
-                                    <div className="w-full h-full flex items-center justify-center bg-slate-900 text-slate-700 font-bold uppercase tracking-wider text-xs">
-                                        No Image
-                                    </div>
-                                )}
-                                <div className="absolute inset-0 bg-gradient-to-t from-[#11121c] via-transparent to-transparent opacity-80" />
-                                
-                                {/* Status Toggle (On Card) */}
-                                <button
-                                    onClick={(e) => toggleStatus(e, ep)}
-                                    className={`absolute top-3 right-3 p-1.5 rounded-full backdrop-blur-md border transition-all z-10
-                                        ${isUsed ? 'bg-green-500/20 text-green-400 border-green-500/30' : 'bg-slate-900/50 text-slate-400 border-slate-700 hover:text-white'}
-                                    `}
-                                    title={isUsed ? "사용 완료 (Used)" : "미사용 (Unused)"}
-                                >
-                                    {isUsed ? <CheckCircle2 size={16} /> : <Circle size={16} />}
-                                </button>
-                            </div>
-
-                            {/* Content */}
-                            <div className="p-5 relative">
-                                <div className="flex items-start justify-between mb-2">
-                                    <div className="flex-1 min-w-0">
-                                        <h3 className={`font-bold text-lg truncate pr-2 ${isUsed ? 'text-slate-500 decoration-slate-600 line-through' : 'text-slate-100 group-hover:text-blue-400 transition-colors'}`}>
-                                            {ep.name}
-                                        </h3>
-                                    </div>
-                                </div>
-
-                                <p className="text-slate-400 text-sm line-clamp-2 mb-4 h-10 leading-relaxed">
-                                    {ep.content?.replace(/[#*`]/g, '').slice(0, 100) || '내용 없음'}
-                                </p>
-
-                                {/* Footer (Tags & Date) */}
-                                <div className="flex items-center justify-between pt-4 border-t border-slate-800/50">
-                                     <div className="flex gap-1.5 overflow-hidden">
-                                        {ep.tags?.slice(0, 2).map((tag, i) => (
-                                            <span key={i} className="px-2 py-0.5 bg-slate-800/50 text-slate-500 text-[10px] rounded border border-slate-700/50">
-                                                #{tag}
-                                            </span>
-                                        ))}
-                                        {(ep.tags?.length || 0) > 2 && (
-                                            <span className="text-[10px] text-slate-600">+{ep.tags!.length - 2}</span>
-                                        )}
-                                     </div>
-                                     <div className="flex items-center gap-1 text-[10px] text-slate-600">
-                                         <Clock size={10} />
-                                         <span>{(ep.info as any)?.created || 'Unknown'}</span>
-                                     </div>
-                                </div>
+        <div className="flex-1 overflow-y-auto pb-20 custom-scrollbar space-y-12">
+            {filteredEpisodes.length === 0 ? (
+                <div className="flex flex-col items-center justify-center h-64 text-slate-500">
+                    <p>검색 결과가 없습니다.</p>
+                </div>
+            ) : (
+                <>
+                    {/* Available Episodes */}
+                    {filteredEpisodes.some(ep => !((ep.info as any)?.isUsed)) && (
+                        <div className="space-y-4">
+                            <h2 className="text-xl font-bold text-slate-300 flex items-center gap-2">
+                                <Circle className="text-blue-500 fill-blue-500/20" size={16} />
+                                사용 가능 <span className="text-slate-500 text-sm font-normal">({filteredEpisodes.filter(ep => !((ep.info as any)?.isUsed)).length})</span>
+                            </h2>
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6">
+                                {filteredEpisodes.filter(ep => !((ep.info as any)?.isUsed)).map(ep => renderCard(ep))}
                             </div>
                         </div>
-                    )
-                })}
-            </div>
+                    )}
+
+                    {/* Used Episodes */}
+                    {filteredEpisodes.some(ep => (ep.info as any)?.isUsed) && (
+                        <div className="space-y-4">
+                            <h2 className="text-xl font-bold text-slate-500 flex items-center gap-2">
+                                <CheckCircle2 className="text-green-500/50" size={16} />
+                                사용 완료 <span className="text-slate-600 text-sm font-normal">({filteredEpisodes.filter(ep => (ep.info as any)?.isUsed).length})</span>
+                            </h2>
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6">
+                                {filteredEpisodes.filter(ep => (ep.info as any)?.isUsed).map(ep => renderCard(ep))}
+                            </div>
+                        </div>
+                    )}
+                </>
+            )}
         </div>
 
         {/* Modals */}
