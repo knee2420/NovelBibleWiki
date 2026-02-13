@@ -9,6 +9,7 @@ import { WikiDetailModal } from './components/Common/WikiDetailModal'
 import { GenericArchive } from './pages/GenericArchive'
 import { RelationBoard } from './pages/RelationBoard'
 import { SceneCard } from './types/plot'
+import { EpisodeArchive } from './pages/EpisodeArchive' // [NEW]
 
 function App(): ReactElement {
   const [currentPage, setCurrentPage] = useState('home') // Default: Home
@@ -83,6 +84,8 @@ function App(): ReactElement {
 
       case 'plot':
         return <PlotDashboard wikiData={wikiData} selectedScenePath={activeScenePath} onSelectScene={setActiveScenePath} />
+      case 'episodes':
+        return <EpisodeArchive onEntryClick={handleEntryClick} />
       case 'board':
         return <RelationBoard wikiData={wikiData} sceneData={sceneData} />
       case 'characters':

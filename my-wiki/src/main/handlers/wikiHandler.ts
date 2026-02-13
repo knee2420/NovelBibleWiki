@@ -76,7 +76,8 @@ export function setupWikiHandlers(store: any): void {
         else if (rawType === 'item' || data.category) entryType = 'item'
         else if (rawType === 'location' || data.region) entryType = 'location'
         else if (rawType === 'faction' || data.leader) entryType = 'faction'
-        else if (rawType === 'scene') entryType = 'scene' // 플롯 데이터는 제외하거나 포함할지 결정
+        else if (rawType === 'episode') entryType = 'episode' // [NEW] Episode Type
+        else if (rawType === 'scene') entryType = 'scene' 
 
         // 요약문 생성 (description이 없으면 본문 앞부분 자르기)
         const summary =
@@ -121,14 +122,17 @@ export function setupWikiHandlers(store: any): void {
   })
 
   // --------------------------------------------------------------------------
-  // [CRUD] 1. 새 위키 문서 생성 (Create) -> 무조건 _Drafts 폴더로 격리
+  // [CRUD] 1. 새 위키 문서 생성 (Create)
   // --------------------------------------------------------------------------
-  ipcMain.handle('create-wiki-entry', async (_, { type, title, content }) => {
+  ipcMain.handle('create-wiki-entry', async (_, { type, title, content, image, tags }) => {
     const vaultPath = store.get('vaultPath') as string
     if (!vaultPath) return { success: false, message: 'Vault 경로 미설정' }
 
-    // 1. Inbox 폴더 경로 설정
-    const targetDir = join(vaultPath, '20_Wiki/00_Draft')
+    // 1. 타겟 폴더 설정 (Episode는 별도 폴더)
+    let targetDir = join(vaultPath, '20_Wiki/00_Draft')
+    if (type === 'episode') {
+        targetDir = join(vaultPath, '20_Wiki/에피소드')
+    }
 
     try {
       await fs.ensureDir(targetDir) // 폴더 없으면 생성
@@ -146,12 +150,17 @@ export function setupWikiHandlers(store: any): void {
         counter++
       }
 
-      // 4. 기본 템플릿 생성
-      const frontmatter = {
-        title: title, // 옵시디언 호환용
+      // 4. Content Prep
+      const frontmatter: any = {
+        title: title, 
         type: type.toLowerCase(),
-        tags: [], // 태그에 자동으로 draft 추가 (선택사항)
+        tags: tags || [],
         created: new Date().toISOString().split('T')[0]
+      }
+      
+      // Image Handling (if provided path)
+      if (image) {
+          frontmatter.image = image
       }
 
       const fileData = matter.stringify(content || '', frontmatter)
