@@ -1,6 +1,8 @@
 import { useState, useRef, useEffect, useMemo, useCallback } from 'react'
-import { Sparkles, ArrowRight, Bot, BookOpen, Search, PenTool, CheckCircle, XCircle, ChevronDown, ChevronUp, Users, User, MapPin, Target, X, Plus, Crosshair, Swords, Heart, Shield, FileText, Scroll } from 'lucide-react'
+import { Sparkles, ArrowRight, Bot, BookOpen, Search, PenTool, CheckCircle, XCircle, ChevronDown, ChevronUp, Users, User, MapPin, Target, X, Plus, Crosshair, Swords, Heart, Shield, FileText, Scroll, LayoutTemplate } from 'lucide-react'
 import { WikiEntry } from '../../types/wiki'
+import { ActBoard } from '../../types/plot'
+import { StorySandbox } from './StorySandbox'
 
 interface AIWriterPanelProps {
     currentContent: string
@@ -10,7 +12,7 @@ interface AIWriterPanelProps {
     onClose: () => void
 }
 
-type Message = {
+export type Message = {
     role: 'user' | 'assistant'
     content?: string
     toolCall?: {
@@ -526,8 +528,25 @@ export const AIWriterPanel = ({ currentContent, sceneContext, wikiData, onApplyC
     const [input, setInput] = useState('')
     const [loading, setLoading] = useState(false)
     const [isSetupOpen, setIsSetupOpen] = useState(true) // Scene Setup expanded by default
+    const [mode, setMode] = useState<'chat' | 'sandbox'>('chat') // New Mode State
+    const [plotData, setPlotData] = useState<ActBoard[]>([]) // [NEW] Plot Data
+
     const scrollRef = useRef<HTMLDivElement>(null)
     const inputRef = useRef<HTMLInputElement>(null)
+
+    // Fetch Plot Data for Sandbox
+    const fetchPlotData = useCallback(() => {
+        // @ts-ignore
+        window.api.getPlotData().then((data: ActBoard[]) => {
+            setPlotData(data)
+        }).catch(console.error)
+    }, [])
+
+    useEffect(() => {
+        if (mode === 'sandbox') {
+            fetchPlotData()
+        }
+    }, [mode, fetchPlotData])
 
     // --- Mention Logic State ---
     const [mentionState, setMentionState] = useState<{ active: boolean, query: string, index: number }>({ active: false, query: '', index: 0 })
@@ -979,7 +998,37 @@ ${contextText}
     }
 
     return (
-        <div className="flex flex-col h-full bg-[#111113] border-l border-slate-800/50 shadow-2xl w-[450px] absolute right-0 top-0 bottom-0 z-50">
+        <div className={`flex flex-col bg-[#111113] shadow-2xl transition-all duration-500 ease-[cubic-bezier(0.25,1,0.5,1)] ${
+            mode === 'sandbox' 
+                ? 'fixed inset-0 w-screen h-screen z-[100] border-none' 
+                : 'absolute right-0 top-0 bottom-0 h-full w-[450px] z-50 border-l border-slate-800/50'
+        }`}>
+            {mode === 'sandbox' ? (
+                <div className="h-full relative animate-in fade-in zoom-in-95 duration-300">
+                    <StorySandbox 
+                        initialHistory={messages} 
+                        wikiData={wikiData} 
+                        plotData={plotData} 
+                        sceneContext={sceneContext}
+                        onRefresh={fetchPlotData}
+                    />
+                    <div className="absolute top-3.5 right-4 flex gap-2 z-50">
+                        <button 
+                            onClick={() => setMode('chat')} 
+                            className="flex items-center gap-1.5 px-3 py-1.5 bg-black/40 hover:bg-slate-800 text-slate-300 rounded-full border border-white/5 backdrop-blur-md transition-all text-xs font-medium"
+                        >
+                            <Bot size={14} /> Back to Agent
+                        </button>
+                        <button 
+                            onClick={onClose} 
+                            className="p-1.5 bg-black/40 hover:bg-slate-800 text-slate-300 rounded-full border border-white/5 backdrop-blur-md transition-all"
+                        >
+                            <ArrowRight size={14} />
+                        </button>
+                    </div>
+                </div>
+            ) : (
+                <>
             {/* Header */}
             <div className="h-14 border-b border-slate-800 flex items-center justify-between px-4 bg-slate-900/80 backdrop-blur-sm shrink-0">
                 <div className="flex items-center gap-2">
@@ -992,6 +1041,13 @@ ${contextText}
                     </div>
                 </div>
                 <div className="flex items-center gap-1">
+                    <button 
+                        onClick={() => setMode('sandbox')}
+                        className="p-2 hover:bg-slate-800 rounded-full text-slate-400 hover:text-amber-500 transition-colors"
+                        title="Open Story Sandbox"
+                    >
+                        <LayoutTemplate size={16} />
+                    </button>
                     <SetupSummaryBadge setup={sceneSetup} />
                     <button onClick={handleCopyHistory} className="p-2 hover:bg-slate-800 rounded-full text-slate-400 transition-colors">
                         <BookOpen size={14} />
@@ -1210,6 +1266,8 @@ ${contextText}
                     </button>
                 </div>
             </div>
+                </>
+            )}
         </div>
     )
 }
