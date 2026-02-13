@@ -1,4 +1,4 @@
-export type EntryType = 'character' | 'item' | 'location' | 'faction' | 'other' | 'scene'
+export type EntryType = 'character' | 'item' | 'location' | 'faction' | 'other' | 'scene' | 'episode'
 export type CharacterGrade = 'MAIN' | 'SUB' | 'MINOR' | 'EXTRA'
 export type RelationMood = 'FRIENDLY' | 'HOSTILE' | 'NEUTRAL'
 export type RelationTense = 'CURRENT' | 'PAST'
@@ -76,4 +76,13 @@ export interface SceneEntry extends BaseEntry {
   info: Record<string, any>
 }
 
-export type WikiEntry = CharacterEntry | ItemEntry | LocationEntry | FactionEntry | OtherEntry | SceneEntry
+// 7. 에피소드
+export interface EpisodeEntry extends BaseEntry {
+  type: 'episode'
+  info: {
+    isUsed?: boolean
+    [key: string]: any
+  }
+}
+
+export type WikiEntry = CharacterEntry | ItemEntry | LocationEntry | FactionEntry | OtherEntry | SceneEntry | EpisodeEntry

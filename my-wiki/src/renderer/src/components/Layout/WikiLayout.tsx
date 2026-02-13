@@ -12,7 +12,8 @@ import {
   FolderOpen,
   Check,
   Share2,
-  Database
+  Database,
+  Clapperboard
 } from 'lucide-react'
 import { CreateNewModal } from '../Common/CreateNewModal'
 
@@ -26,6 +27,7 @@ export const WikiLayout = ({ children, currentPage, onNavigate }: WikiLayoutProp
   const navItems = [
     { id: 'home', label: '홈', icon: <Home size={20} /> },
     { id: 'plot', label: '플롯 보드', icon: <LayoutTemplate size={20} /> },
+    { id: 'episodes', label: '에피소드', icon: <Clapperboard size={20} /> }, // [NEW]
     { id: 'board', label: '관계도', icon: <Share2 size={20} /> },
     { id: 'characters', label: '인물', icon: <Users size={20} /> },
     { id: 'items', label: '아이템', icon: <Sword size={20} /> },
