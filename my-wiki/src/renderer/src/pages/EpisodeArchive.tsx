@@ -2,19 +2,23 @@ import { useState, useEffect } from 'react'
 import { WikiEntry } from '../types/wiki'
 import { EpisodeCreateModal } from '../components/Episode/EpisodeCreateModal'
 import { EpisodeDetailModal } from '../components/Episode/EpisodeDetailModal'
-import { Plus, Search, Clapperboard, CheckCircle2, Circle } from 'lucide-react'
+import { EpisodeCanvas } from '../components/Episode/EpisodeCanvas'
+import { Plus, Search, Clapperboard, CheckCircle2, Circle, LayoutGrid, Workflow } from 'lucide-react'
 
 interface EpisodeArchiveProps {
     onEntryClick: (entry: WikiEntry) => void
+    initialEpisodeId?: string | null
+    onClearTargetEpisode?: () => void
 }
 
-export const EpisodeArchive = ({ onEntryClick }: EpisodeArchiveProps) => {
+export const EpisodeArchive = ({ onEntryClick, initialEpisodeId, onClearTargetEpisode }: EpisodeArchiveProps) => {
   const [episodes, setEpisodes] = useState<WikiEntry[]>([])
   const [allWikiData, setAllWikiData] = useState<WikiEntry[]>([]) // Store all
   const [searchTerm, setSearchTerm] = useState('')
   const [ismnCreateOpen, setIsCreateOpen] = useState(false)
   const [selectedEpisode, setSelectedEpisode] = useState<WikiEntry | null>(null)
   const [refreshKey, setRefreshKey] = useState(0)
+  const [viewMode, setViewMode] = useState<'grid' | 'canvas'>('grid')
 
   useEffect(() => {
     const fetchEpisodes = async () => {
@@ -23,9 +27,18 @@ export const EpisodeArchive = ({ onEntryClick }: EpisodeArchiveProps) => {
       setAllWikiData(allData)
       const episodeData = allData.filter(d => d.type === 'episode')
       setEpisodes(episodeData)
+
+      // [NEW] Open initial episode if requested
+      if (initialEpisodeId) {
+          const target = episodeData.find(e => e.id === initialEpisodeId)
+          if (target) {
+              setSelectedEpisode(target)
+              if (onClearTargetEpisode) onClearTargetEpisode()
+          }
+      }
     }
     fetchEpisodes()
-  }, [refreshKey])
+  }, [refreshKey, initialEpisodeId])
 
   const handleRefresh = () => setRefreshKey(prev => prev + 1)
 
@@ -77,7 +90,8 @@ export const EpisodeArchive = ({ onEntryClick }: EpisodeArchiveProps) => {
   )
 
   const renderCard = (ep: WikiEntry) => {
-    const isUsed = (ep.info as any)?.isUsed || false
+    // ... (same renderCard logic, assuming it's stable)
+     const isUsed = (ep.info as any)?.isUsed || false
     const imageUrl = ep.image || (ep.info as any)?.image 
 
     return (
@@ -150,70 +164,106 @@ export const EpisodeArchive = ({ onEntryClick }: EpisodeArchiveProps) => {
             <div>
                 <h1 className="text-3xl font-bold text-white flex items-center gap-3">
                     <Clapperboard className="text-blue-500" size={32} />
-                    Example Episodes
+                    Original Episodes
                 </h1>
                 <p className="text-slate-400 mt-1 flex items-center gap-2">
                     작품에 사용될 에피소드 아이디어 보관소
                     <span className="w-1 h-1 bg-slate-600 rounded-full"/>
-                    <span className="text-blue-400 font-mono">{filteredEpisodes.length} Items</span>
+                    <span className="text-blue-400 font-mono">{episodes.length} Items</span>
                 </p>
             </div>
             <div className="flex items-center gap-4">
-                <div className="relative">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={16} />
-                    <input 
-                        type="text" 
-                        placeholder="Search episodes..." 
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        className="bg-slate-900 border border-slate-700 rounded-lg pl-10 pr-4 py-2 text-sm focus:border-blue-500 outline-none w-64"
-                    />
+                
+                {/* View Mode Toggle */}
+                <div className="bg-slate-900 p-1 rounded-lg border border-slate-700 flex gap-1">
+                    <button 
+                        onClick={() => setViewMode('grid')}
+                        className={`p-2 rounded-md transition-all ${viewMode === 'grid' ? 'bg-slate-800 text-white shadow' : 'text-slate-500 hover:text-slate-300'}`}
+                        title="Grid View"
+                    >
+                        <LayoutGrid size={18} />
+                    </button>
+                    <button 
+                        onClick={() => setViewMode('canvas')}
+                        className={`p-2 rounded-md transition-all ${viewMode === 'canvas' ? 'bg-slate-800 text-white shadow' : 'text-slate-500 hover:text-slate-300'}`}
+                        title="Canvas Board View"
+                    >
+                        <Workflow size={18} />
+                    </button>
                 </div>
-                <button 
-                    onClick={() => setIsCreateOpen(true)}
-                    className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg font-bold text-sm transition-colors shadow-lg shadow-blue-900/20"
-                >
-                    <Plus size={16} /> 새 에피소드 추가
-                </button>
+
+                {viewMode === 'grid' && (
+                    <>
+                        <div className="relative">
+                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={16} />
+                            <input 
+                                type="text" 
+                                placeholder="Search episodes..." 
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                                className="bg-slate-900 border border-slate-700 rounded-lg pl-10 pr-4 py-2 text-sm focus:border-blue-500 outline-none w-64"
+                            />
+                        </div>
+                        <button 
+                            onClick={() => setIsCreateOpen(true)}
+                            className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg font-bold text-sm transition-colors shadow-lg shadow-blue-900/20"
+                        >
+                            <Plus size={16} /> 새 에피소드 추가
+                        </button>
+                    </>
+                )}
             </div>
         </div>
 
-        {/* Grid */}
-        <div className="flex-1 overflow-y-auto pb-20 custom-scrollbar space-y-12">
-            {filteredEpisodes.length === 0 ? (
-                <div className="flex flex-col items-center justify-center h-64 text-slate-500">
-                    <p>검색 결과가 없습니다.</p>
-                </div>
-            ) : (
-                <>
-                    {/* Available Episodes */}
-                    {filteredEpisodes.some(ep => !((ep.info as any)?.isUsed)) && (
-                        <div className="space-y-4">
-                            <h2 className="text-xl font-bold text-slate-300 flex items-center gap-2">
-                                <Circle className="text-blue-500 fill-blue-500/20" size={16} />
-                                사용 가능 <span className="text-slate-500 text-sm font-normal">({filteredEpisodes.filter(ep => !((ep.info as any)?.isUsed)).length})</span>
-                            </h2>
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6">
-                                {filteredEpisodes.filter(ep => !((ep.info as any)?.isUsed)).map(ep => renderCard(ep))}
+        {/* Content Area */}
+        {viewMode === 'grid' ? (
+            <div className="flex-1 overflow-y-auto pb-20 custom-scrollbar space-y-12 animate-in fade-in duration-300">
+                {filteredEpisodes.length === 0 ? (
+                    <div className="flex flex-col items-center justify-center h-64 text-slate-500">
+                        <p>검색 결과가 없습니다.</p>
+                    </div>
+                ) : (
+                    <>
+                        {/* Available and Used Sections (Same as before) */}
+                         {/* Available Episodes */}
+                        {filteredEpisodes.some(ep => !((ep.info as any)?.isUsed)) && (
+                            <div className="space-y-4">
+                                <h2 className="text-xl font-bold text-slate-300 flex items-center gap-2">
+                                    <Circle className="text-blue-500 fill-blue-500/20" size={16} />
+                                    사용 가능 <span className="text-slate-500 text-sm font-normal">({filteredEpisodes.filter(ep => !((ep.info as any)?.isUsed)).length})</span>
+                                </h2>
+                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6">
+                                    {filteredEpisodes.filter(ep => !((ep.info as any)?.isUsed)).map(ep => renderCard(ep))}
+                                </div>
                             </div>
-                        </div>
-                    )}
+                        )}
 
-                    {/* Used Episodes */}
-                    {filteredEpisodes.some(ep => (ep.info as any)?.isUsed) && (
-                        <div className="space-y-4">
-                            <h2 className="text-xl font-bold text-slate-500 flex items-center gap-2">
-                                <CheckCircle2 className="text-green-500/50" size={16} />
-                                사용 완료 <span className="text-slate-600 text-sm font-normal">({filteredEpisodes.filter(ep => (ep.info as any)?.isUsed).length})</span>
-                            </h2>
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6">
-                                {filteredEpisodes.filter(ep => (ep.info as any)?.isUsed).map(ep => renderCard(ep))}
+                        {/* Used Episodes */}
+                        {filteredEpisodes.some(ep => (ep.info as any)?.isUsed) && (
+                            <div className="space-y-4">
+                                <h2 className="text-xl font-bold text-slate-500 flex items-center gap-2">
+                                    <CheckCircle2 className="text-green-500/50" size={16} />
+                                    사용 완료 <span className="text-slate-600 text-sm font-normal">({filteredEpisodes.filter(ep => (ep.info as any)?.isUsed).length})</span>
+                                </h2>
+                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6">
+                                    {filteredEpisodes.filter(ep => (ep.info as any)?.isUsed).map(ep => renderCard(ep))}
+                                </div>
                             </div>
-                        </div>
-                    )}
-                </>
-            )}
-        </div>
+                        )}
+                    </>
+                )}
+            </div>
+        ) : (
+            /* Canvas View */
+            <div className="flex-1 min-h-0 border border-slate-800 rounded-2xl overflow-hidden animate-in fade-in duration-300">
+                <EpisodeCanvas 
+                    wikiEntries={allWikiData} 
+                    onEditEpisode={(entry) => setSelectedEpisode(entry)} 
+                    onCreateEpisode={() => setIsCreateOpen(true)} // Pass create handler
+                />
+            </div>
+        )}
+
 
         {/* Modals */}
         <EpisodeCreateModal 
@@ -227,7 +277,8 @@ export const EpisodeArchive = ({ onEntryClick }: EpisodeArchiveProps) => {
                 entry={selectedEpisode}
                 onClose={() => setSelectedEpisode(null)} 
                 onUpdate={handleRefresh}
-                onTagClick={handleTagClick} // [NEW] Pass click handler
+                onTagClick={handleTagClick}
+                allTags={Array.from(new Set(allWikiData.flatMap(d => d.tags || [])))}
             />
         )}
     </div>

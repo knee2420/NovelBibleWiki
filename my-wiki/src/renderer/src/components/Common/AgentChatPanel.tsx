@@ -1,6 +1,6 @@
 
 import { useState, useRef, useEffect } from 'react'
-import { X, Send, Bot, User, Sparkles, Save, Eraser } from 'lucide-react'
+import { X, Send, Bot, User, Sparkles, Save, Eraser, ArrowRight } from 'lucide-react'
 import { WikiEntry } from '../../types/wiki'
 import ReactMarkdown from 'react-markdown'
 
@@ -8,7 +8,8 @@ interface AgentChatPanelProps {
   isOpen: boolean
   onClose: () => void
   selectedEntries: WikiEntry[]
-  onSaveEpisode: (title: string, content: string, tags: string[]) => Promise<void>
+  onSaveEpisode: (title: string, content: string, tags: string[]) => Promise<string | void>
+  onNavigateToEpisode?: (id: string) => void
 }
 
 interface ChatMessage {
@@ -17,13 +18,15 @@ interface ChatMessage {
   content: string
   timestamp: Date
   isEpisodeDraft?: boolean // If true, show "Save" button
+  savedEpisodeId?: string // [NEW] If saved, store ID to navigate
 }
 
 export const AgentChatPanel = ({
   isOpen,
   onClose,
   selectedEntries,
-  onSaveEpisode
+  onSaveEpisode,
+  onNavigateToEpisode
 }: AgentChatPanelProps) => {
   const [input, setInput] = useState('')
   const [messages, setMessages] = useState<ChatMessage[]>([])
@@ -106,14 +109,15 @@ export const AgentChatPanel = ({
       const content = msg.content
       const tags = selectedEntries.map(e => e.name)
 
-      await onSaveEpisode(title, content, tags)
+      const savedId = await onSaveEpisode(title, content, tags)
       
       // Add confirmation message
       setMessages(prev => [...prev, {
           id: Date.now().toString(),
           role: 'assistant',
           content: `✅ **"${title}"** 에피소드가 성공적으로 저장되었습니다!\n\n'에피소드 저장소'의 [사용 가능] 탭에서 확인하실 수 있습니다.`,
-          timestamp: new Date()
+          timestamp: new Date(),
+          savedEpisodeId: savedId || undefined
       }])
   }
 
@@ -190,6 +194,16 @@ export const AgentChatPanel = ({
                         className="self-start flex items-center gap-1.5 px-3 py-1.5 bg-green-600/10 text-green-400 border border-green-600/30 rounded-lg text-xs font-bold hover:bg-green-600/20 transition-colors"
                     >
                         <Save size={14} /> 에피소드 저장하기
+                    </button>
+                )}
+
+                {/* [NEW] Navigation Action after Save */}
+                {msg.role === 'assistant' && msg.savedEpisodeId && onNavigateToEpisode && (
+                    <button 
+                        onClick={() => onNavigateToEpisode(msg.savedEpisodeId!)}
+                        className="self-start flex items-center gap-1.5 px-3 py-1.5 bg-blue-600/20 text-blue-400 border border-blue-500/50 rounded-lg text-xs font-bold hover:bg-blue-600/30 transition-colors shadow-lg shadow-blue-900/20"
+                    >
+                        <ArrowRight size={14} /> 에피소드 확인하러 가기
                     </button>
                 )}
             </div>
