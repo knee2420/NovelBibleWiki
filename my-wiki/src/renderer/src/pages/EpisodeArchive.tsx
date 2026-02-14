@@ -6,9 +6,11 @@ import { Plus, Search, Clapperboard, CheckCircle2, Circle } from 'lucide-react'
 
 interface EpisodeArchiveProps {
     onEntryClick: (entry: WikiEntry) => void
+    initialEpisodeId?: string | null
+    onClearTargetEpisode?: () => void
 }
 
-export const EpisodeArchive = ({ onEntryClick }: EpisodeArchiveProps) => {
+export const EpisodeArchive = ({ onEntryClick, initialEpisodeId, onClearTargetEpisode }: EpisodeArchiveProps) => {
   const [episodes, setEpisodes] = useState<WikiEntry[]>([])
   const [allWikiData, setAllWikiData] = useState<WikiEntry[]>([]) // Store all
   const [searchTerm, setSearchTerm] = useState('')
@@ -23,9 +25,18 @@ export const EpisodeArchive = ({ onEntryClick }: EpisodeArchiveProps) => {
       setAllWikiData(allData)
       const episodeData = allData.filter(d => d.type === 'episode')
       setEpisodes(episodeData)
+
+      // [NEW] Open initial episode if requested
+      if (initialEpisodeId) {
+          const target = episodeData.find(e => e.id === initialEpisodeId)
+          if (target) {
+              setSelectedEpisode(target)
+              if (onClearTargetEpisode) onClearTargetEpisode()
+          }
+      }
     }
     fetchEpisodes()
-  }, [refreshKey])
+  }, [refreshKey, initialEpisodeId])
 
   const handleRefresh = () => setRefreshKey(prev => prev + 1)
 
@@ -227,7 +238,8 @@ export const EpisodeArchive = ({ onEntryClick }: EpisodeArchiveProps) => {
                 entry={selectedEpisode}
                 onClose={() => setSelectedEpisode(null)} 
                 onUpdate={handleRefresh}
-                onTagClick={handleTagClick} // [NEW] Pass click handler
+                onTagClick={handleTagClick}
+                allTags={Array.from(new Set(allWikiData.flatMap(d => d.tags || [])))}
             />
         )}
     </div>

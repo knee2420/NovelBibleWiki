@@ -9,9 +9,10 @@ interface EpisodeDetailModalProps {
   onClose: () => void
   onUpdate: () => void
   onTagClick?: (tag: string) => void
+  allTags?: string[]
 }
 
-export const EpisodeDetailModal = ({ entry, onClose, onUpdate, onTagClick }: EpisodeDetailModalProps) => {
+export const EpisodeDetailModal = ({ entry, onClose, onUpdate, onTagClick, allTags = [] }: EpisodeDetailModalProps) => {
   const [isEditing, setIsEditing] = useState(false)
   const [isMaximized, setIsMaximized] = useState(false)
   
@@ -27,6 +28,10 @@ export const EpisodeDetailModal = ({ entry, onClose, onUpdate, onTagClick }: Epi
   // Input States
   const [tagInput, setTagInput] = useState('')
 
+  // Autocomplete State
+  const [showSuggestions, setShowSuggestions] = useState(false)
+  const [filteredTags, setFilteredTags] = useState<string[]>([])
+
   // Reset state when entry changes
   useEffect(() => {
     setTitle(entry.name)
@@ -37,6 +42,8 @@ export const EpisodeDetailModal = ({ entry, onClose, onUpdate, onTagClick }: Epi
     setIsUsed((entry.info as any)?.isUsed || false)
     setComment((entry.info as any)?.comment || '')
     setIsEditing(false)
+    setTagInput('')
+    setShowSuggestions(false)
   }, [entry])
 
   const handleSave = async () => {
@@ -95,14 +102,40 @@ export const EpisodeDetailModal = ({ entry, onClose, onUpdate, onTagClick }: Epi
     }
   }
 
+  const handleTagInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      const val = e.target.value
+      setTagInput(val)
+      
+      if (val.trim() && allTags) {
+          const matches = allTags
+              .filter(t => t.toLowerCase().includes(val.toLowerCase()) && !tags.includes(t))
+              .slice(0, 10) // Limit to 10
+          setFilteredTags(matches)
+          setShowSuggestions(matches.length > 0)
+      } else {
+          setShowSuggestions(false)
+      }
+  }
+
   const handleAddTag = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
         const val = tagInput.trim()
         if (val && !tags.includes(val)) {
             setTags([...tags, val])
             setTagInput('')
+            setShowSuggestions(false)
         }
+    } else if (e.key === 'Escape') {
+        setShowSuggestions(false)
     }
+  }
+  
+  const selectSuggestion = (tag: string) => {
+      if (!tags.includes(tag)) {
+          setTags([...tags, tag])
+          setTagInput('')
+          setShowSuggestions(false)
+      }
   }
 
   const handleRemoveTag = (tagToRemove: string) => {
@@ -110,8 +143,9 @@ export const EpisodeDetailModal = ({ entry, onClose, onUpdate, onTagClick }: Epi
   }
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm animate-in fade-in duration-200" onClick={() => setShowSuggestions(false)}>
       <div 
+        onClick={(e) => e.stopPropagation()}
         className={`bg-[#0b0c15] border border-slate-700 shadow-2xl overflow-hidden flex flex-col md:flex-row relative transition-all duration-300
             ${isMaximized ? 'fixed inset-0 w-screen h-screen rounded-none z-[110]' : 'w-[85vw] h-[85vh] max-w-6xl rounded-2xl'}
         `}
@@ -119,7 +153,7 @@ export const EpisodeDetailModal = ({ entry, onClose, onUpdate, onTagClick }: Epi
         
         {/* LEFT COLUMN: Visuals & Meta */}
         <div className="w-full md:w-[320px] lg:w-[360px] bg-[#11121c] border-r border-slate-800 flex flex-col flex-shrink-0">
-          {/* Image Area */}
+          {/* ... (Image Area remains) */}
           <div className="aspect-[4/3] w-full bg-black relative group overflow-hidden shrink-0">
              {image ? (
                 <img 
@@ -203,15 +237,29 @@ export const EpisodeDetailModal = ({ entry, onClose, onUpdate, onTagClick }: Epi
                     ))}
                     
                     {isEditing && (
-                        <div className="relative flex items-center">
+                        <div className="relative">
                              <input 
                                 type="text"
                                 value={tagInput}
-                                onChange={(e) => setTagInput(e.target.value)}
+                                onChange={handleTagInputChange}
                                 onKeyDown={handleAddTag}
                                 placeholder="+ Tag"
-                                className="w-20 bg-transparent text-xs text-white placeholder:text-slate-600 focus:outline-none min-w-[60px]"
+                                className="w-24 bg-transparent text-xs text-white placeholder:text-slate-600 focus:outline-none border-b border-transparent focus:border-blue-500 py-1"
                             />
+                            {/* Autocomplete Dropdown */}
+                            {showSuggestions && (
+                                <div className="absolute top-full left-0 mt-1 w-48 bg-[#1e293b] border border-slate-700 rounded-lg shadow-xl z-50 overflow-hidden max-h-48 overflow-y-auto">
+                                    {filteredTags.map(suggestion => (
+                                        <div 
+                                            key={suggestion}
+                                            onClick={() => selectSuggestion(suggestion)}
+                                            className="px-3 py-2 text-xs text-slate-300 hover:bg-blue-600 hover:text-white cursor-pointer transition-colors"
+                                        >
+                                            #{suggestion}
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
                         </div>
                     )}
                 </div>

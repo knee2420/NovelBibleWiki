@@ -13,6 +13,7 @@ interface GenericArchiveProps {
   createType?: string // 생성할 타입 (없으면 버튼 숨김)
   onRefresh?: () => void
   onEntryClick: (entry: WikiEntry) => void
+  onNavigateToEpisode?: (id: string) => void
 }
 
 export const GenericArchive = ({
@@ -21,7 +22,8 @@ export const GenericArchive = ({
   data,
   createType,
   onRefresh,
-  onEntryClick
+  onEntryClick,
+  onNavigateToEpisode
 }: GenericArchiveProps) => {
   const [searchTerm, setSearchTerm] = useState('')
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
@@ -130,6 +132,8 @@ export const GenericArchive = ({
               // We might want to clear selection or keep it?
               // setSelectedIds(new Set()) 
               // setIsChatOpen(false)
+              if (onRefresh) onRefresh() // Refresh data mainly
+              return result.path // Return the ID (path)
           } else {
               alert('에피소드 저장 실패: ' + result.message)
           }
@@ -439,6 +443,7 @@ export const GenericArchive = ({
           onClose={() => setIsChatOpen(false)}
           selectedEntries={selectedEntries}
           onSaveEpisode={handleSaveEpisode}
+          onNavigateToEpisode={onNavigateToEpisode}
       />
 
       {/* Create Modal */}

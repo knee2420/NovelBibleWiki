@@ -71,6 +71,13 @@ function App(): ReactElement {
     setCurrentPage('plot') // Switch to Plot Tab
   }
 
+  const [targetEpisodeId, setTargetEpisodeId] = useState<string | null>(null)
+
+  const handleNavigateToEpisode = (id: string) => {
+    setTargetEpisodeId(id)
+    setCurrentPage('episodes')
+  }
+
   const renderContent = () => {
     switch (currentPage) {
       case 'home':
@@ -85,7 +92,13 @@ function App(): ReactElement {
       case 'plot':
         return <PlotDashboard wikiData={wikiData} selectedScenePath={activeScenePath} onSelectScene={setActiveScenePath} />
       case 'episodes':
-        return <EpisodeArchive onEntryClick={handleEntryClick} />
+        return (
+          <EpisodeArchive 
+            onEntryClick={handleEntryClick} 
+            initialEpisodeId={targetEpisodeId}
+            onClearTargetEpisode={() => setTargetEpisodeId(null)}
+          />
+        )
       case 'board':
         return <RelationBoard wikiData={wikiData} sceneData={sceneData} />
       case 'characters':
@@ -99,6 +112,7 @@ function App(): ReactElement {
             createType="character"
             onRefresh={triggerRefresh}
             onEntryClick={handleEntryClick}
+            onNavigateToEpisode={handleNavigateToEpisode}
           />
         )
       case 'items':
@@ -110,6 +124,7 @@ function App(): ReactElement {
             createType="item"
             onRefresh={triggerRefresh}
             onEntryClick={handleEntryClick}
+            onNavigateToEpisode={handleNavigateToEpisode}
           />
         )
       case 'locations':
@@ -121,6 +136,7 @@ function App(): ReactElement {
             createType="location"
             onRefresh={triggerRefresh}
             onEntryClick={handleEntryClick}
+            onNavigateToEpisode={handleNavigateToEpisode}
           />
         )
       case 'factions':
@@ -132,6 +148,7 @@ function App(): ReactElement {
             createType="faction"
             onRefresh={triggerRefresh}
             onEntryClick={handleEntryClick}
+            onNavigateToEpisode={handleNavigateToEpisode}
           />
         )
       case 'ai-schema':
