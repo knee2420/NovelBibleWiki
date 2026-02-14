@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef, useMemo } from 'react';
+import { useState, useCallback, useRef, useMemo, useEffect } from 'react';
 import {
   ReactFlow,
   addEdge,
@@ -15,7 +15,8 @@ import {
 import '@xyflow/react/dist/style.css';
 import { WikiEntry } from '../../types/wiki';
 import { EpisodeNode, EpisodeNodeComponent } from './EpisodeNode';
-import { Search, Save, Download } from 'lucide-react';
+import { Search, Save, Download, ChevronLeft, ChevronRight } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const initialNodes: EpisodeNode[] = [];
 const initialEdges: Edge[] = [];
@@ -27,14 +28,33 @@ const nodeTypes = {
 
 interface EpisodeCanvasProps {
   wikiEntries: WikiEntry[]; // All wiki entries from parent or fetch
+  onEditEpisode?: (entry: WikiEntry) => void;
 }
 
-export const EpisodeCanvas = ({ wikiEntries = [] }: EpisodeCanvasProps) => {
+export const EpisodeCanvas = ({ wikiEntries = [], onEditEpisode }: EpisodeCanvasProps) => {
   const reactFlowWrapper = useRef(null);
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
   const [rfInstance, setRfInstance] = useState<any>(null);
   const [searchTerm, setSearchTerm] = useState('');
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  
+  // Hover State for Sidebar Items
+  const [hoveredItem, setHoveredItem] = useState<WikiEntry | null>(null);
+  const [hoverPos, setHoverPos] = useState<{ top: number, left: number } | null>(null);
+
+  // Sync Node Data with wikiEntries (Important for CRUD updates)
+  useEffect(() => {
+    setNodes((nds) => 
+      nds.map((node) => {
+        const freshEntry = wikiEntries.find(e => e.id === node.data.entry.id)
+        if (freshEntry) {
+          return { ...node, data: { ...node.data, entry: freshEntry } }
+        }
+        return node
+      })
+    )
+  }, [wikiEntries, setNodes])
 
   // Filter episodes for sidebar (Left Panel)
   const episodes = useMemo(() => 
@@ -73,7 +93,7 @@ export const EpisodeCanvas = ({ wikiEntries = [] }: EpisodeCanvasProps) => {
       if (!entryString) return;
 
       const entry: WikiEntry = JSON.parse(entryString);
-
+      
       const position = rfInstance.screenToFlowPosition({
         x: event.clientX,
         y: event.clientY,
@@ -91,6 +111,13 @@ export const EpisodeCanvas = ({ wikiEntries = [] }: EpisodeCanvasProps) => {
     [rfInstance, setNodes],
   );
 
+  // Double Click to Edit
+  const onNodeDoubleClick = useCallback((_, node: EpisodeNode) => {
+      if (onEditEpisode && node.data.entry) {
+          onEditEpisode(node.data.entry)
+      }
+  }, [onEditEpisode]);
+
   // Save / Export Logic
   const onSave = useCallback(() => {
     if (rfInstance) {
@@ -106,11 +133,16 @@ export const EpisodeCanvas = ({ wikiEntries = [] }: EpisodeCanvasProps) => {
   }, [rfInstance]);
 
   return (
-    <div className="flex h-full w-full bg-[#0b0c15] text-slate-200">
+    <div className="flex h-full w-full bg-[#0b0c15] text-slate-200 relative overflow-hidden">
       
       {/* Sidebar (Episode List) */}
-      <div className="w-80 border-r border-slate-800 bg-[#11121c] flex flex-col shrink-0 z-10 shadow-2xl">
-        <div className="p-4 border-b border-slate-800 bg-[#0b0e14]">
+      <motion.div 
+        animate={{ width: isSidebarOpen ? 320 : 0, opacity: isSidebarOpen ? 1 : 0 }}
+        initial={{ width: 320, opacity: 1 }}
+        transition={{ type: "spring", stiffness: 300, damping: 30 }}
+        className="border-r border-slate-800 bg-[#11121c] flex flex-col shrink-0 z-10 shadow-2xl relative overflow-hidden"
+      >
+        <div className="p-4 border-b border-slate-800 bg-[#0b0e14] whitespace-nowrap">
             <h2 className="text-lg font-bold mb-1 text-white">Episodes Library</h2>
             <p className="text-xs text-slate-500 mb-3">Drag cards to the board</p>
             
@@ -134,6 +166,12 @@ export const EpisodeCanvas = ({ wikiEntries = [] }: EpisodeCanvasProps) => {
                     className="p-3 bg-[#1e293b] border border-slate-700 rounded-xl cursor-grab hover:border-blue-500/50 hover:bg-slate-800 transition-all select-none group"
                     draggable
                     onDragStart={(event) => onDragStart(event, ep)}
+                    onMouseEnter={(e) => {
+                        const rect = e.currentTarget.getBoundingClientRect();
+                        setHoveredItem(ep);
+                        setHoverPos({ top: rect.top, left: rect.right + 10 });
+                    }}
+                    onMouseLeave={() => setHoveredItem(null)}
                 >
                     <div className="flex items-center gap-3">
                         <div className="w-10 h-10 rounded-lg bg-black overflow-hidden shrink-0 border border-slate-700">
@@ -156,7 +194,82 @@ export const EpisodeCanvas = ({ wikiEntries = [] }: EpisodeCanvasProps) => {
                 </div>
             )}
         </div>
-      </div>
+      </motion.div>
+
+      {/* Sidebar Item Hover Popup (Fixed Position) */}
+      <AnimatePresence>
+        {hoveredItem && hoverPos && (
+            <motion.div 
+                initial={{ opacity: 0, x: -10, scale: 0.95 }}
+                animate={{ opacity: 1, x: 0, scale: 1 }}
+                exit={{ opacity: 0, x: -10, scale: 0.95 }}
+                transition={{ duration: 0.15 }}
+                style={{ 
+                    position: 'fixed', 
+                    top: hoverPos.top, 
+                    left: hoverPos.left,
+                    zIndex: 100
+                }}
+                className="pointer-events-none"
+            >
+                 <div className="bg-slate-800/95 backdrop-blur-md border border-slate-600 p-4 rounded-xl shadow-2xl text-xs text-slate-200 w-72 space-y-3">
+                    {/* Header */}
+                    <div className="flex items-center gap-2 mb-2 pb-2 border-b border-slate-700/50">
+                        {hoveredItem.image && <img src={hoveredItem.image} className="w-8 h-8 rounded object-cover border border-slate-600"/>}
+                        <h4 className="font-bold text-slate-100 truncate flex-1">{hoveredItem.name}</h4>
+                    </div>
+
+                    {/* Summary */}
+                    <div>
+                        <h5 className="font-bold text-blue-400 mb-1 flex items-center gap-1.5">
+                            <span className="w-1 h-3 bg-blue-500 rounded-full"/> 요약
+                        </h5>
+                        <p className="leading-relaxed text-slate-300 line-clamp-4">
+                            {hoveredItem.content?.replace(/[#*`]/g, '').slice(0, 150) || '내용 없음'}
+                        </p>
+                    </div>
+
+                    {/* Comment */}
+                    {(hoveredItem.info as any)?.comment && (
+                        <div>
+                            <h5 className="font-bold text-amber-400 mb-1 flex items-center gap-1.5">
+                                <span className="w-1 h-3 bg-amber-500 rounded-full"/> 코멘트
+                            </h5>
+                            <p className="leading-relaxed text-slate-300 italic">
+                                "{ (hoveredItem.info as any).comment }"
+                            </p>
+                        </div>
+                    )}
+
+                    {/* Tags */}
+                    {hoveredItem.tags && hoveredItem.tags.length > 0 && (
+                        <div>
+                            <h5 className="font-bold text-emerald-400 mb-1 flex items-center gap-1.5">
+                                <span className="w-1 h-3 bg-emerald-500 rounded-full"/> 태그
+                            </h5>
+                            <div className="flex flex-wrap gap-1">
+                                {hoveredItem.tags.map(tag => (
+                                    <span key={tag} className="px-1.5 py-0.5 bg-slate-700 text-slate-300 rounded text-[10px]">
+                                        {tag}
+                                    </span>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+                 </div>
+            </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Collapse Toggle Button (Floating) */}
+      <button
+        onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+        className={`absolute top-4 z-20 transition-all duration-300 p-2 bg-[#1e293b] border border-slate-700 rounded-md shadow-lg text-slate-300 hover:text-white hover:border-blue-500
+            ${isSidebarOpen ? 'left-[328px]' : 'left-4'}
+        `}
+      >
+        {isSidebarOpen ? <ChevronLeft size={16} /> : <ChevronRight size={16} />}
+      </button>
 
       {/* React Flow Canvas */}
       <div className="flex-1 h-full relative" ref={reactFlowWrapper}>
@@ -169,6 +282,7 @@ export const EpisodeCanvas = ({ wikiEntries = [] }: EpisodeCanvasProps) => {
           onInit={setRfInstance}
           onDrop={onDrop}
           onDragOver={onDragOver}
+          onNodeDoubleClick={onNodeDoubleClick}
           nodeTypes={nodeTypes}
           fitView
           className="bg-[#0f172a]"
