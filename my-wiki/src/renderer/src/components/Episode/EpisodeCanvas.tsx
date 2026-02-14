@@ -11,50 +11,102 @@ import {
   MiniMap,
   BackgroundVariant,
   Panel,
+  Node,
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import { WikiEntry } from '../../types/wiki';
 import { EpisodeNode, EpisodeNodeComponent } from './EpisodeNode';
-import { Search, Save, Download, ChevronLeft, ChevronRight } from 'lucide-react';
+import { TextNode, TextNodeComponent } from './nodes/TextNode';
+import { FrameNode, FrameNodeComponent } from './nodes/FrameNode';
+import { Search, Save, Download, ChevronLeft, ChevronRight, MousePointer2, Type, SquareDashed, ArrowRight, Plus, Trash2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-const initialNodes: EpisodeNode[] = [];
+const initialNodes: (EpisodeNode | TextNode | FrameNode)[] = [];
 const initialEdges: Edge[] = [];
 
 // Node Types Registration
 const nodeTypes = {
   episode: EpisodeNodeComponent,
+  text: TextNodeComponent,
+  frame: FrameNodeComponent,
 };
+
+// Define Combined Node Types
+type CanvasNode = EpisodeNode | TextNode | FrameNode;
 
 interface EpisodeCanvasProps {
   wikiEntries: WikiEntry[]; // All wiki entries from parent or fetch
   onEditEpisode?: (entry: WikiEntry) => void;
+  onCreateEpisode?: () => void;
 }
 
-export const EpisodeCanvas = ({ wikiEntries = [], onEditEpisode }: EpisodeCanvasProps) => {
+const STORAGE_KEY = 'novel-bible-episode-canvas-state';
+
+const loadFromStorage = () => {
+    try {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) {
+            return JSON.parse(saved);
+        }
+    } catch (e) {
+        console.error('Failed to load canvas state:', e);
+    }
+    return { nodes: [], edges: [] };
+};
+
+export const EpisodeCanvas = ({ wikiEntries = [], onEditEpisode, onCreateEpisode }: EpisodeCanvasProps) => {
   const reactFlowWrapper = useRef(null);
-  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
+  const [nodes, setNodes, onNodesChange] = useNodesState<CanvasNode>(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
+  const [isLoaded, setIsLoaded] = useState(false);
+
+  // Load from storage on mount
+  useEffect(() => {
+      const { nodes: savedNodes, edges: savedEdges } = loadFromStorage();
+      if (savedNodes && savedNodes.length > 0) {
+          setNodes(savedNodes);
+      }
+      if (savedEdges && savedEdges.length > 0) {
+          setEdges(savedEdges);
+      }
+      setIsLoaded(true);
+  }, []);
+
+  // Save to storage on change
+  useEffect(() => {
+      if (isLoaded) { // Only save if we have loaded initial state
+          localStorage.setItem(STORAGE_KEY, JSON.stringify({ nodes, edges }));
+      }
+  }, [nodes, edges, isLoaded]);
   const [rfInstance, setRfInstance] = useState<any>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   
+  // Current Tool State
+  const [currTool, setCurrTool] = useState<'default' | 'text' | 'frame' | 'edge'>('default');
+  const [connectionSource, setConnectionSource] = useState<string | null>(null);
+
   // Hover State for Sidebar Items
   const [hoveredItem, setHoveredItem] = useState<WikiEntry | null>(null);
   const [hoverPos, setHoverPos] = useState<{ top: number, left: number } | null>(null);
 
   // Sync Node Data with wikiEntries (Important for CRUD updates)
+  // Sync Node Data with wikiEntries (Important for CRUD updates)
   useEffect(() => {
+    if (!isLoaded) return;
+    
     setNodes((nds) => 
       nds.map((node) => {
-        const freshEntry = wikiEntries.find(e => e.id === node.data.entry.id)
-        if (freshEntry) {
-          return { ...node, data: { ...node.data, entry: freshEntry } }
+        if (node.type === 'episode') {
+           const freshEntry = wikiEntries.find(e => e.id === node.data.entry.id);
+            if (freshEntry) {
+              return { ...node, data: { ...node.data, entry: freshEntry } } as EpisodeNode;
+            }
         }
-        return node
+        return node;
       })
-    )
-  }, [wikiEntries, setNodes])
+    );
+  }, [wikiEntries, setNodes, isLoaded]); // Re-run when loaded or entries change
 
   // Filter episodes for sidebar (Left Panel)
   const episodes = useMemo(() => 
@@ -112,29 +164,230 @@ export const EpisodeCanvas = ({ wikiEntries = [], onEditEpisode }: EpisodeCanvas
   );
 
   // Double Click to Edit
-  const onNodeDoubleClick = useCallback((_, node: EpisodeNode) => {
-      if (onEditEpisode && node.data.entry) {
-          onEditEpisode(node.data.entry)
+  const onNodeDoubleClick = useCallback((_, node: Node) => {
+      // Only trigger for episode nodes
+      if (node.type === 'episode' && onEditEpisode && node.data.entry) {
+          onEditEpisode(node.data.entry as WikiEntry);
       }
   }, [onEditEpisode]);
+
+  // Handle adding nodes (Text/Frame)
+  const handleAddNode = useCallback((event: React.MouseEvent) => {
+      if (currTool === 'default' || currTool === 'edge') return;
+
+      const position = rfInstance?.screenToFlowPosition({
+          x: event.clientX,
+          y: event.clientY,
+      }) || { x: 0, y: 0 };
+
+      if (currTool === 'text') {
+        const newNode: TextNode = {
+            id: `text-${Date.now()}`,
+            type: 'text',
+            position: { x: position.x - 100, y: position.y - 50 }, // Center on click
+            data: { text: '', color: '#fbbf24' },
+            style: { width: 200, height: 100 }, // Default size for resizer
+        };
+        setNodes((nds) => nds.concat(newNode));
+        setCurrTool('default');
+      }
+
+      if (currTool === 'frame') {
+          const newNode: FrameNode = {
+              id: `frame-${Date.now()}`,
+              type: 'frame',
+              position: { x: position.x - 250, y: position.y - 200 }, // Center
+              data: { label: 'New Frame' },
+              style: { width: 500, height: 400, zIndex: -1 }, // Default large size
+          };
+          setNodes((nds) => [newNode, ...nds]); // Add to beginning (behind others)
+          setCurrTool('default');
+      }
+  }, [currTool, rfInstance, setNodes]);
+
+  // Pane Click Handler
+  const onPaneClick = handleAddNode;
+
+  // Node Click Handler (for placing items on top of frames or Creating Edges)
+  const onNodeClick = useCallback((event: React.MouseEvent, node: Node) => {
+      // Tool: Edge Creation
+      if (currTool === 'edge') {
+          if (!connectionSource) {
+              setConnectionSource(node.id);
+          } else {
+              // Create edge
+              if (connectionSource !== node.id) {
+                 const newEdge: Edge = {
+                     id: `e${connectionSource}-${node.id}`,
+                     source: connectionSource,
+                     target: node.id,
+                     animated: true,
+                     style: { stroke: '#3b82f6', strokeWidth: 2 }
+                 };
+                 setEdges((eds) => addEdge(newEdge, eds));
+                 setConnectionSource(null); // Reset
+                 setCurrTool('default'); // Optional: reset tool after connection
+              } else {
+                 setConnectionSource(null); // Deselect if clicking same node
+              }
+          }
+          return;
+      }
+
+      // Tool: Text/Frame Placement
+      if (currTool !== 'default') {
+          handleAddNode(event);
+      }
+  }, [currTool, handleAddNode, connectionSource, setEdges, setConnectionSource]);
+
+  // Node Drag Stop Handler (Grouping Logic)
+  const onNodeDragStop = useCallback(
+    (_: React.MouseEvent, node: Node) => {
+      // 1. Find potential parent frame
+      // We look for FrameNodes that intersect with the dragged node
+      const intersections = rfInstance.getIntersectingNodes(node).filter((n: Node) => n.type === 'frame');
+      const parentFrame = intersections[intersections.length - 1]; // Take the last one (top-most usually)
+
+      if (parentFrame) {
+         // Moving INTO a Frame
+         if (node.parentId !== parentFrame.id) {
+             const parentNode = parentFrame;
+             
+             // Calculate relative position
+             const relativePosition = {
+                 x: node.position.x - parentNode.position.x,
+                 y: node.position.y - parentNode.position.y,
+             };
+
+             setNodes((nds) => 
+               nds.map((n) => {
+                 if (n.id === node.id) {
+                   return {
+                     ...n,
+                     parentId: parentNode.id,
+                     position: relativePosition,
+                     extent: 'parent', // Optional: clip to parent
+                   };
+                 }
+                 return n;
+               })
+             );
+         }
+      } else {
+          // Moving OUT of a Frame
+          if (node.parentId) {
+               // We need the absolute position to detach it
+               // Since checking 'intersections' might fail if we dragged it partially out, 
+               // but getIntersectingNodes checks overlap. If valid 'intersections' is empty, we are out.
+               
+               // To get absolute position, we need the parent's position.
+               const parentNode = nodes.find(n => n.id === node.parentId);
+               
+               if (parentNode) {
+                   const absolutePosition = {
+                       x: parentNode.position.x + node.position.x,
+                       y: parentNode.position.y + node.position.y,
+                   };
+
+                   setNodes((nds) => 
+                       nds.map((n) => {
+                           if (n.id === node.id) {
+                               const { parentId, extent, ...rest } = n;
+                               return {
+                                   ...rest,
+                                   position: absolutePosition,
+                               };
+                           }
+                           return n;
+                       })
+                   );
+               }
+          }
+      }
+    },
+    [rfInstance, nodes, setNodes]
+  );
+
+  // Delete Selected Nodes
+  const handleDeleteSelected = useCallback(() => {
+      setNodes((nds) => nds.filter((node) => !node.selected));
+      setEdges((eds) => eds.filter((edge) => !edge.selected));
+  }, [setNodes, setEdges]);
+
 
   // Save / Export Logic
   const onSave = useCallback(() => {
     if (rfInstance) {
       const flow = rfInstance.toObject();
       const exportData = {
-          nodes: flow.nodes.map(n => ({ id: n.id, position: n.position, entryId: n.data.entry.id })),
+          nodes: flow.nodes.map(n => ({ 
+              id: n.id, 
+              type: n.type,
+              position: n.position, 
+              width: n.style?.width,
+              height: n.style?.height,
+              data: n.data, // Include text/label data
+              entryId: n.data.entry?.id 
+          })),
           edges: flow.edges.map(e => ({ source: e.source, target: e.target }))
       }
       console.log('Exported Flow:', exportData);
       alert('Canvas layout exported to console (JSON).');
-      // Here you would typically save to file or database
     }
   }, [rfInstance]);
 
   return (
     <div className="flex h-full w-full bg-[#0b0c15] text-slate-200 relative overflow-hidden">
       
+      {/* Floating Toolbar (Top Center) */}
+      <div className="absolute top-4 left-1/2 -translate-x-1/2 z-50 flex items-center gap-1 p-1.5 bg-[#1e293b]/90 backdrop-blur-md border border-slate-700/50 rounded-lg shadow-2xl">
+          <button 
+                onClick={() => setCurrTool('default')}
+                className={`p-2 rounded-md transition-all ${currTool === 'default' ? 'bg-blue-600 text-white shadow-lg' : 'text-slate-400 hover:bg-slate-700 hover:text-slate-100'}`}
+                title="Select (Pointer)"
+            >
+                <MousePointer2 size={18} />
+          </button>
+          <div className="w-px h-6 bg-slate-700 mx-1" />
+          <button 
+                onClick={() => setCurrTool('frame')}
+                className={`p-2 rounded-md transition-all ${currTool === 'frame' ? 'bg-blue-600 text-white shadow-lg' : 'text-slate-400 hover:bg-slate-700 hover:text-slate-100'}`}
+                title="Add Frame"
+            >
+                <SquareDashed size={18} />
+          </button>
+          <button 
+                onClick={() => setCurrTool('text')}
+                className={`p-2 rounded-md transition-all ${currTool === 'text' ? 'bg-blue-600 text-white shadow-lg' : 'text-slate-400 hover:bg-slate-700 hover:text-slate-100'}`}
+                title="Add Text"
+            >
+                <Type size={18} />
+          </button>
+          <div className="w-px h-6 bg-slate-700 mx-1" />
+          <button 
+                onClick={() => setCurrTool('edge')}
+                className={`p-2 rounded-md transition-all ${currTool === 'edge' ? 'bg-blue-600 text-white shadow-lg' : 'text-slate-400 hover:bg-slate-700 hover:text-slate-100'}`}
+                title="Connect (Edge)"
+            >
+                <ArrowRight size={18} />
+          </button>
+          <div className="w-px h-6 bg-slate-700 mx-1" />
+          <button 
+                onClick={onCreateEpisode}
+                className="p-2 rounded-md transition-all text-green-400 hover:bg-green-500/20 hover:text-green-300"
+                title="Create New Episode"
+            >
+                <Plus size={18} />
+          </button>
+          <button 
+                onClick={handleDeleteSelected}
+                className="p-2 rounded-md transition-all text-red-400 hover:bg-red-500/20 hover:text-red-300"
+                title="Delete Selected"
+            >
+                <Trash2 size={18} />
+          </button>
+      </div>
+
       {/* Sidebar (Episode List) */}
       <motion.div 
         animate={{ width: isSidebarOpen ? 320 : 0, opacity: isSidebarOpen ? 1 : 0 }}
@@ -283,9 +536,16 @@ export const EpisodeCanvas = ({ wikiEntries = [], onEditEpisode }: EpisodeCanvas
           onDrop={onDrop}
           onDragOver={onDragOver}
           onNodeDoubleClick={onNodeDoubleClick}
+          onPaneClick={onPaneClick}
+          onNodeClick={onNodeClick}
+          onNodeDragStop={onNodeDragStop}
           nodeTypes={nodeTypes}
           fitView
-          className="bg-[#0f172a]"
+          panOnDrag={currTool === 'default'}
+          selectionOnDrag={currTool === 'default'} 
+          zoomOnDoubleClick={currTool === 'default'}
+          panOnScroll={true} // Allow scrolling even when placing items
+          className={`bg-[#0f172a] ${currTool !== 'default' ? '!cursor-crosshair' : ''}`}
         >
           <Background color="#1e293b" gap={20} size={1} variant={BackgroundVariant.Dots} />
           <Controls className="bg-[#1e293b] border-slate-700 text-slate-200 fill-slate-200" />

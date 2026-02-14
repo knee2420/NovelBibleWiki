@@ -258,7 +258,8 @@ export const EpisodeArchive = ({ onEntryClick, initialEpisodeId, onClearTargetEp
             <div className="flex-1 min-h-0 border border-slate-800 rounded-2xl overflow-hidden animate-in fade-in duration-300">
                 <EpisodeCanvas 
                     wikiEntries={allWikiData} 
-                    onEditEpisode={(entry) => setSelectedEpisode(entry)}
+                    onEditEpisode={(entry) => setSelectedEpisode(entry)} 
+                    onCreateEpisode={() => setIsCreateOpen(true)} // Pass create handler
                 />
             </div>
         )}
