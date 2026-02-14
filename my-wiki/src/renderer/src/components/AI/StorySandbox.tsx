@@ -94,6 +94,19 @@ interface ResearchTask {
     createdAt: number
 }
 
+// -- Improved Story Node Structure for Tree --
+interface StoryNode {
+    id: string
+    parentId: string | null
+    title: string
+    summary: string
+    content: string
+    reasoning?: string
+    children: string[]
+    timestamp: number
+    selected?: boolean
+}
+
 
 const buildFileTree = (entries: WikiEntry[]): TreeNode[] => {
     const root: TreeNode[] = []
@@ -478,11 +491,21 @@ export const StorySandbox = ({ initialHistory = [], wikiData = [], plotData = []
     // -- Context Action State --
     const [selectedActionItems, setSelectedActionItems] = useState<Set<string>>(new Set())
 
-    // -- Branching State --
     const [isBranchPanelOpen, setIsBranchPanelOpen] = useState(false)
-    const [storyBranches, setStoryBranches] = useState<Array<{ id: string, title: string, content: string, reasoning: string }>>([])
+    const [storyNodes, setStoryNodes] = useState<StoryNode[]>([])
+    const [activeNodeId, setActiveNodeId] = useState<string | null>(null)
     const [isGeneratingBranches, setIsGeneratingBranches] = useState(false)
-    const [editingBranchId, setEditingBranchId] = useState<string | null>(null)
+
+    // UI Loading State for Refinement
+    const [isRefiningNode, setIsRefiningNode] = useState(false)
+    const [branchCount, setBranchCount] = useState<number>(3)
+
+    // Helper to find node by ID
+    const getNode = (id: string) => storyNodes.find(n => n.id === id)
+
+    // Helper to get children
+    const getChildren = (id: string) => storyNodes.filter(n => n.parentId === id)
+
     const [tempBranchData, setTempBranchData] = useState<{ title: string, content: string, reasoning: string }>({ title: '', content: '', reasoning: '' })
 
     const toggleActionItem = (itemId: string) => {
@@ -494,7 +517,7 @@ export const StorySandbox = ({ initialHistory = [], wikiData = [], plotData = []
         })
     }
 
-    const handleContextAction = (action: 'draft' | 'analyze' | 'ask') => {
+    const handleContextAction = (action: 'draft' | 'analyze' | 'ask' | 'suggest_beats') => {
         const currentTask = tasks.find(t => t.id === selectedTaskId)
         if (!currentTask) return
 
@@ -508,9 +531,18 @@ export const StorySandbox = ({ initialHistory = [], wikiData = [], plotData = []
             prompt = `Analyze the relationship and potential conflicts between ${contextString}.`
         } else if (action === 'ask') {
             prompt = `With context of ${contextString}, `
+        } else if (action === 'suggest_beats') {
+            prompt = `[SYSTEM] Suggest ${branchCount} interesting distinct story beats (plot options) involving ${contextString}, considering the story context.
+FORMAT REQUIREMENT: You MUST return a JSON Array. Do not wrap in markdown code blocks.
+Example: [{"title": "Conflict Arises", "summary": "A fights B", "content": "Full scene description...", "reasoning": "Creates tension"}]`
         }
 
         setChatInput(prompt)
+        // Auto-submit if it's a command
+        if (action === 'suggest_beats') {
+            // We will handle the auto-send in the effect or just let user press enter.
+            // For better UX, let's auto-fill and focus.
+        }
         if (chatInputRef.current) chatInputRef.current.focus()
     }
 
@@ -1394,49 +1426,172 @@ ${s.content}
         setIsSourceModalOpen(false)
     }
 
-    const handleGenerateBranches = async () => {
+    const handleGenerateBranches = async (parentNodeId?: string) => {
         if (!activeTabId) return
         setIsGeneratingBranches(true)
-        // Keep existing branches if user wants to add to them? Or clear? 
-        // Usually "Generate" implies fresh set, but let's clear for now as requested "starts empty".
-        if (storyBranches.length === 0) setStoryBranches([])
         setIsBranchPanelOpen(true)
+
+        // If specific parent triggered this, set it as active for visual feedback
+        const effectiveParentId = parentNodeId || activeNodeId || null
+        if (effectiveParentId) setActiveNodeId(effectiveParentId)
 
         try {
             const currentContent = tabs.find(t => t.id === activeTabId)?.content || ''
+
+            // Context from Parent Node if exists
+            let parentContext = ''
+            if (effectiveParentId) {
+                const parentNode = getNode(effectiveParentId)
+                if (parentNode) {
+                    parentContext = `\n[PREVIOUS BEAT CONTEXT]\nTitle: ${parentNode.title}\nSummary: ${parentNode.summary}\nContent: ${parentNode.content}\n`
+                }
+            }
 
             // Ask AI for branches
             // @ts-ignore
             const result: any = await window.api.interactSceneWriterAgent({
                 currentContent,
-                userMessage: `[SYSTEM: Generate 3 distinct plot branch options for the continuation of this scene. 
-Return ONLY a valid JSON array. 
-Format: [{"title": "Short Title", "content": "Summary of events...", "reasoning": "Why this works..."}]
-Do not add markdown formatting or surrounding text.]`,
+                userMessage: `[SYSTEM: Generate ${branchCount} distinct NEXT story beats following the previous beat.
+${parentContext ? parentContext : "Context: Start of a new sequence based on current scene."}
+
+ instructions:
+ 1. Continue the narrative flow naturally from the Previous Beat.
+ 2. Provide NEW distinct options for what happens NEXT.
+ 3. Return ONLY a valid JSON Array with exactly ${branchCount} items.
+
+Format: [{"title": "Short Title", "summary": "One sentence summary", "content": "Detailed event description...", "reasoning": "Narrative purpose..."}]
+]`,
                 context: sceneContext || { chapter: 0, scene: 0 },
-                history: [] // No history needed for fresh branch generation usually
+                history: []
             })
 
             if (result.success) {
+                console.log('AI Reply:', result.reply)
+                let newNodes: StoryNode[] = []
+
+                // 1. Try JSON Parsing
                 try {
-                    // Clean up response if it contains markdown code blocks
                     const cleanJson = result.reply.replace(/```json/g, '').replace(/```/g, '').trim()
-                    // Attempt to find the array if there's extra text
                     const arrayMatch = cleanJson.match(/\[.*\]/s)
                     const jsonStr = arrayMatch ? arrayMatch[0] : cleanJson
-
                     const branches = JSON.parse(jsonStr)
+
                     if (Array.isArray(branches)) {
-                        // Add IDs
-                        const newBranches = branches.map((b: any) => ({ ...b, id: Date.now().toString() + Math.random().toString().slice(2, 6) }))
-                        setStoryBranches(prev => [...prev, ...newBranches])
-                    } else {
-                        throw new Error('Invalid format')
+                        newNodes = branches.map((b: any) => ({
+                            id: Date.now().toString() + Math.random().toString().slice(2, 6),
+                            parentId: effectiveParentId,
+                            title: b.title,
+                            summary: b.summary || b.title,
+                            content: b.content,
+                            reasoning: b.reasoning,
+                            children: [],
+                            timestamp: Date.now()
+                        }))
                     }
                 } catch (e) {
-                    console.error('Failed to parse branches', e)
-                    // Fallback: Show raw text as one branch if parsing fails
-                    setStoryBranches(prev => [...prev, { id: Date.now().toString(), title: 'AI Suggestion', content: result.reply, reasoning: 'Raw response - formatting failed' }])
+                    console.log('JSON Parse failed, trying Markdown...', e)
+                }
+
+                // 2. Fallback: Markdown List Parsing
+                if (newNodes.length === 0) {
+                    const lines = result.reply.split('\n')
+                    let currentBeat: any = null
+
+                    // Strategy: Check if the text uses Numbered list (1. ...)
+                    // If it does, we ONLY treat Numbered lines as new beats.
+                    // Flatten everything else (including bullets) into the content.
+                    const hasNumberedList = lines.some(l => /^\s*(?:\*\*)?\d+\./.test(l))
+
+                    lines.forEach(line => {
+                        const trimmed = line.trim()
+                        if (!trimmed) return
+
+                        let isNewBeat = false
+                        let title = ''
+                        let content = ''
+
+                        // Regex for Numbered Beat: "1. Title", "**1. Title**", "**1.** Title"
+                        const numberMatch = trimmed.match(/^\s*(?:\*\*)?(\d+)\.\s*(?:\*\*)?\s*(.*?)$/)
+
+                        // Regex for Bullet Beat: "* Title", "- Title", "* **Title**"
+                        const bulletMatch = !hasNumberedList ? trimmed.match(/^\s*[*\\-]\s*(.*?)$/) : null
+
+                        if (hasNumberedList && numberMatch) {
+                            isNewBeat = true
+                            // Clean title
+                            let raw = numberMatch[2]
+                            // Remove trailing ** if present
+                            if (raw.endsWith('**')) raw = raw.slice(0, -2)
+                            // Split by colon if present
+                            const colonIdx = raw.indexOf(':')
+                            if (colonIdx !== -1) {
+                                title = raw.substring(0, colonIdx).trim()
+                                content = raw.substring(colonIdx + 1).trim()
+                            } else {
+                                title = raw.trim()
+                            }
+                        } else if (bulletMatch) {
+                            isNewBeat = true
+                            let raw = bulletMatch[1]
+                            const colonIdx = raw.indexOf(':')
+                            if (colonIdx !== -1) {
+                                title = raw.substring(0, colonIdx).replace(/\*\*/g, '').trim()
+                                content = raw.substring(colonIdx + 1).trim()
+                            } else {
+                                // Check for bold title "**Title** Content"
+                                const boldMatch = raw.match(/^\*\*(.*?)\*\*\s*(.*)$/)
+                                if (boldMatch) {
+                                    title = boldMatch[1].trim()
+                                    content = boldMatch[2].trim()
+                                } else {
+                                    title = raw.replace(/\*\*/g, '').trim()
+                                }
+                            }
+                        }
+
+                        if (isNewBeat) {
+                            if (currentBeat) {
+                                newNodes.push({
+                                    id: Date.now().toString() + Math.random().toString().slice(2, 6),
+                                    parentId: effectiveParentId,
+                                    title: currentBeat.title,
+                                    summary: currentBeat.content.slice(0, 100) + '...',
+                                    content: currentBeat.content,
+                                    reasoning: 'Extracted from list',
+                                    children: [],
+                                    timestamp: Date.now()
+                                })
+                            }
+                            currentBeat = {
+                                title: title || 'New Beat',
+                                content: content
+                            }
+                        } else {
+                            if (currentBeat) {
+                                currentBeat.content += '\n' + trimmed
+                            }
+                        }
+                    })
+
+                    // Push last one
+                    if (currentBeat) {
+                        newNodes.push({
+                            id: Date.now().toString() + Math.random().toString().slice(2, 6),
+                            parentId: effectiveParentId,
+                            title: currentBeat.title,
+                            summary: currentBeat.content.slice(0, 100) + '...',
+                            content: currentBeat.content,
+                            reasoning: 'Extracted from list',
+                            children: [],
+                            timestamp: Date.now()
+                        })
+                    }
+                }
+
+                if (newNodes.length > 0) {
+                    setStoryNodes(prev => [...prev, ...newNodes])
+                } else {
+                    console.warn('No beats parsed from AI reply')
                 }
             }
         } catch (e) {
@@ -1446,43 +1601,194 @@ Do not add markdown formatting or surrounding text.]`,
         }
     }
 
-    // CRUD for Branches
-    const handleAddManualBranch = () => {
-        const newId = Date.now().toString()
-        const newBranch = { id: newId, title: 'New Branch', content: '', reasoning: '' }
-        setStoryBranches(prev => [...prev, newBranch])
-        setEditingBranchId(newId)
-        setTempBranchData(newBranch)
+    // Add suggested beats from Chat to the Tree
+    const addBeatsFromChat = (beats: any[], parentId: string | null) => {
+        const newNodes: StoryNode[] = beats.map((b: any) => ({
+            id: Date.now().toString() + Math.random().toString().slice(2, 6),
+            parentId: parentId,
+            title: b.title,
+            summary: b.summary || b.title,
+            content: b.content,
+            reasoning: b.reasoning,
+            children: [],
+            timestamp: Date.now()
+        }))
+        setStoryNodes(prev => [...prev, ...newNodes])
+        setIsBranchPanelOpen(true)
     }
 
-    const handleDeleteBranch = (id: string) => {
-        setStoryBranches(prev => prev.filter(b => b.id !== id))
-        if (editingBranchId === id) setEditingBranchId(null)
+    const handleRefineNode = async (nodeId: string) => {
+        const node = getNode(nodeId)
+        if (!node) return
+
+        // Get Collection Context
+        const currentTask = tasks.find(t => t.id === selectedTaskId)
+        const selectedItems = currentTask ? currentTask.items.filter(i => selectedActionItems.has(i.id)) : []
+
+        if (selectedItems.length === 0) {
+            alert("Please select items from the Collection Board to refine this node with.")
+            return
+        }
+
+        const contextString = selectedItems.map(i => `[[${i.type}::${i.name}]]`).join(', ')
+        setIsRefiningNode(true)
+
+        try {
+            // @ts-ignore
+            const result: any = await window.api.interactSceneWriterAgent({
+                currentContent: "",
+                userMessage: `[SYSTEM: Refine the following story beat based on the integrated entities: ${contextString}.
+Original Title: ${node.title}
+Original Content: ${node.content}
+
+Instructions: Rewrite the content to deeply involve the selected characters/items/events. Update the title if necessary.
+Return JSON: {"title": "...", "content": "...", "reasoning": "..."}]`,
+                context: sceneContext || { chapter: 0, scene: 0 },
+                history: []
+            })
+
+            if (result.success) {
+                const cleanJson = result.reply.replace(/```json/g, '').replace(/```/g, '').trim()
+                // Simple object parsing
+                const match = cleanJson.match(/\{.*\}/s)
+                if (match) {
+                    const refined = JSON.parse(match[0])
+                    // Update Node
+                    setStoryNodes(prev => prev.map(n => n.id === nodeId ? { ...n, title: refined.title, content: refined.content, reasoning: refined.reasoning } : n))
+                }
+            }
+
+        } catch (e) {
+            console.error(e)
+        } finally {
+            setIsRefiningNode(false)
+        }
     }
 
-    const startEditingBranch = (branch: any) => {
-        setEditingBranchId(branch.id)
-        setTempBranchData({ title: branch.title, content: branch.content, reasoning: branch.reasoning })
+    // CRUD for Nodes
+    const handleAddManualNode = (parentId: string | null) => {
+        const newNode: StoryNode = {
+            id: Date.now().toString(),
+            parentId: parentId,
+            title: 'New Beat',
+            summary: 'Summary...',
+            content: '',
+            children: [],
+            timestamp: Date.now()
+        }
+        setStoryNodes(prev => [...prev, newNode])
+        setActiveNodeId(newNode.id)
     }
 
-    const saveEditingBranch = () => {
-        if (!editingBranchId) return
-        setStoryBranches(prev => prev.map(b => b.id === editingBranchId ? { ...b, ...tempBranchData } : b))
-        setEditingBranchId(null)
+    const handleDeleteNode = (id: string) => {
+        // Recursive Delete
+        setStoryNodes(prev => {
+            const toDelete = new Set<string>()
+            const markForDeletion = (nodeId: string) => {
+                toDelete.add(nodeId)
+                prev.filter(n => n.parentId === nodeId).forEach(c => markForDeletion(c.id))
+            }
+            markForDeletion(id)
+            return prev.filter(n => !toDelete.has(n.id))
+        })
+        if (activeNodeId === id) setActiveNodeId(null)
     }
 
-    const cancelEditingBranch = () => {
-        setEditingBranchId(null)
+    const updateNode = (id: string, updates: Partial<StoryNode>) => {
+        setStoryNodes(prev => prev.map(n => n.id === id ? { ...n, ...updates } : n))
     }
 
-    const applyBranch = (branchContent: string) => {
+    const applyNodeToEditor = (content: string) => {
         if (!activeTabId) return
         const currentContent = tabs.find(t => t.id === activeTabId)?.content || ''
-        const newContent = currentContent + '\n\n' + branchContent
+        const newContent = currentContent + '\n\n' + content
         handleContentChange(activeTabId, newContent)
         handleSaveContent(activeTabId) // Persist
-        setIsBranchPanelOpen(false) // Close panel after apply
+        // Don't close panel, allow multiple
+    }
 
+    // -- Visual Components for Tree --
+
+    const renderNodeTree = (parentId: string | null, depth: number = 0) => {
+        const nodes = storyNodes.filter(n => n.parentId === parentId)
+        if (nodes.length === 0) return null
+
+        return (
+            <div className="flex flex-col gap-4">
+                {nodes.map(node => (
+                    <div key={node.id} className="flex flex-row items-start gap-2">
+                        {/* Node Card */}
+                        <div className={`
+                            relative flex flex-col min-w-[200px] w-[220px] p-3 rounded-lg border transition-all cursor-pointer bg-[#1A1A1D] group
+                            ${activeNodeId === node.id ? 'border-indigo-500 shadow-[0_0_15px_rgba(99,102,241,0.3)] ring-1 ring-indigo-500/50' : 'border-white/10 hover:border-indigo-500/30'}
+                        `}
+                            onClick={(e) => {
+                                e.stopPropagation()
+                                setActiveNodeId(node.id)
+                            }}
+                        >
+                            {/* Connection Line Input */}
+                            {parentId && (
+                                <div className="absolute top-1/2 -left-3 w-3 h-[1px] bg-white/20" />
+                            )}
+
+                            <div className="flex justify-between items-start mb-1">
+                                <h4 className="font-bold text-xs text-slate-200 truncate pr-2 w-full">{node.title}</h4>
+                                <div className="opacity-0 group-hover:opacity-100 flex items-center gap-1 absolute top-2 right-2 bg-[#1A1A1D] pl-2">
+                                    <button
+                                        onClick={(e) => { e.stopPropagation(); handleRefineNode(node.id) }}
+                                        className="text-slate-500 hover:text-indigo-400"
+                                        title={selectedActionItems.size > 0 ? "Refine with selected Items" : "Select items to refine"}
+                                    >
+                                        <Sparkles size={10} />
+                                    </button>
+                                    <button
+                                        onClick={(e) => { e.stopPropagation(); handleDeleteNode(node.id) }}
+                                        className="text-slate-500 hover:text-red-400"
+                                    >
+                                        <X size={10} />
+                                    </button>
+                                </div>
+                            </div>
+                            <p className="text-[10px] text-slate-400 line-clamp-3 mb-2">{node.summary || node.content}</p>
+
+                            <div className="mt-auto flex gap-1">
+                                <button
+                                    onClick={(e) => { e.stopPropagation(); handleGenerateBranches(node.id); }}
+                                    className="flex-1 py-1 bg-white/5 hover:bg-white/10 rounded text-[9px] text-slate-400 flex justify-center items-center"
+                                    title="Generate Next Options"
+                                >
+                                    <GitBranch size={8} className="mr-1" /> Next
+                                </button>
+                                <button
+                                    onClick={(e) => { e.stopPropagation(); applyNodeToEditor(node.content); }}
+                                    className="flex-1 py-1 bg-indigo-600/20 hover:bg-indigo-600/40 text-indigo-300 rounded text-[9px] font-bold"
+                                    title="Append to Editor"
+                                >
+                                    Apply
+                                </button>
+                            </div>
+
+                            {/* Children Connector Output */}
+                            {getChildren(node.id).length > 0 && (
+                                <div className="absolute top-1/2 -right-2 w-2 h-[1px] bg-white/20" />
+                            )}
+                        </div>
+
+                        {/* Recursive Children */}
+                        {getChildren(node.id).length > 0 && (
+                            <div className="flex flex-col gap-2 ml-4 relative">
+                                {/* Vertical Line for children */}
+                                <div className="absolute top-0 bottom-0 -left-4 w-[1px] bg-white/10" />
+                                {renderNodeTree(node.id, depth + 1)}
+                            </div>
+                        )}
+
+                        {/* Placeholder for "Add Branch" visual if focused? Maybe overkill. */}
+                    </div>
+                ))}
+            </div>
+        )
     }
 
     return (
@@ -1777,23 +2083,34 @@ Do not add markdown formatting or surrounding text.]`,
                                             <div className="flex items-center justify-between mb-4">
                                                 <div className="flex items-center gap-2 text-indigo-400">
                                                     <GitBranch size={16} />
-                                                    <span className="font-bold text-sm">Story Branches</span>
-                                                    <span className="text-xs text-slate-500 px-2 py-0.5 bg-white/5 rounded-full">{storyBranches.length}</span>
+                                                    <span className="font-bold text-sm">Story Branch Tree</span>
+                                                    <span className="text-xs text-slate-500 px-2 py-0.5 bg-white/5 rounded-full">{storyNodes.length}</span>
                                                 </div>
                                                 <div className="flex items-center gap-2">
+                                                    <div className="flex items-center gap-1 bg-black/20 rounded p-0.5 border border-white/5 mr-2">
+                                                        {[1, 2, 3].map(num => (
+                                                            <button
+                                                                key={num}
+                                                                onClick={() => setBranchCount(num)}
+                                                                className={`px-1.5 py-0.5 text-[9px] rounded ${branchCount === num ? 'bg-indigo-600 text-white' : 'text-slate-500 hover:text-slate-300'}`}
+                                                            >
+                                                                {num}
+                                                            </button>
+                                                        ))}
+                                                    </div>
                                                     <button
-                                                        onClick={handleAddManualBranch}
+                                                        onClick={() => handleAddManualNode(activeNodeId)}
                                                         className="p-1.5 hover:bg-white/10 rounded text-slate-400 hover:text-emerald-400 transition-colors flex items-center gap-1"
-                                                        title="Add Manual Branch"
+                                                        title="Add Node to Current"
                                                     >
                                                         <Plus size={14} />
                                                         <span className="text-[10px] font-bold">ADD</span>
                                                     </button>
                                                     <div className="h-4 w-[1px] bg-white/10 mx-1" />
                                                     <button
-                                                        onClick={handleGenerateBranches}
+                                                        onClick={() => handleGenerateBranches(activeNodeId || undefined)}
                                                         className="p-1.5 hover:bg-white/10 rounded text-slate-400 hover:text-white transition-colors"
-                                                        title="Generate with AI"
+                                                        title={`Generate ${branchCount} Next Options from Active`}
                                                         disabled={isGeneratingBranches}
                                                     >
                                                         <RefreshCw size={14} className={isGeneratingBranches ? 'animate-spin' : ''} />
@@ -1814,100 +2131,58 @@ Do not add markdown formatting or surrounding text.]`,
                                                 </div>
                                             ) : (
                                                 <div className="space-y-3">
-                                                    {storyBranches.length === 0 && (
+                                                    {storyNodes.length === 0 && (
                                                         <div className="flex flex-col items-center justify-center py-12 border-2 border-dashed border-white/5 rounded-lg bg-black/20 gap-3">
                                                             <GitBranch size={32} className="text-slate-700" />
-                                                            <p className="text-slate-500 text-xs">No branches yet. Generate with AI or add manually.</p>
+                                                            <p className="text-slate-500 text-xs">Start your story tree.</p>
                                                             <div className="flex gap-2 mt-2">
                                                                 <button
-                                                                    onClick={handleGenerateBranches}
+                                                                    onClick={() => handleGenerateBranches(undefined)}
                                                                     className="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white text-xs rounded shadow-lg transition-colors flex items-center gap-1"
                                                                 >
-                                                                    <Sparkles size={12} /> AI Generate
+                                                                    <Sparkles size={12} /> Generate Root Options
                                                                 </button>
                                                                 <button
-                                                                    onClick={handleAddManualBranch}
+                                                                    onClick={() => handleAddManualNode(null)}
                                                                     className="px-3 py-1.5 bg-slate-700 hover:bg-slate-600 text-slate-200 text-xs rounded transition-colors flex items-center gap-1"
                                                                 >
-                                                                    <Plus size={12} /> Manual Add
+                                                                    <Plus size={12} /> Add Root
                                                                 </button>
                                                             </div>
                                                         </div>
                                                     )}
 
-                                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                                                        {storyBranches.map((branch) => {
-                                                            const isEditing = editingBranchId === branch.id
-                                                            return (
-                                                                <div key={branch.id} className={`bg-[#1A1A1D] border rounded-lg p-3 transition-all flex flex-col group relative overflow-hidden ${isEditing ? 'border-indigo-500 ring-1 ring-indigo-500/50' : 'border-white/10 hover:border-indigo-500/50'}`}>
-                                                                    {!isEditing && <div className="absolute top-0 left-0 w-1 h-full bg-indigo-500/0 group-hover:bg-indigo-500 transition-all" />}
-
-                                                                    {isEditing ? (
-                                                                        <div className="flex flex-col h-full gap-2">
-                                                                            <input
-                                                                                type="text"
-                                                                                className="bg-black/30 border border-white/10 rounded px-2 py-1 text-sm font-bold text-indigo-300 outline-none focus:border-indigo-500"
-                                                                                value={tempBranchData.title}
-                                                                                onChange={e => setTempBranchData(prev => ({ ...prev, title: e.target.value }))}
-                                                                                placeholder="Branch Title"
-                                                                            />
-                                                                            <textarea
-                                                                                className="flex-1 bg-black/30 border border-white/10 rounded px-2 py-1 text-xs text-slate-300 outline-none focus:border-indigo-500 resize-none"
-                                                                                value={tempBranchData.content}
-                                                                                onChange={e => setTempBranchData(prev => ({ ...prev, content: e.target.value }))}
-                                                                                placeholder="Describe the scene event..."
-                                                                            />
-                                                                            <input
-                                                                                type="text"
-                                                                                className="bg-black/30 border border-white/10 rounded px-2 py-1 text-[10px] text-slate-400 outline-none focus:border-indigo-500 italic"
-                                                                                value={tempBranchData.reasoning}
-                                                                                onChange={e => setTempBranchData(prev => ({ ...prev, reasoning: e.target.value }))}
-                                                                                placeholder="Reasoning (Optional)"
-                                                                            />
-                                                                            <div className="flex gap-2 mt-auto">
-                                                                                <button onClick={saveEditingBranch} className="flex-1 py-1 bg-indigo-600/20 text-indigo-400 hover:bg-indigo-600/30 rounded text-xs">Save</button>
-                                                                                <button onClick={cancelEditingBranch} className="flex-1 py-1 bg-white/5 text-slate-400 hover:bg-white/10 rounded text-xs">Cancel</button>
-                                                                            </div>
-                                                                        </div>
-                                                                    ) : (
-                                                                        <>
-                                                                            <div className="flex items-start justify-between mb-2 pl-2">
-                                                                                <h4 className="font-bold text-slate-200 text-sm truncate pr-2" title={branch.title}>{branch.title}</h4>
-                                                                                <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                                                                                    <button
-                                                                                        onClick={(e) => { e.stopPropagation(); startEditingBranch(branch); }}
-                                                                                        className="p-1 hover:bg-white/10 rounded text-slate-500 hover:text-indigo-400"
-                                                                                    >
-                                                                                        <Edit2 size={10} />
-                                                                                    </button>
-                                                                                    <button
-                                                                                        onClick={(e) => { e.stopPropagation(); handleDeleteBranch(branch.id); }}
-                                                                                        className="p-1 hover:bg-white/10 rounded text-slate-500 hover:text-red-400"
-                                                                                    >
-                                                                                        <Trash2 size={10} />
-                                                                                    </button>
-                                                                                </div>
-                                                                            </div>
-                                                                            <p className="text-xs text-slate-400 mb-3 line-clamp-4 pl-2 flex-1" title={branch.content}>
-                                                                                {branch.content || <span className="italic opacity-50">No content...</span>}
-                                                                            </p>
-                                                                            {branch.reasoning && (
-                                                                                <div className="mb-3 pl-2 text-[10px] text-indigo-400/80 italic line-clamp-2">
-                                                                                    "{branch.reasoning}"
-                                                                                </div>
-                                                                            )}
-                                                                            <button
-                                                                                onClick={() => applyBranch(branch.content)}
-                                                                                className="mt-auto w-full py-1.5 rounded bg-indigo-600/10 hover:bg-indigo-600 text-indigo-400 hover:text-white text-xs font-bold transition-all border border-indigo-600/20 hover:border-indigo-600"
-                                                                            >
-                                                                                Apply Branch
-                                                                            </button>
-                                                                        </>
-                                                                    )}
-                                                                </div>
-                                                            )
-                                                        })}
+                                                    {/* Tree View Container */}
+                                                    <div className="overflow-x-auto pb-4 pt-2">
+                                                        <div className="min-w-full">
+                                                            {renderNodeTree(null)}
+                                                        </div>
                                                     </div>
+
+                                                    {/* Active Node Detail View */}
+                                                    {activeNodeId && (
+                                                        <div className="mt-4 pt-4 border-t border-white/10">
+                                                            <div className="flex items-center justify-between mb-2">
+                                                                <h4 className="font-bold text-indigo-400 text-sm">
+                                                                    Selected: {getNode(activeNodeId)?.title}
+                                                                </h4>
+                                                                <span className="text-[10px] text-slate-500">
+                                                                    {isRefiningNode ? 'Refining...' : 'Ready to edit'}
+                                                                </span>
+                                                            </div>
+                                                            <textarea
+                                                                className="w-full bg-[#141417] border border-white/10 rounded p-3 text-sm text-slate-300 min-h-[150px] outline-none focus:border-indigo-500"
+                                                                value={getNode(activeNodeId)?.content || ''}
+                                                                onChange={(e) => updateNode(activeNodeId, { content: e.target.value })}
+                                                                placeholder="Node Content..."
+                                                            />
+                                                            {getNode(activeNodeId)?.reasoning && (
+                                                                <div className="mt-2 text-xs text-slate-500 italic bg-white/5 p-2 rounded">
+                                                                    "{getNode(activeNodeId)?.reasoning}"
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                    )}
                                                 </div>
                                             )}
                                         </div>
@@ -2101,6 +2376,13 @@ Do not add markdown formatting or surrounding text.]`,
                                                 <MessageSquare size={12} />
                                                 <span className="text-[9px]">Ask AI</span>
                                             </button>
+                                            <button
+                                                onClick={() => handleContextAction('suggest_beats')}
+                                                className="flex flex-col items-center justify-center gap-1 p-2 rounded bg-indigo-800 hover:bg-indigo-700 text-indigo-100 transition-colors col-span-3 mt-1"
+                                            >
+                                                <GitBranch size={12} />
+                                                <span className="text-[9px]">Suggest Story Beats</span>
+                                            </button>
                                         </div>
                                     </div>
                                 ) : (
@@ -2199,6 +2481,86 @@ Do not add markdown formatting or surrounding text.]`,
                                                     />
                                                 )
                                             )}
+                                            {/* Detect JSON or Markdown Beats */}
+                                            {(() => {
+                                                if (msg.role === 'assistant' && msg.content) {
+                                                    const extractBeatsFromContent = (text: string) => {
+                                                        const beats: any[] = [];
+
+                                                        // 1. Try JSON
+                                                        try {
+                                                            const cleanJson = text.replace(/```json/g, '').replace(/```/g, '').trim();
+                                                            const arrayMatch = cleanJson.match(/\[.*\]/s);
+                                                            if (arrayMatch) {
+                                                                const parsed = JSON.parse(arrayMatch[0]);
+                                                                if (Array.isArray(parsed)) return parsed;
+                                                            }
+                                                        } catch (e) { /* continued */ }
+
+                                                        // 2. Try Markdown List (1. **Title**: Content OR * **Title**: Content)
+                                                        const lines = text.split('\n');
+                                                        let currentBeat: any = null;
+
+                                                        lines.forEach(line => {
+                                                            const trimmed = line.trim();
+                                                            // Regex: (Number. OR * OR -) (**Title** OR Title) (: OR -) Content
+                                                            // Matches: "1. **Title**: Content", "* **Title** - Content", "1. Title: Content"
+                                                            const beatMatch = trimmed.match(/^(\d+\.|[*\\-])\s*(?:\*\*)?(.*?)(?:\*\*)?\s*(?::|-)\s*(.*)$/);
+
+                                                            // Or just bold title at start of line: "**Title**: Content"
+                                                            const simpleBoldMatch = !beatMatch ? trimmed.match(/^\*\*(.*?)\*\*\s*(?::|-)\s*(.*)$/) : null;
+
+                                                            const match = beatMatch || simpleBoldMatch;
+
+                                                            if (match) {
+                                                                const title = beatMatch ? beatMatch[2] : match![1];
+                                                                const content = beatMatch ? beatMatch[3] : match![2];
+
+                                                                if (currentBeat) beats.push(currentBeat);
+                                                                currentBeat = {
+                                                                    title: title.trim(),
+                                                                    summary: content.trim().slice(0, 100) + '...',
+                                                                    content: content.trim(),
+                                                                    reasoning: 'Extracted from list'
+                                                                };
+                                                            } else if (currentBeat && trimmed && !trimmed.match(/^(\d+\.|[*\\-])/)) {
+                                                                // Append content to current beat
+                                                                currentBeat.content += '\n' + trimmed;
+                                                            }
+                                                        });
+                                                        if (currentBeat) beats.push(currentBeat);
+
+                                                        return beats.length > 0 ? beats : null;
+                                                    };
+
+                                                    const beats = extractBeatsFromContent(msg.content);
+
+                                                    if (beats && beats.length > 0) {
+                                                        return (
+                                                            <div className="mt-2 pt-2 border-t border-white/5">
+                                                                <div className="text-[10px] font-bold text-indigo-400 mb-2 flex items-center gap-1">
+                                                                    <GitBranch size={12} /> Suggested Beats
+                                                                </div>
+                                                                <div className="space-y-2">
+                                                                    {beats.map((beat: any, bIdx: number) => (
+                                                                        <div key={bIdx} className="bg-slate-900/50 p-2 rounded border border-white/5 text-xs">
+                                                                            <div className="font-bold text-slate-200">{beat.title}</div>
+                                                                            <div className="text-slate-400 text-[10px] line-clamp-2">{beat.content}</div>
+                                                                        </div>
+                                                                    ))}
+                                                                    <button
+                                                                        onClick={() => addBeatsFromChat(beats, activeNodeId)}
+                                                                        className="w-full py-1.5 bg-indigo-600/20 hover:bg-indigo-600 text-indigo-300 hover:text-white rounded text-[10px] font-bold transition-colors"
+                                                                    >
+                                                                        Add to Story Tree
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                        )
+                                                    }
+                                                }
+                                                return null
+                                            })()}
                                         </div>
                                     </div>
                                 ))}
@@ -2376,7 +2738,7 @@ Do not add markdown formatting or surrounding text.]`,
                     </div>
                 )
             }
-        </div>
+        </div >
     )
 }
 
